@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单词对对碰</title>
+    <style>
+        /* Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+         body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .input-area, .game-area {
+            margin-bottom: 20px;
+        }
+
+        .input-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border: none; /* 这一行隐藏边框 */
+        }
+
+        .input-field {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical; /* 允许垂直拉伸 */
+            box-sizing: border-box; /* 修复输入框显示 */
+            margin: 0; /* 居中显示 */
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .game-area {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            max-width: 800px;
+            width: 100%;
+        }
+        .card {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s;
+        }
+
+        .card.active {
+            background-color: #a5d6a7;
+        }
+        .card.matched {
+            background-color: #d4edda;
+        }
+        .card.incorrect {
+            background-color: #f8d7da;
+        }
+        .reset-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .hidden {
+            display: none;
+        }
+
+        #errorArea {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            display: none;
+        }
+
+        #errorArea.show {
+            display: block;
+        }
+
+        .premade-words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px; /* 设置横向和竖向的间距 */
+            margin-top: 10px; /* 设置上边距 */
+        }
+
+        .discreet-text {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f0f0f0;
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="input-area" id="inputArea">
+            <div class="input-field">
+                <label for="wordTranslationList">输入单词与翻译：</label>
+                <textarea id="wordTranslationList" rows="10" cols="30" placeholder="在此处输入单词与翻译,中间用逗号/空格/tab隔开,每行只能放一组单词与翻译"></textarea>
+            </div>
+            <button id="startGameButton">开始游戏</button>
+            <div class="premade-words">
+                <button id="presetWordsButton1">预置单词-动物</button>
+                <button id="presetWordsButton2">预置单词-家具</button>
+                <button id="presetWordsButton3">预置单词-天空</button>
+            </div>
+        </div>
+        <div class="game-area" id="gameArea"></div>
+        <div id="errorArea" class="hidden"></div>
+        <button class="reset-button hidden" id="resetButton">重新开始</button>
+    </div>
+
+    <div class="discreet-text">
+        <p>单词对对碰 &copy;2024 机智的常总 (<a href="https://github.com/cjlaaa">GitHub</a>)</p>
+        <p>本网页内容根据 <a rel="license" href="https://opensource.org/licenses/MIT">MIT 许可协议</a> 进行发布。</p>
+    </div>
+
+    <script>
+        let words = [];
+        let selectedCards = [];
+        const gameArea = document.getElementById("gameArea");
+        const resetButton = document.getElementById("resetButton");
+        const startGameButton = document.getElementById("startGameButton");
+        const wordTranslationListInput = document.getElementById("wordTranslationList");
+        const inputArea = document.getElementById("inputArea");
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function initializeGame() {
+            // Filter out words that have already been used
+            words = words.filter(word => !word.used);
+            if (words.length === 0) {
+                errorArea.style.backgroundColor = "#d4edda"; // 设置错误区域背景色为绿色
+                showError("全部单词匹配成功！", false); // 绿色提示
+                return;
+            }
+            gameArea.innerHTML = "";
+            selectedCards = [];
+            shuffle(words); // Shuffle the words array
+            let cards = [];
+            for (let i = 0; i < 5 && i < words.length; i++) {
+                const word = words[i];
+                cards.push({ text: word.english, type: "english" });
+                cards.push({ text: word.chinese, type: "chinese" });
+                word.used = true; // Mark the word as used
+            }
+            shuffle(cards);
+            cards.forEach(card => {
+                const cardElement = document.createElement("div");
+                cardElement.classList.add("card");
+                cardElement.textContent = card.text;
+                cardElement.dataset.type = card.type;
+                cardElement.addEventListener("click", handleCardClick);
+                gameArea.appendChild(cardElement);
+            });
+            inputArea.classList.add("hidden"); // Hide input area after game starts
+            resetButton.classList.remove("hidden"); // Show reset button after game starts
+        }
+
+        function handleCardClick(event) {
+            const card = event.target;
+            if (selectedCards.length < 2 && !card.classList.contains("active") && !card.classList.contains("matched")) {
+                card.classList.add("active");
+                selectedCards.push(card);
+                if (selectedCards.length === 2) {
+                    checkMatch();
+                }
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = selectedCards;
+            const word1 = card1.textContent;
+            const word2 = card2.textContent;
+            const type1 = card1.dataset.type;
+            const type2 = card2.dataset.type;
+
+            if (type1 !== type2 && isMatch(word1, word2)) {
+                selectedCards = [];
+                card1.classList.add("matched");
+                card2.classList.add("matched");
+                if (document.querySelectorAll('.card').length === document.querySelectorAll('.card.matched').length) {
+                    initializeGame();
+                }
+            } else {
+                card1.classList.add("incorrect");
+                card2.classList.add("incorrect");
+                setTimeout(() => {
+                    card1.classList.remove("active", "incorrect");
+                    card2.classList.remove("active", "incorrect");
+                    selectedCards = [];
+                }, 400);
+            }
+        }
+
+        function isMatch(word1, word2) {
+            return words.some(word => 
+                (word.english === word1 && word.chinese === word2) || 
+                (word.english === word2 && word.chinese === word1)
+            );
+        }
+
+        startGameButton.addEventListener("click", () => {
+            const input = wordTranslationListInput.value.trim();
+            if (input) {
+                const wordPairs = input.split('\n');
+                words = wordPairs.reduce((acc, pair, index) => {
+                    const [english, chinese] = pair.split(/[,\t\n|]+/);
+                    if (english && chinese && english.trim() && chinese.trim()) { // 检查字符串不为空
+                        acc.push({ english: english.trim(), chinese: chinese.trim() });
+                    } else {
+                        showError(`第 ${index + 1} 行格式错误，请检查输入。`, true); // 显示错误提示
+                    }
+                    return acc;
+                }, []);
+                setTimeout(() => {
+                    hideError()
+                }, 2000);
+                initializeGame();
+            } else {
+                showError("请输入单词与翻译。", true); // 红色提示
+            }
+        });
+
+        resetButton.addEventListener("click", () => {
+            gameArea.innerHTML = "";
+            selectedCards = [];
+            inputArea.classList.remove("hidden"); // Show input area on reset
+            resetButton.classList.add("hidden"); // Hide reset button on reset
+            hideError(); // 隐藏错误提示
+        });
+    
+
+        function showError(message, isError) {
+            errorArea.textContent = message;
+            if (isError) {
+                errorArea.style.backgroundColor = "#f8d7da"; // 红色背景
+                errorArea.style.color = "#721c24"; // 红色字体
+                errorArea.style.borderColor = "#f5c6cb"; // 红色边框
+            } else {
+                errorArea.style.backgroundColor = "#d4edda"; // 绿色背景
+                errorArea.style.color = "#155724"; // 绿色字体
+                errorArea.style.borderColor = "#c3e6cb"; // 绿色边框
+            }
+            errorArea.classList.add("show");
+        }
+
+        function hideError() {
+            errorArea.textContent = "";
+            errorArea.classList.remove("show");
+        }
+
+        const presetWordsButton1 = document.getElementById("presetWordsButton1");
+        const presetWordsButton2 = document.getElementById("presetWordsButton2");
+        const presetWordsButton3 = document.getElementById("presetWordsButton3");
+
+        // 定义预置单词列表
+        const presetWordLists = [
+            `cat, 猫
+dog, 狗
+rabbit, 兔子
+bird, 鸟
+fish, 鱼`,
+            `chair, 椅子
+table, 桌子
+lamp, 灯
+sofa, 沙发
+bed, 床`,
+            `sun, 太阳
+moon, 月亮
+star, 星星
+cloud, 云
+rain, 雨`
+        ];
+
+        presetWordsButton1.addEventListener("click", () => {
+            fillWordList(presetWordLists[0]);
+        });
+
+        presetWordsButton2.addEventListener("click", () => {
+            fillWordList(presetWordLists[1]);
+        });
+
+        presetWordsButton3.addEventListener("click", () => {
+            fillWordList(presetWordLists[2]);
+        });
+
+        function fillWordList(presetWords) {
+            wordTranslationListInput.value = presetWords;
+        }
+
+    </script>
+</body>
+</html>
