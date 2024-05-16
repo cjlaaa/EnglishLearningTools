@@ -25,6 +25,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 20px;
+            margin-bottom: 20px; /* 新增的容器之间的间距 */
         }
 
         .area {
@@ -64,6 +65,12 @@
         .navigation {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+        }
+
+        #sentenceIndexArea {
+            margin-left: auto; /* 将索引区域推到右边 */
+            padding-left: 20px; /* 可选，增加一点间距使其不紧贴返回按钮 */
         }
 
         .card {
@@ -92,11 +99,20 @@
             display: flex;
             flex-wrap: wrap;
             gap: 10px; /* 设置横向和竖向的间距 */
+            margin-top: 10px; /* 增加顶部间距 */
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .container:nth-child(2) {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="container1">
         <!-- 输入区域 -->
         <div class="area" id="inputArea">
             <label for="englishArticle">英文文章:</label><br>
@@ -104,12 +120,30 @@
             <label for="chineseTranslation">中文翻译:</label><br>
             <textarea id="chineseTranslation" rows="4">欢迎使用英语回译王。在这里输入中文翻译，然后点击开始按钮。然后单击下面的单词卡开始反向翻译练习。 您也可以点击页面底部的预设文章按钮开始练习。请注意，中英文文章中的每个句子都应按相应的顺序用句号或感叹号或问号分隔，否则可能会出现不匹配的问题。</textarea>
             <button onclick="startExercise()">开始</button>
+
+            <!-- 预制文章按钮 -->
+            <div class="premade-articles">
+                <button onclick="loadArticle(1)">剑桥雅思核心词汇精讲精练Recording 1a</button>
+                <button onclick="loadArticle(2)">新概念英语3L1</button>
+                <button onclick="loadArticle(3)">新概念英语3L3</button>
+            </div>
         </div>
-        <!-- 文章导航区域 -->
+    </div>
+
+    <div class="container hidden" id="container2">
         <div class="area navigation">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <button onclick="returnToInitial()">&lt; 返回</button>
+                <div id="sentenceIndexArea"></div>
+            </div>
+        </div>
+
+        <!-- 文章导航区域 -->
+        <div class="area">
             <button onclick="prevSentence()">&lt; 上一句</button>
             <button onclick="nextSentence()">下一句 &gt;</button>
         </div>
+        
         <!-- 中文翻译区域 -->
         <div class="area" id="chineseTranslationArea"></div>
         <!-- 翻译区域 -->
@@ -118,12 +152,6 @@
         <div class="area" id="wordArea"></div>
         <!-- 错误提示区域 -->
         <div class="area error" id="errorArea"></div>
-        <!-- 预制文章按钮 -->
-        <div class="premade-articles">
-            <button onclick="loadArticle(1)">剑桥雅思核心词汇精讲精练Recording 1a</button>
-            <button onclick="loadArticle(2)">新概念英语3L1</button>
-            <button onclick="loadArticle(3)">新概念英语3L3</button>
-        </div>
     </div>
 
     <div class="discreet-text">
@@ -184,6 +212,28 @@
             chineseTranslationArea.innerText = chineseTranslation + "\n";
 
             checkSentence(); // 检查句子是否正确
+
+            // 隐藏第一个容器并显示第二个容器
+            document.querySelectorAll('.container')[0].style.display = 'none';
+            document.querySelectorAll('.container')[1].style.display = 'block';
+
+            // 更新当前句子索引和总句子数量的显示
+            updateSentenceIndexDisplay();
+        }
+
+        function updateSentenceIndexDisplay() {
+            var sentenceIndexArea = document.getElementById("sentenceIndexArea");
+            sentenceIndexArea.innerText = `当前句子：${currentSentenceIndex + 1} / ${originalEnglishSentences.length}`;
+        }
+
+        // 返回到初始状态
+        function returnToInitial() {
+            document.querySelectorAll('.container')[0].style.display = 'block';
+            document.querySelectorAll('.container')[1].style.display = 'none';
+            document.getElementById("translationArea").innerText = ''; // 清空翻译区内容
+            document.getElementById("wordArea").innerHTML = ''; // 清空单词卡片
+            document.getElementById("errorArea").innerText = ''; // 清空错误提示
+            currentSentenceIndex = 0; // 重置当前句子索引
         }
 
         // 上一句
@@ -191,6 +241,8 @@
             if (currentSentenceIndex > 0) {
                 currentSentenceIndex--;
                 startExercise();
+                // 更新内容...
+                updateSentenceIndexDisplay();
             }
         }
 
@@ -199,6 +251,8 @@
             if (currentSentenceIndex < originalEnglishSentences.length - 1) {
                 currentSentenceIndex++;
                 startExercise();
+                // 更新内容...
+                updateSentenceIndexDisplay();
             }
         }
 
@@ -208,10 +262,20 @@
             var translationArea = document.getElementById("translationArea");
             var word = card.innerText;
 
+            // 添加调用系统语音朗读的功能
+            speakText(word);
+
             card.remove();
             translationArea.innerHTML += '<div class="card" onclick="removeFromTranslation(this)">' + word + '</div>';
 
             checkSentence(); // 检查句子是否正确
+        }
+
+        // 调用系统语音朗读文本内容的函数
+        function speakText(text) {
+            window.speechSynthesis.cancel();
+            var utterance = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(utterance);
         }
 
         // 从翻译区域移除单词
@@ -219,6 +283,9 @@
             var wordArea = document.getElementById("wordArea");
             var translationArea = document.getElementById("translationArea");
             var word = card.innerText;
+
+            // 添加调用系统语音朗读的功能
+            speakText(word);
 
             card.remove();
             wordArea.innerHTML += '<div class="card" onclick="addToTranslation(this)">' + word + '</div>';
@@ -345,7 +412,7 @@ but, so far, the archaeologists have been unable to discover her identity`
             document.getElementById("chineseTranslation").value = chineseTranslations[articleNumber - 1];
 
             currentSentenceIndex = 0;
-            startExercise();
+            // startExercise();
         }
     </script>
 </body>

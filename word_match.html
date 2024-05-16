@@ -212,12 +212,23 @@
         function handleCardClick(event) {
             const card = event.target;
             if (selectedCards.length < 2 && !card.classList.contains("active") && !card.classList.contains("matched")) {
+                const wordText = card.textContent; // 获取卡片上的文本内容
+                // 在这里添加代码进行文本朗读
+                speakText(wordText);
+
                 card.classList.add("active");
                 selectedCards.push(card);
                 if (selectedCards.length === 2) {
                     checkMatch();
                 }
             }
+        }
+
+        // 调用系统语音朗读文本内容的函数
+        function speakText(text) {
+            window.speechSynthesis.cancel();
+            var utterance = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(utterance);
         }
 
         function checkMatch() {
