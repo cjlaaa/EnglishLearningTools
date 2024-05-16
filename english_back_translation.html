@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>英语回译王</title>
     <style>
-        /* Reset */
+        /* 重置 */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -25,7 +25,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            margin-bottom: 20px; /* 新增的容器之间的间距 */
+            margin-bottom: 20px;
         }
 
         .area {
@@ -40,12 +40,12 @@
         }
 
         textarea {
-            width: 100%; /* 让文本框宽度充满其父元素 */
-            min-height: 50px; /* 设置文本框的最小高度 */
+            width: 100%;
+            min-height: 50px;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            resize: vertical; /* 允许垂直拉伸 */
+            resize: vertical;
         }
 
         button {
@@ -69,8 +69,7 @@
         }
 
         #sentenceIndexArea {
-            margin-left: auto; /* 将索引区域推到右边 */
-            padding-left: 20px; /* 可选，增加一点间距使其不紧贴返回按钮 */
+            margin-left: auto;
         }
 
         .card {
@@ -98,17 +97,14 @@
         .premade-articles {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px; /* 设置横向和竖向的间距 */
-            margin-top: 10px; /* 增加顶部间距 */
+            gap: 10px;
+            margin-top: 10px;
         }
 
         .hidden {
             display: none;
         }
 
-        .container:nth-child(2) {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -132,15 +128,21 @@
 
     <div class="container hidden" id="container2">
         <div class="area navigation">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
                 <button onclick="returnToInitial()">&lt; 返回</button>
-                <div id="sentenceIndexArea"></div>
+                <button onclick="resetCurrentSentence()">重置当前句子</button> <!-- 新增按钮 -->
             </div>
+        </div>
+
+        <div>
+            <div class="area" id="sentenceIndexArea"></div>
         </div>
 
         <!-- 文章导航区域 -->
         <div class="area">
             <button onclick="prevSentence()">&lt; 上一句</button>
+            <button onclick="speakCurrentSentence()">快速朗读当前句子</button>
+            <button onclick="speakCurrentSentenceSlow()">慢速朗读当前句子</button>
             <button onclick="nextSentence()">下一句 &gt;</button>
         </div>
         
@@ -164,6 +166,34 @@
         var originalEnglishSentences = []; // 原始英文句子数组
         var originalChineseTranslations = []; // 原始中文翻译数组
         var currentSentenceIndex = 0; // 当前句子索引
+
+        // 朗读当前句子
+        function speakCurrentSentence() {
+            var englishSentence = originalEnglishSentences[currentSentenceIndex].trim();
+            speakText(englishSentence, 1.4);
+        }
+
+        function speakCurrentSentenceSlow() {
+            var englishSentence = originalEnglishSentences[currentSentenceIndex].trim();
+            speakText(englishSentence, 0.7);
+        }
+
+        // 重置当前句子状态
+        function resetCurrentSentence() {
+            var wordArea = document.getElementById("wordArea");
+            var translationArea = document.getElementById("translationArea");
+            var errorArea = document.getElementById("errorArea");
+
+            // 清空翻译区内容
+            translationArea.innerHTML = '';
+            // 清空单词卡片
+            wordArea.innerHTML = '';
+            // 清空错误提示
+            errorArea.innerText = '';
+            
+            // 重新开始当前句子练习
+            startExercise();
+        }
 
         // 随机打乱数组元素顺序
         function shuffleArray(array) {
@@ -271,10 +301,10 @@
             checkSentence(); // 检查句子是否正确
         }
 
-        // 调用系统语音朗读文本内容的函数
-        function speakText(text) {
+        function speakText(text, speed = 1.0) {
             window.speechSynthesis.cancel();
             var utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = speed; // 设置朗读速度
             window.speechSynthesis.speak(utterance);
         }
 
