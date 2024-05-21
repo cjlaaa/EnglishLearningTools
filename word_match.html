@@ -246,8 +246,38 @@
         function speakText(text) {
             window.speechSynthesis.cancel();
             var utterance = new SpeechSynthesisUtterance(text);
+            if (selectedVoice){
+                utterance.voice = selectedVoice;
+            }
+            utterance.rate = 0.7; // 设置朗读速度
             window.speechSynthesis.speak(utterance);
         }
+
+        // 定义一个变量来保存找到的语音
+        let selectedVoice;
+        // 监听 voiceschanged 事件
+        window.speechSynthesis.onvoiceschanged = function() {
+            // 获取所有可用的语音
+            const voices = window.speechSynthesis.getVoices();
+            // 打印所有可用语音的详细信息
+            // console.log('Available voices:', voices);
+            // 查找名为 "Mark" 或 "Samantha" 的语音
+            selectedVoice = voices.find(voice => voice.name.includes('Mark') || voice.name.includes('Samantha'));
+            if (selectedVoice) {
+                // console.log('Found voice:', selectedVoice);
+                // // 创建一个 SpeechSynthesisUtterance 实例
+                // const utterance = new SpeechSynthesisUtterance('Hello, this is Mark or Samantha.');
+                // // 设置为找到的语音
+                // utterance.voice = selectedVoice;
+                // // 使用当前设置的语音进行合成
+                // window.speechSynthesis.speak(utterance);
+            } else {
+                // console.error('Voice not found: Mark or Samantha.');
+            }
+        };
+        // 手动触发一次以确保语音列表加载
+        window.speechSynthesis.getVoices();
+
 
         function checkMatch() {
             const [card1, card2] = selectedCards;
