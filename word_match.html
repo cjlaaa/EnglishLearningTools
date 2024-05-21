@@ -185,7 +185,7 @@
 
         function initializeGame() {
             words = words.filter(word => !word.used);
-            if (words.length <= 5) {
+            if (words.length <= 5 || document.querySelectorAll('.card.matched').length < 10) {
                 nextGroupButton.classList.add("hidden"); // 隐藏“下一组”按钮
             } else {
                 nextGroupButton.classList.remove("hidden"); // 显示“下一组”按钮
@@ -271,7 +271,7 @@
                     // Check if all words are used
                     if (words.length === document.querySelectorAll('.card.matched').length / 2) {
                         showError("全部单词匹配成功！", false); // 绿色提示
-                    } else if (words.length <= 5) {
+                    } else if (document.querySelectorAll('.card.matched').length < 10) {
                         nextGroupButton.classList.add("hidden"); // 隐藏“下一组”按钮
                     } else {
                         nextGroupButton.classList.remove("hidden"); // 显示“下一组”按钮
