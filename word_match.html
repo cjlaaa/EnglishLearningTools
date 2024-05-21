@@ -143,7 +143,7 @@
         <div class="input-area" id="inputArea">
             <div class="input-field">
                 <label for="wordTranslationList">输入单词与翻译：</label>
-                <textarea id="wordTranslationList" rows="10" cols="30" placeholder="在此处输入单词与翻译,中间用逗号/空格/tab隔开,每行只能放一组单词与翻译"></textarea>
+                <textarea id="wordTranslationList" rows="10" cols="30" placeholder="在此处输入单词与翻译,每行只能放一组单词与翻译,中间用tab符/分号/竖线隔开(注意为了支持英文词组和中文词义逗号,这里的分隔符不支持空格和逗号).建议使用excel两列分别输入英文单词和中文翻译并一一对应,然后框选后复制并粘贴到这里即可直接开始游戏."></textarea>
             </div>
             <button id="startGameButton">开始游戏</button>
             <div class="premade-words">
@@ -330,7 +330,7 @@
             if (input) {
                 const wordPairs = input.split('\n');
                 words = wordPairs.reduce((acc, pair, index) => {
-                    const [english, chinese] = pair.split(/[,\t\n|]+/);
+                    const [english, chinese] = pair.split(/[;|\t\n|]+/);
                     if (english && chinese && english.trim() && chinese.trim()) { // 检查字符串不为空
                         acc.push({ english: english.trim(), chinese: chinese.trim() });
                     } else {
@@ -382,21 +382,21 @@
 
         // 定义预置单词列表
         const presetWordLists = [
-            `cat, 猫
-dog, 狗
-rabbit, 兔子
-bird, 鸟
-fish, 鱼`,
-            `chair, 椅子
-table, 桌子
-lamp, 灯
-sofa, 沙发
-bed, 床`,
-            `sun, 太阳
-moon, 月亮
-star, 星星
-cloud, 云
-rain, 雨`
+            `cat\t猫
+dog\t狗
+rabbit\t兔子
+bird\t鸟
+fish\t鱼`,
+            `chair\t椅子
+table\t桌子
+lamp\t灯
+sofa\t沙发
+bed\t床`,
+            `sun\t太阳
+moon\t月亮
+star\t星星
+cloud\t云
+rain\t雨`
         ];
 
         presetWordsButton1.addEventListener("click", () => {
