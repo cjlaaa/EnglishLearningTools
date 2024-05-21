@@ -155,6 +155,7 @@
         <div class="game-area" id="gameArea"></div>
         <div id="errorArea" class="hidden"></div>
         <button class="reset-button hidden" id="resetButton">重新开始</button>
+        <button class="next-group-button hidden" id="nextGroupButton">下一组</button>
     </div>
 
     <div class="discreet-text">
@@ -171,6 +172,10 @@
         const wordTranslationListInput = document.getElementById("wordTranslationList");
         const inputArea = document.getElementById("inputArea");
 
+        // const colors = ["#a8d8e2", "#c5b8bf", "#e0c7e3", "#ebe4d0", "#f2c69c"];
+        const colors = ["#FFD8B1", "#FFFACD", "#E0FFFF", "#C1E0FF", "#E1C1FF"];
+        let currentColorIndex = 0;
+
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -179,12 +184,15 @@
         }
 
         function initializeGame() {
-            // Filter out words that have already been used
             words = words.filter(word => !word.used);
             if (words.length === 0) {
-                errorArea.style.backgroundColor = "#d4edda"; // 设置错误区域背景色为绿色
                 showError("全部单词匹配成功！", false); // 绿色提示
+                nextGroupButton.classList.add("hidden"); // 隐藏“下一组”按钮
                 return;
+            } else if (words.length <= 5) {
+                nextGroupButton.classList.add("hidden"); // 隐藏“下一组”按钮
+            } else {
+                nextGroupButton.classList.remove("hidden"); // 显示“下一组”按钮
             }
             gameArea.innerHTML = "";
             selectedCards = [];
@@ -209,12 +217,26 @@
             resetButton.classList.remove("hidden"); // Show reset button after game starts
         }
 
+        nextGroupButton.addEventListener("click", () => {
+            if (words.length > 0) {
+                initializeGame();
+            } else {
+                showError("没有更多的单词组。", true); // 显示错误提示
+            }
+        });
+
         function handleCardClick(event) {
             const card = event.target;
+
+            // 只在点击英语卡片时朗读文本内容
+            if (card.dataset.type === "english") {
+                speakText(card.textContent);
+            }
+
             if (selectedCards.length < 2 && !card.classList.contains("active") && !card.classList.contains("matched")) {
                 const wordText = card.textContent; // 获取卡片上的文本内容
                 // 在这里添加代码进行文本朗读
-                speakText(wordText);
+                // speakText(wordText);
 
                 card.classList.add("active");
                 selectedCards.push(card);
@@ -242,8 +264,20 @@
                 selectedCards = [];
                 card1.classList.add("matched");
                 card2.classList.add("matched");
+
+                const color = colors[currentColorIndex];
+                card1.style.backgroundColor = color;
+                card2.style.backgroundColor = color;
+                currentColorIndex = (currentColorIndex + 1) % colors.length;
+
+                // Check if all cards are matched
                 if (document.querySelectorAll('.card').length === document.querySelectorAll('.card.matched').length) {
-                    initializeGame();
+                    // Check if all words are used
+                    if (words.length === document.querySelectorAll('.card.matched').length / 2) {
+                        showError("全部单词匹配成功！", false); // 绿色提示
+                    } else {
+                        nextGroupButton.classList.remove("hidden"); // 显示“下一组”按钮
+                    }
                 }
             } else {
                 card1.classList.add("incorrect");
@@ -276,9 +310,6 @@
                     }
                     return acc;
                 }, []);
-                setTimeout(() => {
-                    hideError()
-                }, 2000);
                 initializeGame();
             } else {
                 showError("请输入单词与翻译。", true); // 红色提示
@@ -290,9 +321,9 @@
             selectedCards = [];
             inputArea.classList.remove("hidden"); // Show input area on reset
             resetButton.classList.add("hidden"); // Hide reset button on reset
+            nextGroupButton.classList.add("hidden"); // Hide "Next Group" button on reset
             hideError(); // 隐藏错误提示
         });
-    
 
         function showError(message, isError) {
             errorArea.textContent = message;
@@ -300,6 +331,10 @@
                 errorArea.style.backgroundColor = "#f8d7da"; // 红色背景
                 errorArea.style.color = "#721c24"; // 红色字体
                 errorArea.style.borderColor = "#f5c6cb"; // 红色边框
+
+                setTimeout(() => {
+                    hideError()
+                }, 3000);
             } else {
                 errorArea.style.backgroundColor = "#d4edda"; // 绿色背景
                 errorArea.style.color = "#155724"; // 绿色字体
