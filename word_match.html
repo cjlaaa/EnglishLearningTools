@@ -200,13 +200,15 @@
         function initializeGame() {
             words = words.filter(word => !word.used);
             updateProgress();
+            gameArea.innerHTML = "";
+            selectedCards = [];
+
             if (words.length <= 5 || document.querySelectorAll('.card.matched').length < 10) {
                 nextGroupButton.classList.add("hidden"); // 隐藏“下一组”按钮
             } else {
                 nextGroupButton.classList.remove("hidden"); // 显示“下一组”按钮
             }
-            gameArea.innerHTML = "";
-            selectedCards = [];
+
             shuffle(words); // Shuffle the words array
             let cards = [];
             for (let i = 0; i < 5 && i < words.length; i++) {
