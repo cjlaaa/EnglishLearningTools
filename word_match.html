@@ -136,6 +136,19 @@
             font-size: 12px;
             color: #888;
         }
+
+        .progress-area {
+            background-color: #e0e0e0;
+            color: #333;
+            padding: 4px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 12px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 430px;
+            display: none; /* 默认隐藏 */
+        }
     </style>
 </head>
 <body>
@@ -152,6 +165,7 @@
                 <button id="presetWordsButton3">预置单词-天空</button>
             </div>
         </div>
+        <div class="progress-area" id="progressArea"></div>
         <div class="game-area" id="gameArea"></div>
         <div id="errorArea" class="hidden"></div>
         <button class="reset-button hidden" id="resetButton">重新开始</button>
@@ -185,6 +199,7 @@
 
         function initializeGame() {
             words = words.filter(word => !word.used);
+            updateProgress();
             if (words.length <= 5 || document.querySelectorAll('.card.matched').length < 10) {
                 nextGroupButton.classList.add("hidden"); // 隐藏“下一组”按钮
             } else {
@@ -211,11 +226,28 @@
             });
             inputArea.classList.add("hidden"); // Hide input area after game starts
             resetButton.classList.remove("hidden"); // Show reset button after game starts
+
+            // 显示进度条
+            const progressArea = document.getElementById("progressArea");
+            progressArea.style.display = "block";
         }
+
+        function updateProgress() {
+            const progressArea = document.getElementById("progressArea");
+            const totalGroups = Math.ceil(words.length / 5);
+            const remainingGroups = Math.ceil(words.filter(word => !word.used).length / 5);
+            if (remainingGroups < 1) {
+                progressArea.textContent = `最后一组单词`;
+            } else {
+                progressArea.textContent = `还剩 ${remainingGroups} 组单词`;
+            }
+        }
+
 
         nextGroupButton.addEventListener("click", () => {
             if (words.length > 0) {
                 initializeGame();
+                updateProgress(); // 更新进度
             } else {
                 showError("没有更多的单词组。", true); // 显示错误提示
             }
@@ -339,10 +371,12 @@
                     return acc;
                 }, []);
                 initializeGame();
+                updateProgress(); // 更新进度
             } else {
                 showError("请输入单词与翻译。", true); // 红色提示
             }
         });
+
 
         resetButton.addEventListener("click", () => {
             gameArea.innerHTML = "";
@@ -351,6 +385,11 @@
             resetButton.classList.add("hidden"); // Hide reset button on reset
             nextGroupButton.classList.add("hidden"); // Hide "Next Group" button on reset
             hideError(); // 隐藏错误提示
+            updateProgress(); // 更新进度
+
+            // 隐藏进度条
+            const progressArearea = document.getElementById("progressArea");
+            progressArea.style.display = "none";
         });
 
         function showError(message, isError) {
