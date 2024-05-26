@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语朗读王</title>
+    <style>
+		body {
+		    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		    margin: 0;
+		    padding: 20px;
+		    background-color: #f7f7f7;
+		}
+
+		#container {
+		    max-width: 800px;
+		    margin: 0 auto;
+		    background: #fff;
+		    padding: 20px;
+		    border-radius: 8px;
+		    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		}
+
+		#inputArea {
+		    width: 98%;
+		    height: 150px;
+		    padding: 10px;
+		    border: 1px solid #ddd;
+		    border-radius: 4px;
+		    margin-bottom: 10px;
+		}
+
+		button {
+		    background-color: #007bff;
+		    color: #fff;
+		    border: none;
+		    padding: 8px 16px; /* 减小内边距 */
+		    border-radius: 4px;
+		    cursor: pointer;
+		    transition: background-color 0.3s;
+		}
+
+		button:hover {
+		    background-color: #0056b3;
+		}
+
+		#buttonContainer {
+		    display: flex;
+		    justify-content: space-between;
+		    margin-top: 20px;
+		}
+
+		#sentenceList {
+		    margin-top: 20px;
+		}
+
+		.sentence {
+		    margin: 10px 0;
+		    display: flex;
+		    align-items: center;
+		    background: #f1f1f1;
+		    padding: 10px;
+		    border-radius: 4px;
+		    flex-wrap: wrap;
+		}
+
+		.sentence button {
+		    background-color: #28a745;
+		    margin-right: 10px;
+		}
+
+		.sentence button:hover {
+		    background-color: #218838;
+		}
+
+		.word {
+		    margin: 0 5px;
+		    padding: 2px 5px;
+		    cursor: pointer;
+		    background-color: #fff;
+		    border-radius: 4px;
+		    display: inline-block;
+		    transition: background-color 0.3s;
+		}
+
+		.word:hover {
+		    background-color: #007bff;
+		    color: #fff;
+		}
+
+		#vocabList {
+		    margin-top: 20px;
+		    border: 1px solid #ddd;
+		    padding: 10px;
+		    border-radius: 4px;
+		    background: #fff;
+		    display: flex;
+		    flex-wrap: wrap;
+		}
+
+		#vocabList div {
+		    margin: 5px; /* 调整成员之间的间距 */
+		    padding: 5px;
+		    background: #f1f1f1;
+		    border-radius: 4px;
+		    cursor: pointer;
+		}
+
+		#vocabList div:hover {
+		    background: #007bff;
+		    color: #fff;
+		}
+
+		#vocabList {
+		    margin-top: 20px;
+		    border: 1px solid #ddd;
+		    padding: 10px;
+		    border-radius: 4px;
+		    background: #fff;
+		    display: flex; /* 使用Flexbox布局 */
+		    flex-wrap: wrap; /* 允许单词卡片换行 */
+		}
+
+		#errorArea {
+		    margin-top: 10px;
+		    padding: 10px;
+		    background-color: #f8d7da;
+		    color: #721c24;
+		    border: 1px solid #f5c6cb;
+		    border-radius: 5px;
+		    display: none;
+		}
+
+		#errorArea.show {
+		    display: block;
+		}
+
+		#premade-articles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .highlighted-word {
+		    background-color: yellow; /* 设置特殊颜色 */
+		    color: black; /* 设置特殊颜色的文字颜色 */
+		}
+    </style>
+</head>
+<body>
+    <div id="container">
+	    <textarea id="inputArea" placeholder="请输入英文文章"></textarea><br>
+	    <button id="startButton" onclick="startReading()">开始分句朗读</button>
+
+        <div id="premade-articles">
+            <button onclick="loadArticle(1)">An Incredible Journey</button>
+            <button onclick="loadArticle(2)">Wild Things</button>
+            <button onclick="loadArticle(3)">A Puma at Large</button>
+        </div>
+
+		<div id="buttonContainer" style="display: none;">
+		    <button id="returnButton" onclick="returnToInitialState()">返回</button>
+		    <button id="playAllButton" onclick="playAllSentences()">全部朗读</button>
+		    <button id="stopButton" onclick="stopReading()">停止</button>
+		</div>
+
+	    <div id="readingSection" style="display: none;">
+	        <div id="sentenceList"></div>
+	        <h2>生词列表</h2>
+	        <div id="vocabList"></div>
+	        <button onclick="copyAllWords()">复制所有单词</button>
+	    </div>
+
+	    <div id="errorArea" style="color: green; margin-top: 10px;"></div>
+	</div>
+
+    <script>
+		function startReading() {
+		    const text = document.getElementById('inputArea').value.trim(); // 获取文本并去除首尾空白字符
+		    if (text === '') {
+		        showError("请输入英文文章", true);
+		        return; // 停止函数执行
+		    }
+		    
+		    // 如果有文本，则继续执行朗读操作
+		    const sentences = text.split(/(?<=[.!?\n])/);
+		    const sentenceList = document.getElementById('sentenceList');
+		    sentenceList.innerHTML = '';
+
+		    sentences.forEach(sentence => {
+		        if (sentence.trim() === '') return;
+
+		        const sentenceDiv = document.createElement('div');
+		        sentenceDiv.className = 'sentence';
+
+		        const playButton = document.createElement('button');
+		        playButton.textContent = '朗读';
+		        playButton.onclick = () => speakText(sentence);
+
+		        sentenceDiv.appendChild(playButton);
+
+		        const words = sentence.split(/[\s-]+/);
+		        words.forEach(word => {
+		            if (word.trim() === '') return;
+
+		            const wordSpan = document.createElement('span');
+		            wordSpan.className = 'word';
+		            wordSpan.textContent = word;
+		            wordSpan.onclick = () => addWordToVocab(word);
+
+		            sentenceDiv.appendChild(wordSpan);
+		        });
+
+		        sentenceList.appendChild(sentenceDiv);
+		    });
+
+		    // 隐藏输入区和开始按钮，显示返回按钮、全部播放按钮和朗读区域
+		    document.getElementById('inputArea').style.display = 'none';
+		    document.getElementById('startButton').style.display = 'none';
+		    document.getElementById('premade-articles').style.display = 'none';
+		    document.getElementById('readingSection').style.display = 'block';
+		    document.getElementById('buttonContainer').style.display = 'block';
+		}
+
+		function playAllSentences() {
+		    speakText(document.getElementById('inputArea').value)
+		}
+
+		function stopReading() {
+		    window.speechSynthesis.cancel(); // 停止朗读
+		}
+
+		function returnToInitialState() {
+			window.speechSynthesis.cancel();
+		    document.getElementById('inputArea').style.display = 'block';
+		    document.getElementById('startButton').style.display = 'block';
+		    document.getElementById('premade-articles').style.display = 'block';
+		    document.getElementById('readingSection').style.display = 'none';
+		    document.getElementById('sentenceList').innerHTML = '';
+		    document.getElementById('vocabList').innerHTML = '';
+		    document.getElementById('buttonContainer').style.display = 'none';
+		}
+
+        // 调用系统语音朗读文本内容的函数
+        function speakText(text) {
+            window.speechSynthesis.cancel();
+            var utterance = new SpeechSynthesisUtterance(text);
+            if (selectedVoice){
+                utterance.voice = selectedVoice;
+            }
+            utterance.rate = 0.7; // 设置朗读速度
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // 定义一个变量来保存找到的语音
+        let selectedVoice;
+        // 监听 voiceschanged 事件
+        window.speechSynthesis.onvoiceschanged = function() {
+            // 获取所有可用的语音
+            const voices = window.speechSynthesis.getVoices();
+            // 打印所有可用语音的详细信息
+            // console.log('Available voices:', voices);
+            // 查找名为 "Mark" 或 "Samantha" 的语音
+            selectedVoice = voices.find(voice => voice.name.includes('Mark') || voice.name.includes('Samantha'));
+            if (selectedVoice) {
+                // console.log('Found voice:', selectedVoice);
+                // // 创建一个 SpeechSynthesisUtterance 实例
+                // const utterance = new SpeechSynthesisUtterance('Hello, this is Mark or Samantha.');
+                // // 设置为找到的语音
+                // utterance.voice = selectedVoice;
+                // // 使用当前设置的语音进行合成
+                // window.speechSynthesis.speak(utterance);
+            } else {
+                // console.error('Voice not found: Mark or Samantha.');
+            }
+        };
+        // 手动触发一次以确保语音列表加载
+        window.speechSynthesis.getVoices();
+
+        function addWordToVocab(word) {
+        	if (window.speechSynthesis.speaking) {
+			} else {
+			    speakText(word);
+			}
+
+		    // 使用正则表达式删除单词中的标点
+		    const cleanWord = word.replace(/[^\w\s]/g, ''); // 此正则表达式将删除所有非单词字符（字母、数字和下划线）和空格
+
+		    if (cleanWord.trim() === '') {
+		    	return
+		    }
+
+		    const vocabList = document.getElementById('vocabList');
+		    if (!Array.from(vocabList.children).some(div => div.textContent === cleanWord)) {
+		        const wordDiv = document.createElement('div');
+		        wordDiv.textContent = cleanWord;
+		        wordDiv.onclick = () => deleteWordFromVocab(cleanWord);
+		        vocabList.appendChild(wordDiv);
+
+		        // 修改所有句子中包含该单词的单词的颜色
+			    const wordSpans = document.querySelectorAll('.word');
+			    wordSpans.forEach(wordSpan => {
+			    	const cleanTextContent = wordSpan.textContent.replace(/[^\w\s]/g, '')
+
+			        if (cleanTextContent === cleanWord) {
+			            wordSpan.style.color = 'red'; // 修改颜色为红色（这里可以设置为你想要的颜色）
+			        }
+			    });
+		    }
+		}
+
+        function deleteWordFromVocab(word) {
+		    const vocabList = document.getElementById('vocabList');
+		    const wordDivs = vocabList.querySelectorAll('div');
+		    
+		    wordDivs.forEach(wordDiv => {
+		        if (wordDiv.textContent === word) {
+		            wordDiv.remove();
+		        }
+		    });
+
+		    if (window.speechSynthesis.speaking) {
+			} else {
+			    speakText(word);
+			}
+
+			// 恢复句子中的单词颜色
+            const wordSpans = document.querySelectorAll('.word');
+            wordSpans.forEach(wordSpan => {
+            	const cleanTextContent = wordSpan.textContent.replace(/[^\w\s]/g, '')
+                if (cleanTextContent === word) {
+                    wordSpan.style.color = ''; // 恢复默认颜色
+                }
+            });
+
+		    // showError("已删除生词", false);
+		}
+
+        function copyAllWords() {
+		    const vocabList = document.getElementById('vocabList');
+		    const words = Array.from(vocabList.children).map(div => div.textContent).join('\n');
+		    navigator.clipboard.writeText(words).then(() => {
+		        showError("已复制所有生词", false)
+		    });
+		}
+
+		function showError(message, isError) {
+            errorArea.textContent = message;
+            if (isError) {
+                errorArea.style.backgroundColor = "#f8d7da"; // 红色背景
+                errorArea.style.color = "#721c24"; // 红色字体
+                errorArea.style.borderColor = "#f5c6cb"; // 红色边框
+
+                setTimeout(() => {
+                    hideError()
+                }, 2000);
+            } else {
+                errorArea.style.backgroundColor = "#d4edda"; // 绿色背景
+                errorArea.style.color = "#155724"; // 绿色字体
+                errorArea.style.borderColor = "#c3e6cb"; // 绿色边框
+
+                setTimeout(() => {
+                    hideError()
+                }, 2000);
+            }
+            errorArea.classList.add("show");
+        }
+
+        function hideError() {
+            errorArea.textContent = "";
+            errorArea.classList.remove("show");
+        }
+
+        // 加载预制文章
+        function loadArticle(articleNumber) {
+            var englishArticles = [
+`An incredible journey.
+IN OCTOBER 1604, something remarkable appeared in the night sky. Without warning, a light brighter than any star suddenly lit up the darkness. Early astronomers saw it as a miraculous portent of things to come. None of them guessed what it really was - the dying light of a distant star that had exploded thousands of years before.
+Now known as Kepler's Star after the astronomer who watched it for more than a year, the supernova helped to usher in a new era of space exploration. Within a few years Galileo Galilei was pioneering the use of the telescope, using one he'd designed himself to observe hills and valleys on the moon, spots on the sun, the phases of Venus, the stars of the Milky Way and, most famously, the satellites of Jupiter. Tycho Brahe, Christian Huygens and other greats of early astronomy were soon making discoveries of their own.
+We are still in the golden age of discovery kick-started by these pioneers. We now have telescopes the size of football fields peering deeper into space than Kepler could have imagined. And for the past 60 years we have been sending satellites, craft, probes, humans and instruments into space to get an even closer look. Right now, the Curiosity rover is sending back snapshots from the surface of Mars and the Philae lander is hitchhiking out of our solar system aboard a passing comet.
+Thanks to these tools of exploration our knowledge of the cosmos is constantly expanding all the time. As just one example, when the European Space Agency's Gaia mission finishes in 2018, its telescope will have photographed over a billion stars, providing us with the most accurate three-dimensional map of the heavens ever drawn.The memory of the swashbuckling race to the moon may be fading, but space exploration is as vibrant as ever.
+This issue of New Scientist: The Collection roams the frontiers of that inspirational quest.
+It will illuminate some of the deepest mysteries of the universe and help you see our own cosmic corner in astonishing detail.
+Chapter 1 takes a journey around our solar system. Meet the robots climbing the mountains of Mars, visit some of our neighbourhood's most unusual moons, stare at the surface of the sun and get to know the spacecraft struggling to cross the solar system's last horizon.
+Chapter 2 widens the aperture to explore our home galaxy, the Milky Way. We no longer think it is the entire universe, but still many of its secrets elude us, from the black hole at its centre to the stars that may have formed alongside our sun.
+Chapter 3 returns to more familiar - if still very alien - territory in the shape of the Earth-like planets that may be strewn across the cosmos. What strange worlds are they? Are they - or their moons - capable of supporting intelligent life? And how would we know what to look for?
+Finally, Chapter 4 plunges into the depths of space to check out some of its most unusual inhabitants, from the galaxies too perfect to exist to the stars larger than we thought possible.
+We may no longer rely on the naked eye to scan the heavens, but there's plenty we still don't know. Let New Scientist take you to the very limits of our knowledge, and guide you through the questions that will power the next centuries of discovery.
+Gilead Amit, Editor`,
+
+`Wild things.
+Life on Earth, Charles Darwin wrote in On the Origin of Species, is full of "endless forms most beautiful and most wonderful". Anyone who has visited a rainforest, a coral reef or even an English meadow knows what he was talking about.
+Life is dazzling, fecund, diverse and yet fragile.
+Earth is the only planet we know where it exists, and we are right to exult in it.
+This issue of New Scientist: The Collection is dedicated to Earth's stunning, fascinating and most fragile wildlife. From the tropics to the poles, the depths of the oceans to the peaks of the Himalayas, life is everywhere.
+In these pages you'll encounter the most interesting organisms the planet has to offer complemented with stunning wildlife photography.
+We begin, in Chapter 1, with our own kin: the mammals. From the plight of the rarest primates to the extraordinary social bonds of some of the largest animals on Earth, these are tales of survival, recovery and, in some cases, extinction. Pulling the stories together, it is possible to see a glimmer of hope for the 26 remaining Hainan gibbons in the remarkable comebacks of Europe's large predators and Canada's adorable sea otters. Or will they go the way of the world's largest ape and the mysterious wolf of the south Atlantic?
+In Chapter 2, we take to the skies. Birds are no less fascinating than mammals, and in some cases equally imperilled. One particularly poignant story is the operation to save the Chatham Island black robin, a heroic and successful effort - although it did have a strange effect on the bird's eggs. You'll also meet pelicans, cormorants, wild turkeys and an owl that appears to be horribly lost.
+Chapter 3 is all about the oceans and the fascinating beasts that live in it. Did you know that by eating vast quantities of fish and krill, whales make the oceans richer not poorer?
+That a sly red devil is taking over the eastern Pacific? Or that one of the most valuable materials on Earth is rotten marine excrement? One of our writers has gone hunting for it, so you don't have to.
+Chapter 4 brings us back to earth with an exploration of some of the most peculiar plants the planet has to offer. Some are carnivorous and seem to draw in small bats and shrews. Others, incredibly, show signs of intelligence.
+Chapter 5 is dedicated to the cold, slimy and yet oddly endearing. We learn that the
+"Lazarus frogs" offer hope for a group of animals that has been decimated by a ferocious fungus, and then head to the Balkans on a quest to find the world's largest and fiercest cave dweller (spoiler alert: it is neither very large nor very fierce, but incredibly rare). Along the way, we learn a thing or two about where snakes come from and how turtles find their way home.
+The weirdest and most wonderful wild things are saved for last. Chapter 6 is all about the extremes, from the Arctic Ocean's very own sea unicorns to the tiniest geckos, fish and frogs, which fit on a human fingernail.
+What is the biggest organism on Earth? The oldest? The driest? All will be revealed.
+Catherine Brahic, Editor`,
+
+`Where must the puma have come from?
+Pumas are large, cat-like animals which are found in America. When reports came into London Zoo that a wild puma had been spotted forty-five miles south of London, they were not taken seriously. However, as the evidence began to accumulate, experts from the Zoo felt obliged to investigate, for the descriptions given by people who claimed to have seen the puma were extraordinarily similar.
+The hunt for the puma began in a small village where a woman picking blackberries saw 'a large cat' only five yards away from her. It immediately ran away when she saw it, and experts confirmed that a puma will not attack a human being unless it is cornered. The search proved difficult, for the puma was often observed at one place in the morning and at another place twenty miles away in the evening. Wherever it went, it left behind it a trail of dead deer and small animals like rabbits. Paw prints were seen in a number of places and puma fur was found clinging to bushes. Several people complained of "cat-like noises' at night and a businessman on a fishing trip saw the puma up a tree. The experts were now fully convinced that the animal was a puma, but where had it come from? As no pumas had been reported missing from any zoo in the country, this one must have been in the possession of a private collector and somehow managed to escape. The hunt went on for several weeks, but the puma was not caught. It is disturbing to think that a dangerous wild animal is still at large in the quiet countryside`
+];
+
+	        document.getElementById("inputArea").value = englishArticles[articleNumber - 1];
+	    }
+
+    </script>
+</body>
+</html>
