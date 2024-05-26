@@ -131,20 +131,6 @@
 		    min-height: 37px
 		}
 
-		#errorArea {
-		    margin-top: 10px;
-		    padding: 10px;
-		    background-color: #f8d7da;
-		    color: #721c24;
-		    border: 1px solid #f5c6cb;
-		    border-radius: 5px;
-		    display: none;
-		}
-
-		#errorArea.show {
-		    display: block;
-		}
-
 		#premade-articles {
             display: flex;
             flex-wrap: wrap;
@@ -163,6 +149,36 @@
             font-size: 12px;
             color: #888;
         }
+
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 2px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+        }
+
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
     </style>
 </head>
 <body>
@@ -176,7 +192,7 @@
             <button onclick="loadArticle(3)">A Puma at Large</button>
         </div>
 
-        <div id="errorArea" style="color: green; margin-top: 10px;"></div>
+    	<div id="toast"></div>
 
 	    <div id="readingSection" style="display: none;">
 	        <div id="buttonContainer">
@@ -354,37 +370,29 @@
                 }
             });
 
-		    // showError("已删除生词", false);
+		    showError("已删除生词", false);
 		}
 
-        function copyAllWords() {
+		function copyAllWords() {
 		    const vocabList = document.getElementById('vocabList');
-		    const words = Array.from(vocabList.children).map(div => div.textContent).join('\n');
-		    navigator.clipboard.writeText(words).then(() => {
-		        showError("已复制所有生词", false)
-		    });
+		    if (vocabList.children.length === 0) {
+		        showError("生词列表为空", true);
+		    } else {
+		        const words = Array.from(vocabList.children).map(div => div.textContent).join('\n');
+		        navigator.clipboard.writeText(words).then(() => {
+		            showError("已复制所有生词", false);
+		        });
+		    }
 		}
 
 		function showError(message, isError) {
-            errorArea.textContent = message;
-            if (isError) {
-                errorArea.style.backgroundColor = "#f8d7da"; // 红色背景
-                errorArea.style.color = "#721c24"; // 红色字体
-                errorArea.style.borderColor = "#f5c6cb"; // 红色边框
-
-                setTimeout(() => {
-                    hideError()
-                }, 2000);
-            } else {
-                errorArea.style.backgroundColor = "#d4edda"; // 绿色背景
-                errorArea.style.color = "#155724"; // 绿色字体
-                errorArea.style.borderColor = "#c3e6cb"; // 绿色边框
-
-                setTimeout(() => {
-                    hideError()
-                }, 2000);
-            }
-            errorArea.classList.add("show");
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.backgroundColor = isError ? '#e74c3c' : '#2ecc71'; // red for error, green for success
+            toast.className = 'show';
+            setTimeout(() => {
+                toast.className = toast.className.replace('show', '');
+            }, 3000);
         }
 
         function hideError() {
