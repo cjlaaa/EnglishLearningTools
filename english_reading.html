@@ -28,12 +28,12 @@
 		}
 
 		#inputArea {
-		    width: 98%;
-		    height: 150px;
-		    padding: 10px;
-		    border: 1px solid #ddd;
-		    border-radius: 4px;
-		    margin-bottom: 10px;
+		    width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
 		}
 
 		button {
@@ -167,7 +167,7 @@
 </head>
 <body>
     <div id="container">
-	    <textarea id="inputArea" placeholder="请输入英文文章"></textarea><br>
+	    <textarea id="inputArea" placeholder="当您在此输入英文文章后，请点击开始，便可将文章分句朗读，并轻松标记生词，以便统一复制到其他背单词应用程序中。"></textarea><br>
 	    <button id="startButton" onclick="startReading()">开始分句朗读</button>
 
         <div id="premade-articles">
