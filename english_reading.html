@@ -46,8 +46,9 @@
 
 		#buttonContainer {
 		    display: flex;
-		    justify-content: space-between;
+/*		    justify-content: space-between;*/
 		    margin-top: 20px;
+		    gap: 10px;
 		}
 
 		#sentenceList {
@@ -96,6 +97,7 @@
 		    background: #fff;
 		    display: flex;
 		    flex-wrap: wrap;
+		    margin-bottom: 10px;
 		}
 
 		#vocabList div {
@@ -104,6 +106,7 @@
 		    background: #f1f1f1;
 		    border-radius: 4px;
 		    cursor: pointer;
+		    font-size: 14px; /* 设置字号为14像素 */
 		}
 
 		#vocabList div:hover {
@@ -119,6 +122,7 @@
 		    background: #fff;
 		    display: flex; /* 使用Flexbox布局 */
 		    flex-wrap: wrap; /* 允许单词卡片换行 */
+		    min-height: 37px
 		}
 
 		#errorArea {
@@ -159,17 +163,19 @@
             <button onclick="loadArticle(3)">A Puma at Large</button>
         </div>
 
-		<div id="buttonContainer" style="display: none;">
-		    <button id="returnButton" onclick="returnToInitialState()">返回</button>
-		    <button id="playAllButton" onclick="playAllSentences()">全部朗读</button>
-		    <button id="stopButton" onclick="stopReading()">停止</button>
-		</div>
-
 	    <div id="readingSection" style="display: none;">
-	        <div id="sentenceList"></div>
-	        <h2>生词列表</h2>
+	        <div id="buttonContainer">
+			    <button id="returnButton" onclick="returnToInitialState()">返回</button>
+			    <button id="playAllButton" onclick="playAllSentences()">全部朗读</button>
+			    <button id="stopButton" onclick="stopReading()">停止</button>
+			</div>
+
+
 	        <div id="vocabList"></div>
-	        <button onclick="copyAllWords()">复制所有单词</button>
+	        <button id="copyAllWordsButton" onclick="copyAllWords()">复制所有生词</button>
+
+			
+	        <div id="sentenceList"></div>
 	    </div>
 
 	    <div id="errorArea" style="color: green; margin-top: 10px;"></div>
@@ -220,7 +226,6 @@
 		    document.getElementById('startButton').style.display = 'none';
 		    document.getElementById('premade-articles').style.display = 'none';
 		    document.getElementById('readingSection').style.display = 'block';
-		    document.getElementById('buttonContainer').style.display = 'block';
 		}
 
 		function playAllSentences() {
@@ -239,7 +244,6 @@
 		    document.getElementById('readingSection').style.display = 'none';
 		    document.getElementById('sentenceList').innerHTML = '';
 		    document.getElementById('vocabList').innerHTML = '';
-		    document.getElementById('buttonContainer').style.display = 'none';
 		}
 
         // 调用系统语音朗读文本内容的函数
@@ -400,8 +404,7 @@ In Chapter 2, we take to the skies. Birds are no less fascinating than mammals, 
 Chapter 3 is all about the oceans and the fascinating beasts that live in it. Did you know that by eating vast quantities of fish and krill, whales make the oceans richer not poorer?
 That a sly red devil is taking over the eastern Pacific? Or that one of the most valuable materials on Earth is rotten marine excrement? One of our writers has gone hunting for it, so you don't have to.
 Chapter 4 brings us back to earth with an exploration of some of the most peculiar plants the planet has to offer. Some are carnivorous and seem to draw in small bats and shrews. Others, incredibly, show signs of intelligence.
-Chapter 5 is dedicated to the cold, slimy and yet oddly endearing. We learn that the
-"Lazarus frogs" offer hope for a group of animals that has been decimated by a ferocious fungus, and then head to the Balkans on a quest to find the world's largest and fiercest cave dweller (spoiler alert: it is neither very large nor very fierce, but incredibly rare). Along the way, we learn a thing or two about where snakes come from and how turtles find their way home.
+Chapter 5 is dedicated to the cold, slimy and yet oddly endearing. We learn that the "Lazarus frogs" offer hope for a group of animals that has been decimated by a ferocious fungus, and then head to the Balkans on a quest to find the world's largest and fiercest cave dweller (spoiler alert: it is neither very large nor very fierce, but incredibly rare). Along the way, we learn a thing or two about where snakes come from and how turtles find their way home.
 The weirdest and most wonderful wild things are saved for last. Chapter 6 is all about the extremes, from the Arctic Ocean's very own sea unicorns to the tiniest geckos, fish and frogs, which fit on a human fingernail.
 What is the biggest organism on Earth? The oldest? The driest? All will be revealed.
 Catherine Brahic, Editor`,
