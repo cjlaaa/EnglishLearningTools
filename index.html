@@ -13,73 +13,105 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f4f4f4;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh; /* 确保body占满整个视口高度 */
             margin: 0;
         }
 
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* 确保wrapper占满整个视口高度 */
+            width: 100%;
+        }
+
         .container {
-            max-width: 600px;
+            max-width: 1000px;
             background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            align-self: flex-start; /* 让框靠上 */
-            margin-top: 50px; /* 距离顶部50px */
+            margin: 50px auto 20px auto;
         }
 
         .button-container {
             display: flex;
-            justify-content: center;
+            justify-content: space-around;
             margin-top: 20px;
+            flex-wrap: wrap; /* 使按钮自动换行 */
         }
 
         .button {
-            padding: 15px 30px;
-            margin: 0 10px;
+            padding: 20px;
             font-size: 18px;
             background-color: #007bff;
-            color: #fff;
+            color: #fff; /* 添加这一行 */
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.3s;
+            text-decoration: none;
+            text-align: center;
+            position: relative;
+            width: 280px;
+            height: auto;
+            margin: 10px;
         }
 
         .button:hover {
-            background-color: #0056b3;
+            background-color: #357abd;
+            transform: translateY(-2px);
+        }
+
+        .button::after {
+            content: attr(data-description);
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #e0e0e0;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
         }
 
         .discreet-text {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #f0f0f0;
-            padding: 10px;
             text-align: center;
             font-size: 12px;
             color: #888;
+            padding: 10px;
+            background-color: #f4f4f4;
+            margin-top: auto; /* 将版权信息推到页面底部 */
+        }
+
+        .discreet-text a {
+            color: #888;
+            text-decoration: none;
+        }
+
+        .discreet-text a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>选择一个工具</h1>
-        <div class="button-container">
-            <a href="word_match.html" class="button">单词对对碰</a>
-            <a href="english_back_translation.html" class="button">英语回译王</a>
-            <a href="english_reading.html" class="button">英语朗读王</a>
+    <div class="wrapper">
+        <div class="container">
+            <h1>英语工具集</h1>
+            <div class="button-container">
+                <a href="english_reading.html" class="button" data-description="当你遇到一篇新文章,可以用这个工具练习朗读/听力和快速标注生词,并可以一键将生词复制到其他背单词app中.">英语朗读王</a>
+                <a href="word_match.html" class="button" data-description="你可以将在前一个工具中收集的生单词用chatGPT等AI加上中文翻译后,放在这个工具中快速熟悉.">单词对对碰</a>
+                <a href="english_back_translation.html" class="button" data-description="当你使用前两个工具将某篇文章熟悉的差不多了,可以用这个工具练习回译加强印象.">英语回译王</a>
+            </div>
         </div>
-    </div>
 
-    <div class="discreet-text">
-        <p>&copy; 2024 机智的常总 (<a href="https://github.com/cjlaaa/EnglishLearningTools">GitHub</a>)</p>
-        <p>本网页内容根据 <a rel="license" href="https://opensource.org/licenses/MIT">MIT 许可协议</a> 进行发布。</p>
+        <div class="discreet-text">
+            <p>&copy; 2024 机智的常总 (<a href="https://github.com/cjlaaa/EnglishLearningTools">GitHub</a>)</p>
+            <p>本网页内容根据 <a rel="license" href="https://opensource.org/licenses/MIT">MIT 许可协议</a> 进行发布。</p>
+        </div>
     </div>
 </body>
 </html>
