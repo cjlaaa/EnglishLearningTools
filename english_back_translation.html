@@ -119,9 +119,8 @@
 
             <!-- 预制文章按钮 -->
             <div class="premade-articles">
-                <button onclick="loadArticle(1)">剑桥雅思核心词汇精讲精练Recording 1a</button>
-                <button onclick="loadArticle(2)">新概念英语3L1</button>
-                <button onclick="loadArticle(3)">新概念英语3L3</button>
+                <button onclick="loadArticle(1)">A Puma at Large</button>
+                <button onclick="loadArticle(2)">An unknown goddess</button>
             </div>
         </div>
     </div>
@@ -218,8 +217,8 @@
             }
 
             // 将文章拆分成句子，并保存到数组中
-            originalEnglishSentences = englishArticle.split(/[.!?\n]\s*/).filter(sentence => sentence.trim() !== ""); // 假设句子以句号分隔
-            originalChineseTranslations = chineseTranslation.split(/[.!?。？！\n]\s*/).filter(sentence => sentence.trim() !== ""); // 假设中文翻译以句号分隔
+            originalEnglishSentences = englishArticle.split(/[.!?。？！]\s*/).filter(sentence => sentence.trim() !== ""); // 假设句子以句号分隔
+            originalChineseTranslations = chineseTranslation.split(/[.!?。？！]\s*/).filter(sentence => sentence.trim() !== ""); // 假设中文翻译以句号分隔
 
             // 清空前一次练习的内容
             wordArea.innerHTML = '';
@@ -401,73 +400,22 @@
         // 加载预制文章
         function loadArticle(articleNumber) {
             var englishArticles = [
-                `Speaker A: On Mondays at school a group of us always talk about whatever movies we saw at the weekend. On Saturdays I often get together with my classmates and we see all the latest releases together. I can't remember the last time I saw a film with my parents - we just don't have much in common any more.
-Speaker B: My parents are both teachers so you'd imagine I'd have no trouble at all academically. When I was little it was great because we had a really great relationship. But nowadays all we seem to do is argue and that causes a lot of conflict between us, so l don't really feel I can go to them for help. My friends aren't much help either as they've all got the same problem. Thank goodness get on really well with my tutor at university. She's very approachable and, if I'm struggling with an assignment, I find her advice really helps me.
-Speaker C: My parents are quite old so I feel as though they're out of touch with the modern world. They don't seem to have any idea of what things cost. I'm hoping to get a car in the next few months but I'll be taking my older brother along to help. We used to fight a lot when we were growing up but there's a really close bond between us now. He's already had a few cars so I'm sure he'll be a great help.
-Speaker D: I play the violin and the piano and my grandad is a great cello player. A lot of my friends at school listen to all the popular bands and singers, but my tastes are totally different. I prefer classical music and they just don't understand it at all. Luckily Grandad shares my taste, so we often buy CDs and talk about them together.`,
-                `Pumas are large, cat-like animals which are found in America
-When reports came into London Zoo that a wild puma had been spotted forty-five miles south of London, they were not taken seriously
-However, as the evidence began to accumulate, experts from the Zoo felt obliged to investigate, for the descriptions given by people who claimed to have seen the puma were extraordinarily similar
-The hunt for the puma began in a small village where a woman picking blackberries saw 'a large cat' only five yards away from her
-It immediately ran away when she saw it, and experts confirmed that a puma will not attack a human being unless it is cornered
-The search proved difficult, for the puma was often observed at one place in the morning and at another place twenty miles away in the evening
-Wherever it went, it left behind it a trail of dead deer and small animals like rabbits
-Paw prints were seen in a number of places and puma fur was found clinging to bushes
-Several people complained of "cat-like noises' at night and a businessman on a fishing trip saw the puma up a tree
-The experts were now fully convinced that the animal was a puma, but where had it come from? As no pumas had been reported missing from any zoo in the country, this one must have been in the possession of a private collector and somehow managed to escape
-The hunt went on for several weeks, but the puma was not caught
-It is disturbing to think that a dangerous wild animal is still at large in the quiet countryside`,
-                `Some time ago, an interesting discovery was made by archaeologists on the Aegean island of Kea
-An American team explored a temple which stands in an ancient city on the promontory of Ayia Irini
-The city at one time must have been prosperous, for it enjoyed a high level of civilization, Houses - often three storeys high — were built of stone
-They had large rooms with beautifully decorated walls
-The city was even equipped with a drainage system, for a great many clay pipes were found beneath the narrow streets
-The temple which the archaeologists explored was used as a place of worship from the fifteenth century BC until Roman times
-In the most sacred room of the temple, clay fragments of fifteen statues were found 
-Each of these represented a goddess and had, at one time, been painted
-The body of one statue was found among remains dating from the fifteenth century BC Its missing head happened to be among remains of the fifth century BC 
-This head must have been found in Classical times and carefully preserved
-It was very old and precious even then
-When the archaeologists reconstructed the fragments, they were amazed to find that the goddess turned out to be a very modern-looking woman
-She stood three feet high and her hands rested on her hips
-She was wearing a full-length skirt which swept the ground
-Despite her great age, she was very graceful indeed, 
-but, so far, the archaeologists have been unable to discover her identity`
+`Where must the puma have come from?
+Pumas are large, cat-like animals which are found in America. When reports came into London Zoo that a wild puma had been spotted forty-five miles south of London, they were not taken seriously. However, as the evidence began to accumulate, experts from the Zoo felt obliged to investigate, for the descriptions given by people who claimed to have seen the puma were extraordinarily similar.
+The hunt for the puma began in a small village where a woman picking blackberries saw 'a large cat' only five yards away from her. It immediately ran away when she saw it, and experts confirmed that a puma will not attack a human being unless it is cornered. The search proved difficult, for the puma was often observed at one place in the morning and at another place twenty miles away in the evening. Wherever it went, it left behind it a trail of dead deer and small animals like rabbits. Paw prints were seen in a number of places and puma fur was found clinging to bushes. Several people complained of "cat-like noises' at night and a businessman on a fishing trip saw the puma up a tree. The experts were now fully convinced that the animal was a puma, but where had it come from? As no pumas had been reported missing from any zoo in the country, this one must have been in the possession of a private collector and somehow managed to escape. The hunt went on for several weeks, but the puma was not caught. It is disturbing to think that a dangerous wild animal is still at large in the quiet countryside`,
+
+`How did the archaeologists know that the statue was a goddess? 
+Some time ago, an interesting discovery was made by archaeologists on the Aegean island of Kea. An American team explored a temple which stands in an ancient city on the promontory of Ayia Irini. The city at one time must have been prosperous, for it enjoyed a high level of civilization. Houses - often three storeys high — were built of stone. They had large rooms with beautifully decorated walls. The city was even equipped with a drainage system, for a great many clay pipes were found beneath the narrow streets. 
+The temple which the archaeologists explored was used as a place of worship from the fifteenth century BC until Roman times. In the most sacred room of the temple, clay fragments of fifteen statues were found. Each of these represented a goddess and had, at one time, been painted. The body of one statue was found among remains dating from the fifteenth century BC. Its missing head happened to be among remains of the fifth century BC. This head must have been found in Classical times and carefully preserved. It was very old and precious even then. When the archaeologists reconstructed the fragments, they were amazed to find that the goddess turned out to be a very modern-looking woman. She stood three feet high and her hands rested on her hips. She was wearing a full-length skirt which swept the ground. Despite her great age, she was very graceful indeed. But, so far, the archaeologists have been unable to discover her identity. `
             ];
 
             var chineseTranslations = [
-                `讲述者A: 在学校的星期一，我们一群人总是谈论周末看的电影。周六，我经常和同学们聚在一起，一起看最新上映的电影。我想不起上次和父母一起看电影是什么时候了——我们已经没有太多共同点了。
-讲述者B: 我父母都是老师，所以你可能认为我在学业上一定没有任何问题。小时候很棒，因为我们关系很好。但现在我们似乎只会争吵，这在我们之间造成了很多冲突，所以我觉得我不能向他们求助。我的朋友们也没什么帮助，因为他们都有同样的问题。幸好我在大学里和我的导师相处得很好。她很平易近人，如果我在作业上遇到困难，她的建议对我很有帮助。
-讲述者C: 我父母很老了，所以我觉得他们脱节了现代世界。他们似乎不知道东西的价钱。我希望在接下来的几个月里买一辆车，但我会带着我的哥哥一起去帮忙。我们小时候经常吵架，但现在我们之间有着非常密切的联系。他已经有了几辆车，所以我相信他会很有帮助的。
-讲述者D: 我拉小提琴和钢琴，我的爷爷是个很棒的大提琴手。我在学校的很多朋友都听流行乐队和歌手的音乐，但我的品味完全不同。我更喜欢古典音乐，他们根本就不理解。幸运的是，爷爷和我有着相同的品味，所以我们经常一起买CD并讨论。`,
-                `美洲狮是一种体形似猫的大动物，产于美洲
-当伦敦动物园接到报告说，在伦敦以南45英里处发现一只美洲狮时，这些报告并没有受到重视
-可是，随着证据越来越多，动物园的专家们感到有必要进行一番调查，因为凡是声称见到过美洲狮的人们所描述的情况竟是出奇地相似
-搜寻美洲狮的工作是从一座小村庄开始的,那里的一位妇女在采摘黑莓时看见“一只大猫”，离她仅5码远，她刚看见它，它就立刻逃走了
-专家证实，美洲狮除非被逼得走投无路，是决不会伤人的
-事实上搜寻工作很困难，因为常常是早晨在甲地发现那只美洲狮，晚上却在20英里外的乙地发现它的踪迹
-无论它走到哪儿，一路上总会留下一串死鹿以及死兔子之类的小动物
-在许多地方看见了爪印，灌木丛中也发现了粘在上面的美洲狮毛
-有人抱怨说夜里听见了“像猫一样的叫声”;一位商人去钓鱼，看见那只美洲狮在树上
-专家们如今已经完全肯定那只动物就是美洲狮，但它是从哪儿来的呢?由于全国动物园没有一家报告丢了美洲狮，因此那只美洲狮一定是某位私人收藏家豢养的，不知怎么设法逃出来了
-搜寻工作进行了好几个星期，但始终未能逮住那只美洲狮
-想到在宁静的乡村里有一头危险的野兽继续逍遥流窜，真令人担心`,
-                `不久之前，在爱琴海的基亚岛上，考古工作者有一项有趣的发现
-一个美国考古队在阿伊亚•依里尼海角的一座古城里考察了一座庙宇
-这座古城肯定一度很繁荣，因为它曾享有高度的文明，房子一般有3层楼高，用石块修建
-里面房间很大，墙壁装饰华丽
-城里甚至还敷设了排水系统，因为在狭窄的街道底下发现了许许多多陶土制作的排水管道
-考古工作者考察的这座庙宇从公元前15 世纪直至罗马时代一直是祭祀祈祷的场所
-在庙中最神圣的一间殿堂里发现了15 尊陶制雕像的碎片
-每一尊雕像代表一位女神，而且一度上过色
-其中有一尊雕像，她的躯体是在公元前15世纪的历史文物中发现的，而她那身首异处的脑袋却碰巧是在公元前5世纪的文物中找到的
-她的脑袋一定是在古希腊罗马时代就为人所发现，并受到了精心的保护
-即使在当时，它也属历史悠久的珍奇之物
-考古工作者把这些碎片重新拼装起来后，惊奇地发现那位女神原来是一位相貌十分摩登的女郎
-她身高3英尺，双手叉腰
-身穿一条拖地长裙，
-尽管上了年纪，但体态确实优美
-不过，考古工作者至今未能确定这位女神的身份`
+`美洲狮是从哪里来的？
+美洲狮是一种体形似猫的大动物，产于美洲。当伦敦动物园接到报告说，在伦敦以南45英里处发现一只美洲狮时，这些报告并没有受到重视。可是，随着证据越来越多，动物园的专家们感到有必要进行一番调查，因为凡是声称见到过美洲狮的人们所描述的情况竟是出奇地相似。
+搜寻美洲狮的工作是从一座小村庄开始的，那里的一位妇女在采摘黑莓时看见“一只大猫”，离她仅5码远，她刚看见它，它就立刻逃走了。专家证实，美洲狮除非被逼得走投无路，是决不会伤人的。事实上搜寻工作很困难，因为常常是早晨在甲地发现那只美洲狮，晚上却在20英里外的乙地发现它的踪迹。无论它走到哪儿，一路上总会留下一串死鹿以及死兔子之类的小动物。在许多地方看见了爪印，灌木丛中也发现了粘在上面的美洲狮毛。有人抱怨说夜里听见了“像猫一样的叫声”;一位商人去钓鱼，看见那只美洲狮在树上。专家们如今已经完全肯定那只动物就是美洲狮，但它是从哪儿来的呢?由于全国动物园没有一家报告丢了美洲狮，因此那只美洲狮一定是某位私人收藏家豢养的，不知怎么设法逃出来了。搜寻工作进行了好几个星期，但始终未能逮住那只美洲狮。想到在宁静的乡村里有一头危险的野兽继续逍遥流窜，真令人担心。`,
+                
+`考古学家是如何知道雕像是女神的呢？
+不久之前，在爱琴海的基亚岛上，考古工作者有一项有趣的发现。一个美国考古队在阿伊亚•依里尼海角的一座古城里考察了一座庙宇。这座古城肯定一度很繁荣，因为它曾享有高度的文明。房子一般有3层楼高，用石块修建。里面房间很大，墙壁装饰华丽。城里甚至还敷设了排水系统，因为在狭窄的街道底下发现了许许多多陶土制作的排水管道。考古工作者考察的这座庙宇从公元前15世纪直至罗马时代一直是祭祀祈祷的场所。在庙中最神圣的一间殿堂里发现了15尊陶制雕像的碎片。每一尊雕像代表一位女神，而且一度上过色。其中有一尊雕像，她的躯体是在公元前15世纪的历史文物中发现的。而她那身首异处的脑袋却碰巧是在公元前5世纪的文物中找到的。她的脑袋一定是在古希腊罗马时代就为人所发现，并受到了精心的保护。即使在当时，它也属历史悠久的珍奇之物。考古工作者把这些碎片重新拼装起来后，惊奇地发现那位女神原来是一位相貌十分摩登的女郎。她身高3英尺，双手叉腰。身穿一条拖地长裙。尽管上了年纪，但体态确实优美。不过，考古工作者至今未能确定这位女神的身份。`
             ];
 
             document.getElementById("englishArticle").value = englishArticles[articleNumber - 1];

@@ -241,8 +241,8 @@
 		        return;
 		    }
 
-		    const sentences = text.split(/(?<=[.!?\n])/);
-		    const translations = translationText ? translationText.split(/(?<=[.!?。？！\n])/): [];
+		    const sentences = text.split(/(?<=[.!?。？！])/);
+		    const translations = translationText ? translationText.split(/(?<=[.!?。？！])/): [];
 
 		    const sentenceList = document.getElementById('sentenceList');
 		    sentenceList.innerHTML = '';
