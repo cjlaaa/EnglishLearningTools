@@ -52,7 +52,6 @@
 
 		#buttonContainer {
 		    display: flex;
-/*		    justify-content: space-between;*/
 		    margin-top: 20px;
 		    gap: 10px;
 		}
@@ -179,11 +178,30 @@
             from {bottom: 30px; opacity: 1;}
             to {bottom: 0; opacity: 0;}
         }
+
+        #translationInputArea {
+		    width: 100%;
+		    min-height: 80px;
+		    padding: 10px;
+		    border: 1px solid #ccc;
+		    border-radius: 4px;
+		    resize: vertical;
+		    margin-top: 10px;
+		}
+
+		.translation {
+		    font-size: 14px;
+		    color: #888;
+		    margin-top: 5px;
+		    display: block; /* 确保翻译部分以块级元素显示 */
+		    white-space: pre-wrap; /* 允许换行 */
+		}
     </style>
 </head>
 <body>
     <div id="container">
-	    <textarea id="inputArea" placeholder="当您在此输入英文文章后，请点击开始，便可将文章分句朗读，并轻松标记生词，以便统一复制到其他背单词应用程序中。"></textarea><br>
+	    <textarea id="inputArea" placeholder="将英文文章拷贝到这里,点击开始,即可将文章分句朗读,并轻松标记生词,以便统一复制到其他背单词App中."></textarea><br>
+	    <textarea id="translationInputArea" placeholder="在此输入中文翻译(可选),在使用翻译软件翻译大段英文时可能会有中文句子和英文句子无法一一对应的情况,建议使用文本编辑器用句号/问号分句后再拷贝到翻译app翻译,可有效解决这个问题.分句后别忘了先删除所有的句号和问号再拷贝回这里."></textarea>
 	    <button id="startButton" onclick="startReading()">开始分句朗读</button>
 
         <div id="premade-articles">
@@ -215,18 +233,21 @@
 
     <script>
 		function startReading() {
-		    const text = document.getElementById('inputArea').value.trim(); // 获取文本并去除首尾空白字符
+		    const text = document.getElementById('inputArea').value.trim();
+		    const translationText = document.getElementById('translationInputArea').value.trim();
+
 		    if (text === '') {
 		        showError("请输入英文文章", true);
-		        return; // 停止函数执行
+		        return;
 		    }
-		    
-		    // 如果有文本，则继续执行朗读操作
+
 		    const sentences = text.split(/(?<=[.!?\n])/);
+		    const translations = translationText ? translationText.split(/(?<=[.!?。？！\n])/): [];
+
 		    const sentenceList = document.getElementById('sentenceList');
 		    sentenceList.innerHTML = '';
 
-		    sentences.forEach(sentence => {
+		    sentences.forEach((sentence, index) => {
 		        if (sentence.trim() === '') return;
 
 		        const sentenceDiv = document.createElement('div');
@@ -250,11 +271,20 @@
 		            sentenceDiv.appendChild(wordSpan);
 		        });
 
+		        // 添加中文翻译
+		        if (translations[index]) {
+		            const translationDiv = document.createElement('div');
+		            translationDiv.className = 'translation';
+		            translationDiv.textContent = translations[index].trim();
+		            translationDiv.style.color = 'gray'; // 设置翻译文本颜色
+		            sentenceDiv.appendChild(translationDiv);
+		        }
+
 		        sentenceList.appendChild(sentenceDiv);
 		    });
 
-		    // 隐藏输入区和开始按钮，显示返回按钮、全部播放按钮和朗读区域
 		    document.getElementById('inputArea').style.display = 'none';
+		    document.getElementById('translationInputArea').style.display = 'none';
 		    document.getElementById('startButton').style.display = 'none';
 		    document.getElementById('premade-articles').style.display = 'none';
 		    document.getElementById('readingSection').style.display = 'block';
@@ -271,6 +301,7 @@
 		function returnToInitialState() {
 			window.speechSynthesis.cancel();
 		    document.getElementById('inputArea').style.display = 'block';
+   		    document.getElementById('translationInputArea').style.display = 'block';
 		    document.getElementById('startButton').style.display = 'block';
 		    document.getElementById('premade-articles').style.display = 'block';
 		    document.getElementById('readingSection').style.display = 'none';
@@ -438,7 +469,42 @@ Pumas are large, cat-like animals which are found in America. When reports came 
 The hunt for the puma began in a small village where a woman picking blackberries saw 'a large cat' only five yards away from her. It immediately ran away when she saw it, and experts confirmed that a puma will not attack a human being unless it is cornered. The search proved difficult, for the puma was often observed at one place in the morning and at another place twenty miles away in the evening. Wherever it went, it left behind it a trail of dead deer and small animals like rabbits. Paw prints were seen in a number of places and puma fur was found clinging to bushes. Several people complained of "cat-like noises' at night and a businessman on a fishing trip saw the puma up a tree. The experts were now fully convinced that the animal was a puma, but where had it come from? As no pumas had been reported missing from any zoo in the country, this one must have been in the possession of a private collector and somehow managed to escape. The hunt went on for several weeks, but the puma was not caught. It is disturbing to think that a dangerous wild animal is still at large in the quiet countryside`
 ];
 
+			var chineseTranslations = [
+                `一次不可思议的旅程。
+1604 年 10 月，夜空中出现了一些非凡的东西。毫无预兆地，一道比任何星星都明亮的光芒突然照亮了黑暗。早期天文学家将其视为未来事物的奇迹预兆。他们没有人猜到它到底是什么——一颗数千年前爆炸的遥远恒星发出的垂死之光。
+这颗超新星现在被称为开普勒之星，天文学家观察了它一年多，这颗超新星帮助开创了太空探索的新时代。几年之内，伽利略·伽利雷就率先使用了望远镜，用他自己设计的望远镜来观察月球上的丘陵和山谷、太阳上的斑点、金星的相位、银河系的星星，以及最著名的，木星的卫星。第谷·布拉赫、克里斯蒂安·惠更斯和其他早期天文学的伟人很快就有了自己的发现。
+我们仍然处于由这些先驱者启动的发现的黄金时代。我们现在拥有足球场大小的望远镜，可以比开普勒想象的更深入地观察太空。在过去的 60 年里，我们一直在向太空发射卫星、飞船、探测器、人类和仪器，以便进行更近距离的观察。目前，好奇号火星车正在从火星表面发回快照，菲莱着陆器正在搭乘一颗路过的彗星离开我们的太阳系。
+得益于这些探索工具，我们对宇宙的了解一直在不断扩展。仅举一个例子，当欧洲航天局的盖亚任务于 2018 年结束时，其望远镜将拍摄超过 10 亿颗恒星，为我们提供有史以来绘制的最准确的三维天空地图。月亮可能正在消失，但太空探索一如既往地充满活力。
+本期《新科学家：精选集》漫游了这一鼓舞人心的探索的前沿。
+它将阐明宇宙中一些最深的奥秘，并帮助您以惊人的细节看到我们自己的宇宙角落。
+第一章讲述了我们的太阳系之旅。与攀登火星山脉的机器人见面，参观我们附近一些最不寻常的卫星，凝视太阳表面，了解奋力穿越太阳系最后地平线的航天器。
+第二章扩大视野，探索我们的家乡银河系。我们不再认为它是整个宇宙，但它的许多秘密仍然让我们无法理解，从中心的黑洞到可能与太阳一起形成的恒星。
+第三章回到了我们更熟悉的——尽管仍然非常陌生——的领域，即可能散布在宇宙中的类地行星的形状。它们到底是怎样的奇异世界呢？它们——或者它们的卫星——能够支持智慧生命吗？我们怎么知道要寻找什么？
+最后，第四章深入太空深处，看看其中一些最不寻常的居民，从完美到不存在的星系到比我们想象的更大的恒星。
+我们可能不再依靠肉眼来观察天空，但仍有很多东西我们不知道。让《新科学家》带您探索我们知识的极限，并引导您解决将为下一个世纪的发现提供动力的问题。
+吉利德·阿米特，编辑`,
+                `野生的东西。
+查尔斯·达尔文在《物种起源》中写道，地球上的生命充满了“无尽的最美丽、最奇妙的形式”。任何去过雨林、珊瑚礁甚至英国草地的人都知道他在说什么。
+生命是耀眼的、丰富的、多样的，但又是脆弱的。
+地球是我们唯一知道其存在的行星，我们有理由为它欢欣鼓舞。
+本期《新科学家：精选》致力于地球上令人惊叹、迷人且最脆弱的野生动物。从热带到两极，从海洋深处到喜马拉雅山之巅，生命无处不在。
+在这些页面中，您将遇到地球上最有趣的生物，并辅以令人惊叹的野生动物摄影。
+在第一章中，我们从我们自己的亲属：哺乳动物开始。从最稀有的灵长类动物的困境到地球上一些最大动物的非凡社会联系，这些都是关于生存、恢复，甚至在某些情况下灭绝的故事。综合这些故事，我们可以从欧洲大型掠食者和加拿大可爱海獭的惊人卷土重来中，看到仅存的 26 只海南长臂猿的一线希望。或者他们会重蹈世界上最大的猿类和南大西洋神秘狼的覆辙吗？
+在第二章中，我们飞向天空。鸟类与哺乳动物一样迷人，但在某些情况下同样面临危险。一个特别令人心酸的故事是拯救查塔姆岛黑知更鸟的行动，这是一次英勇而成功的努力，尽管它确实对鸟蛋产生了奇怪的影响。您还会遇到鹈鹕、鸬鹚、野生火鸡和一只似乎迷路了的猫头鹰。
+第三章讲述的是海洋和生活在其中的迷人野兽。您是否知道，通过捕食大量的鱼和磷虾，鲸鱼使海洋变得更加富裕而不是更加贫穷？
+狡猾的红魔正在占领东太平洋？或者地球上最有价值的材料之一是腐烂的海洋排泄物？我们的一位作家已经在寻找它，所以您不必这样做。
+第四章让我们回到地球，探索地球上一些最奇特的植物。有些是肉食性的，似乎会吸引小蝙蝠和鼩鼱。令人难以置信的是，其他人也表现出了智慧的迹象。
+第五章专门讲述寒冷、粘糊糊却又异常可爱的世界。我们了解到“拉撒路青蛙”为一群被凶猛真菌杀死的动物带来了希望，然后前往巴尔干半岛寻找世界上最大、最凶猛的穴居动物（剧透警告：这既不是很大也不是很凶猛，但非常罕见）。一路上，我们了解了一两件事：蛇从哪里来，海龟如何找到回家的路。
+最奇怪、最奇妙的野生动物被留到最后。第六章讲述的是各种极端情况，从北冰洋特有的海洋独角兽到最小的壁虎、鱼类和青蛙，这些都适合人类的指甲。
+地球上最大的生物体是什么？最老的？最干燥的？一切都将揭晓。
+凯瑟琳·布拉希克，编辑`,
+				`美洲狮是从哪里来的？
+美洲狮是一种体形似猫的大动物，产于美洲。当伦敦动物园接到报告说，在伦敦以南45英里处发现一只美洲狮时，这些报告并没有受到重视。可是，随着证据越来越多，动物园的专家们感到有必要进行一番调查，因为凡是声称见到过美洲狮的人们所描述的情况竟是出奇地相似。
+搜寻美洲狮的工作是从一座小村庄开始的，那里的一位妇女在采摘黑莓时看见“一只大猫”，离她仅5码远，她刚看见它，它就立刻逃走了。专家证实，美洲狮除非被逼得走投无路，是决不会伤人的。事实上搜寻工作很困难，因为常常是早晨在甲地发现那只美洲狮，晚上却在20英里外的乙地发现它的踪迹。无论它走到哪儿，一路上总会留下一串死鹿以及死兔子之类的小动物。在许多地方看见了爪印，灌木丛中也发现了粘在上面的美洲狮毛。有人抱怨说夜里听见了“像猫一样的叫声”;一位商人去钓鱼，看见那只美洲狮在树上。专家们如今已经完全肯定那只动物就是美洲狮，但它是从哪儿来的呢?由于全国动物园没有一家报告丢了美洲狮，因此那只美洲狮一定是某位私人收藏家豢养的，不知怎么设法逃出来了。搜寻工作进行了好几个星期，但始终未能逮住那只美洲狮。想到在宁静的乡村里有一头危险的野兽继续逍遥流窜，真令人担心。`
+            ];
+
 	        document.getElementById("inputArea").value = englishArticles[articleNumber - 1];
+	        document.getElementById("translationInputArea").value = chineseTranslations[articleNumber - 1];
 	    }
 
     </script>
