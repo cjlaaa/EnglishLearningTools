@@ -316,7 +316,7 @@
             if (selectedVoice){
                 utterance.voice = selectedVoice;
             }
-            utterance.rate = 0.7; // 设置朗读速度
+            utterance.rate = 0.8; // 设置朗读速度
             window.speechSynthesis.speak(utterance);
         }
 
@@ -327,11 +327,14 @@
             // 获取所有可用的语音
             const voices = window.speechSynthesis.getVoices();
             // 打印所有可用语音的详细信息
-            // console.log('Available voices:', voices);
+            console.log('Available voices:', voices);
             // 查找名为 "Mark" 或 "Samantha" 的语音
-            selectedVoice = voices.find(voice => voice.name.includes('Mark') || voice.name.includes('Samantha'));
+			selectedVoice = voices.find(voice => voice.name.includes('Google US English')) ||
+					voices.find(voice => voice.name.includes('AndrewMultilingual')) ||
+                    voices.find(voice => voice.name.includes('Samantha')) ||
+                    voices.find(voice => voice.name.includes('Mark'));
             if (selectedVoice) {
-                // console.log('Found voice:', selectedVoice);
+                console.log('Found voice:', selectedVoice);
                 // // 创建一个 SpeechSynthesisUtterance 实例
                 // const utterance = new SpeechSynthesisUtterance('Hello, this is Mark or Samantha.');
                 // // 设置为找到的语音
