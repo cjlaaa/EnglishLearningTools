@@ -95,12 +95,53 @@
         .discreet-text a:hover {
             text-decoration: underline;
         }
+
+        .github-commits {
+            padding: 20px;
+            background-color: #f9f9f9; /* 浅灰色背景 */
+            border-radius: 8px;
+            border: 1px solid #ddd; /* 淡色边框 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* 更轻的阴影 */
+            margin-bottom: 20px;
+            width: calc(100% - 40px); /* 考虑左右 padding */
+            max-width: 600px; /* 设置更窄的最大宽度 */
+            margin: 0 auto; /* 让容器居中 */
+            box-sizing: border-box; 
+            text-align: center; /* 文本居中 */
+        }
+
+        .github-commits ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .github-commits li {
+            display: flex;
+            justify-content: space-between; /* 使时间和更新内容均匀分布 */
+            align-items: center; /* 垂直居中 */
+            border-bottom: 1px solid #ddd; /* 下边框 */
+            padding: 10px 20px; /* 上下内边距 */
+        }
+
+        .commit-message {
+            font-size: 16px;
+            margin-right: auto; /* 使文本内容靠左对齐 */
+        }
+
+        .commit-title {
+            font-size: 24px; /* 修改标题字体大小 */
+            text-align: center; /* 标题居中对齐 */
+            margin-bottom: 10px; /* 为标题增加一些下边距 */
+        }
     </style>
 </head>
 <body>
     <div class="wrapper">
         <div class="container">
             <h1>英语工具集</h1>
+            <p>建议在桌面系统上使用edge浏览器获取最佳体验</p>
+
             <div class="button-container">
                 <a href="english_reading.html" class="button" data-description="当你遇到一篇新文章,可以用这个工具练习朗读/听力和快速标注生词,并可以一键将生词复制到其他背单词app中.">英语朗读王</a>
                 <a href="word_match.html" class="button" data-description="你可以将在前一个工具中收集的生单词用chatGPT等AI加上中文翻译后,放在这个工具中快速熟悉.">单词对对碰</a>
@@ -108,10 +149,48 @@
             </div>
         </div>
 
+        <div id="commit-history"></div>
+
         <div class="discreet-text">
             <p>&copy; 2024 机智的常总 (<a href="https://github.com/cjlaaa/EnglishLearningTools">GitHub</a>)</p>
             <p>本网页内容根据 <a rel="license" href="https://opensource.org/licenses/MIT">MIT 许可协议</a> 进行发布。</p>
         </div>
     </div>
+
+    <script>
+        // GitHub 项目的用户名和仓库名
+        const username = 'cjlaaa';
+        const repo = 'EnglishLearningTools';
+
+        // 发送 AJAX 请求到 GitHub API 获取最近的 5 条提交记录
+        fetch(`https://api.github.com/repos/${username}/${repo}/commits?per_page=7`)
+            .then(response => response.json())
+            .then(commits => {
+                // 构建 HTML 列表来显示提交历史
+                const commitListHTML = commits.map(commit => {
+                    const commitDate = new Date(commit.commit.author.date);
+                    const formattedDate = commitDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    return `
+                        <li>
+                            <div class="commit-message">${commit.commit.message}</div>
+                            <div class="commit-time">${formattedDate}</div>
+                        </li>
+                    `;
+                }).join('');
+
+                // 插入到页面中适当的位置
+                document.getElementById('commit-history').innerHTML = `
+                    <div class="github-commits">
+                        <h2>最近更新</h2>
+                        <ul>${commitListHTML}</ul>
+                    </div>
+                `;
+            })
+            .catch(error => console.error('Error fetching commit history:', error));
+    </script>
 </body>
 </html>
