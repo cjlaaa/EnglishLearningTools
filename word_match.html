@@ -316,9 +316,7 @@
             // 打印所有可用语音的详细信息
             // console.log('Available voices:', voices);
             // 查找名为 "Mark" 或 "Samantha" 的语音
-            selectedVoice = voices.find(voice => voice.name.includes('Google US English')) ||
-                    voices.find(voice => voice.name.includes('AndrewMultilingual')) ||
-                    voices.find(voice => voice.name.includes('Samantha')) ||
+            selectedVoice = voices.find(voice => voice.name.includes('Samantha')) ||
                     voices.find(voice => voice.name.includes('Mark'));
             if (selectedVoice) {
                 // console.log('Found voice:', selectedVoice);
