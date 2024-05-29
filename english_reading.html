@@ -353,7 +353,7 @@
 			}
 
 		    // 使用正则表达式删除单词中的标点
-		    const cleanWord = word.replace(/[^\w\s]/g, ''); // 此正则表达式将删除所有非单词字符（字母、数字和下划线）和空格
+		    const cleanWord = word.replace(/[^\w\s]/g, '').toLowerCase(); // 此正则表达式将删除所有非单词字符（字母、数字和下划线）和空格
 
 		    if (cleanWord.trim() === '') {
 		    	return
@@ -369,7 +369,7 @@
 		        // 修改所有句子中包含该单词的单词的颜色
 			    const wordSpans = document.querySelectorAll('.word');
 			    wordSpans.forEach(wordSpan => {
-			    	const cleanTextContent = wordSpan.textContent.replace(/[^\w\s]/g, '')
+			    	const cleanTextContent = wordSpan.textContent.replace(/[^\w\s]/g, '').toLowerCase()
 
 			        if (cleanTextContent === cleanWord) {
 			            wordSpan.style.color = 'red'; // 修改颜色为红色（这里可以设置为你想要的颜色）
@@ -396,7 +396,7 @@
 			// 恢复句子中的单词颜色
             const wordSpans = document.querySelectorAll('.word');
             wordSpans.forEach(wordSpan => {
-            	const cleanTextContent = wordSpan.textContent.replace(/[^\w\s]/g, '')
+            	const cleanTextContent = wordSpan.textContent.replace(/[^\w\s]/g, '').toLowerCase()
                 if (cleanTextContent === word) {
                     wordSpan.style.color = ''; // 恢复默认颜色
                 }
