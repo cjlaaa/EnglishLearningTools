@@ -329,7 +329,10 @@
             // 打印所有可用语音的详细信息
             // console.log('Available voices:', voices);
             // 查找名为 "Mark" 或 "Samantha" 的语音
-            selectedVoice = selectVoice(voices);
+			selectedVoice = voices.find(voice => voice.name.includes('Google US English')) ||
+					voices.find(voice => voice.name.includes('AndrewMultilingual')) ||
+                    voices.find(voice => voice.name.includes('Samantha')) ||
+                    voices.find(voice => voice.name.includes('Mark'));
             if (selectedVoice) {
                 // console.log('Found voice:', selectedVoice);
                 // // 创建一个 SpeechSynthesisUtterance 实例
@@ -344,23 +347,6 @@
         };
         // 手动触发一次以确保语音列表加载
         window.speechSynthesis.getVoices();
-
-        function selectVoice(voices) {
-            let selectedVoice;
-            if (isMobile()) {
-                selectedVoice = voices.find(voice => voice.name.includes('Samantha')) ||
-                                voices.find(voice => voice.name.includes('Mark'));
-            } else {
-                selectedVoice = voices.find(voice => voice.name.includes('Google US English')) ||
-                                voices.find(voice => voice.name.includes('AndrewMultilingual'));
-            }
-            return selectedVoice;
-        }
-
-        function isMobile() {
-            const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-            return mobileRegex.test(navigator.userAgent);
-        }
 
         function addWordToVocab(word) {
         	if (window.speechSynthesis.speaking) {

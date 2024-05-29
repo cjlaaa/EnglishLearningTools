@@ -110,6 +110,20 @@
             text-align: center; /* 文本居中 */
         }
 
+        .github-commits {
+            padding: 20px;
+            background-color: #f9f9f9; /* 浅灰色背景 */
+            border-radius: 8px;
+            border: 1px solid #ddd; /* 淡色边框 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* 更轻的阴影 */
+            margin-bottom: 20px;
+            width: calc(100% - 40px); /* 考虑左右 padding */
+            max-width: 600px; /* 设置更窄的最大宽度 */
+            margin: 0 auto; /* 让容器居中 */
+            box-sizing: border-box; 
+            text-align: center; /* 文本居中 */
+        }
+
         .github-commits ul {
             list-style: none;
             padding: 0;
@@ -118,15 +132,20 @@
 
         .github-commits li {
             display: flex;
-            justify-content: space-between; /* 使时间和更新内容均匀分布 */
-            align-items: center; /* 垂直居中 */
+            flex-direction: column; /* 将内容垂直排列 */
             border-bottom: 1px solid #ddd; /* 下边框 */
             padding: 10px 20px; /* 上下内边距 */
         }
 
         .commit-message {
-            font-size: 16px;
-            margin-right: auto; /* 使文本内容靠左对齐 */
+            font-size: 18px; /* 文本字体大小调大 */
+            text-align: left; /* 确保文本左对齐 */
+        }
+
+        .commit-time {
+            font-size: 14px; /* 时间字体大小调小 */
+            color: #888; /* 时间颜色淡一点 */
+            text-align: right; /* 确保时间左对齐 */
         }
 
         .commit-title {
