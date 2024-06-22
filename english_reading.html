@@ -271,7 +271,7 @@
 
 		        sentenceDiv.appendChild(playButton);
 
-		        const words = sentence.split(/[\s-]+/);
+		        const words = sentence.split(/[\s\/-]+/);
 		        words.forEach(word => {
 		            if (word.trim() === '') return;
 
@@ -300,14 +300,14 @@
 			if (wordsLearnedArray) {
 			    wordsLearnedArray = wordsLearnedArray.map(function(word) {
 			    	//因为上面的正则已经处理了标点情况,所以这里只需要处理带撇号的单词
-        			return word.replace(/'\w*/g, '').toLowerCase();
+        			return cleanText(word);
 			    });
 			}
 			if (wordsLearnedArray) {
 				const wordSpans = document.querySelectorAll('.word');
 			    wordSpans.forEach(wordSpan => {
 			    	// 先处理带撇号的单词,再处理句子尾部单词带标点的情况
-			    	const cleanTextContent = wordSpan.textContent.replace(/'\w*/g, '').replace(/[^\w\s]/g, '').toLowerCase()
+			    	const cleanTextContent = cleanText(wordSpan.textContent)
 
 			        if (wordsLearnedArray.includes(cleanTextContent)) {
 			        }else{
@@ -322,6 +322,10 @@
 		    document.getElementById('wordsLearned').style.display = 'none';
 		    document.getElementById('premade-articles').style.display = 'none';
 		    document.getElementById('readingSection').style.display = 'block';
+		}
+
+		function cleanText(text) {
+		    return text.replace(/['’].*/g, '').replace(/[^\w\s]/g, '').replace(/\b\d+\b/g, '').toLowerCase();
 		}
 
 		function playAllSentences() {
@@ -388,7 +392,7 @@
 			}
 
 		    // 使用正则表达式删除单词中的标点
-		    const cleanWord = word.replace(/[^\w\s]/g, '').toLowerCase(); // 此正则表达式将删除所有非单词字符（字母、数字和下划线）和空格
+		    const cleanWord = cleanText(word); // 此正则表达式将删除所有非单词字符（字母、数字和下划线）和空格
 
 		    if (cleanWord.trim() === '') {
 		    	return
@@ -404,7 +408,7 @@
 		        // 修改所有句子中包含该单词的单词的颜色
 			    const wordSpans = document.querySelectorAll('.word');
 			    wordSpans.forEach(wordSpan => {
-			    	const cleanTextContent = wordSpan.textContent.replace(/[^\w\s]/g, '').toLowerCase()
+			    	const cleanTextContent = cleanText(wordSpan.textContent)
 
 			        if (cleanTextContent === cleanWord) {
 			            wordSpan.style.color = 'red'; // 修改颜色为红色（这里可以设置为你想要的颜色）
@@ -431,7 +435,7 @@
 			// 恢复句子中的单词颜色
             const wordSpans = document.querySelectorAll('.word');
             wordSpans.forEach(wordSpan => {
-            	const cleanTextContent = wordSpan.textContent.replace(/[^\w\s]/g, '').toLowerCase()
+            	const cleanTextContent = cleanText(wordSpan.textContent)
                 if (cleanTextContent === word) {
                     wordSpan.style.color = ''; // 恢复默认颜色
                 }
