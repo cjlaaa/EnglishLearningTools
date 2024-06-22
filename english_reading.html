@@ -189,6 +189,16 @@
 		    margin-top: 10px;
 		}
 
+		#wordsLearned {
+		    width: 100%;
+		    min-height: 100px;
+		    padding: 10px;
+		    border: 1px solid #ccc;
+		    border-radius: 4px;
+		    resize: vertical;
+		    margin-top: 10px;
+		}
+
 		.translation {
 		    font-size: 14px;
 		    color: #888;
@@ -200,7 +210,7 @@
 </head>
 <body>
     <div id="container">
-	    <textarea id="inputArea" placeholder="将英文文章拷贝到这里,点击开始,即可将文章分句朗读,并轻松标记生词,以便统一复制到其他背单词App中."></textarea><br>
+	    <textarea id="inputArea" placeholder="将英文文章拷贝到这里,点击开始,即可将文章分句朗读,并轻松标记生词,以便统一复制到其他背单词App中."></textarea>
 	    <textarea id="translationInputArea" placeholder="在此输入中文翻译(可选),在使用翻译软件翻译大段英文时可能会有中文句子和英文句子无法一一对应的情况,建议使用文本编辑器用句号/问号分句后再拷贝到翻译app翻译,可有效解决这个问题.分句后别忘了先删除所有的句号和问号再拷贝回这里."></textarea>
 	    <button id="startButton" onclick="startReading()">开始分句朗读</button>
 
@@ -209,6 +219,8 @@
             <button onclick="loadArticle(2)">Wild Things</button>
             <button onclick="loadArticle(3)">A Puma at Large</button>
         </div>
+		<textarea id="wordsLearned" placeholder="已掌握的单词表.若不留空,则点击开始后,会自动将不在这里的单词添加到生词列表.可将txt格式的单词表拖动到此."></textarea>
+
 
     	<div id="toast"></div>
 
@@ -267,7 +279,6 @@
 		            wordSpan.className = 'word';
 		            wordSpan.textContent = word;
 		            wordSpan.onclick = () => addWordToVocab(word);
-
 		            sentenceDiv.appendChild(wordSpan);
 		        });
 
@@ -283,9 +294,32 @@
 		        sentenceList.appendChild(sentenceDiv);
 		    });
 
+			// 处理生单词
+			var wordsLearned = document.getElementById('wordsLearned').value;
+			var wordsLearnedArray = wordsLearned.match(/\b\w+\b/g);
+			if (wordsLearnedArray) {
+			    wordsLearnedArray = wordsLearnedArray.map(function(word) {
+			    	//因为上面的正则已经处理了标点情况,所以这里只需要处理带撇号的单词
+        			return word.replace(/'\w*/g, '').toLowerCase();
+			    });
+			}
+			if (wordsLearnedArray) {
+				const wordSpans = document.querySelectorAll('.word');
+			    wordSpans.forEach(wordSpan => {
+			    	// 先处理带撇号的单词,再处理句子尾部单词带标点的情况
+			    	const cleanTextContent = wordSpan.textContent.replace(/'\w*/g, '').replace(/[^\w\s]/g, '').toLowerCase()
+
+			        if (wordsLearnedArray.includes(cleanTextContent)) {
+			        }else{
+			        	addWordToVocab(cleanTextContent, false)
+			        }
+			    });
+			}
+			
 		    document.getElementById('inputArea').style.display = 'none';
 		    document.getElementById('translationInputArea').style.display = 'none';
 		    document.getElementById('startButton').style.display = 'none';
+		    document.getElementById('wordsLearned').style.display = 'none';
 		    document.getElementById('premade-articles').style.display = 'none';
 		    document.getElementById('readingSection').style.display = 'block';
 		}
@@ -304,6 +338,7 @@
    		    document.getElementById('translationInputArea').style.display = 'block';
 		    document.getElementById('startButton').style.display = 'block';
 		    document.getElementById('premade-articles').style.display = 'block';
+		    document.getElementById('wordsLearned').style.display = 'block';
 		    document.getElementById('readingSection').style.display = 'none';
 		    document.getElementById('sentenceList').innerHTML = '';
 		    document.getElementById('vocabList').innerHTML = '';
@@ -346,9 +381,9 @@
         // 手动触发一次以确保语音列表加载
         window.speechSynthesis.getVoices();
 
-        function addWordToVocab(word) {
+		function addWordToVocab(word, isSpeakText = true) {
         	if (window.speechSynthesis.speaking) {
-			} else {
+			} else if (isSpeakText) {
 			    speakText(word);
 			}
 
@@ -431,6 +466,27 @@
             errorArea.textContent = "";
             errorArea.classList.remove("show");
         }
+
+        const textarea = document.getElementById('wordsLearned');
+		textarea.addEventListener('dragover', function(e) {
+		  e.preventDefault();
+		});
+		textarea.addEventListener('drop', function(e) {
+		  e.preventDefault();
+		  const file = e.dataTransfer.files[0];
+		  
+		  if (file.type === 'text/plain') {
+		    const reader = new FileReader();
+		    
+		    reader.onload = function(e) {
+		      textarea.value = e.target.result;
+		    };
+		    
+		    reader.readAsText(file);
+		  } else {
+		    alert('请拖动一个txt文件到此处');
+		  }
+		});
 
         // 加载预制文章
         function loadArticle(articleNumber) {
