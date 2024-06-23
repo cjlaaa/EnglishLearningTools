@@ -325,7 +325,7 @@
 		}
 
 		function cleanText(text) {
-		    return text.replace(/['’].*/g, '').replace(/[^\w\s]/g, '').replace(/\b\d+\b/g, '').toLowerCase();
+		    return text.replace(/['’].*/g, '').replace(/[^\w\s]/g, '').replace(/.*\d+.*/g, '').toLowerCase();
 		}
 
 		function playAllSentences() {
