@@ -50,9 +50,12 @@
 		    background-color: #0056b3;
 		}
 
+		#startButton {
+			margin-top: 10px;
+		}
+
 		#buttonContainer {
 		    display: flex;
-		    margin-top: 20px;
 		    gap: 10px;
 		}
 
@@ -87,6 +90,7 @@
 		    border-radius: 4px;
 		    display: inline-block;
 		    transition: background-color 0.3s;
+		    margin-top: 5px;
 		}
 
 		.word:hover {
@@ -198,6 +202,21 @@
 		    resize: vertical;
 		    margin-top: 10px;
 		}
+		#wordsCommon {
+		    width: 100%;
+		    min-height: 100px;
+		    padding: 10px;
+		    border: 1px solid #ccc;
+		    border-radius: 4px;
+		    resize: vertical;
+		    margin-top: 10px;
+		}
+		#wordsArea {
+			display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            min-height: 200px;
+		}
 
 		.translation {
 		    font-size: 14px;
@@ -210,8 +229,8 @@
 </head>
 <body>
     <div id="container">
-	    <textarea id="inputArea" placeholder="将英文文章拷贝到这里,点击开始,即可将文章分句朗读,并轻松标记生词,以便统一复制到其他背单词App中."></textarea>
-	    <textarea id="translationInputArea" placeholder="在此输入中文翻译(可选),在使用翻译软件翻译大段英文时可能会有中文句子和英文句子无法一一对应的情况,建议使用文本编辑器用句号/问号分句后再拷贝到翻译app翻译,可有效解决这个问题.分句后别忘了先删除所有的句号和问号再拷贝回这里."></textarea>
+	    <textarea id="inputArea" placeholder="将英文文章拷贝到这里,点击开始,即可将文章分句朗读,并轻松标记生词,以便统一复制到其他背单词App中.可将txt格式的文档拖动到此."></textarea>
+	    <textarea id="translationInputArea" placeholder="在此输入中文翻译(可选),在使用翻译软件翻译大段英文时可能会有中文句子和英文句子无法一一对应的情况,建议使用文本编辑器用句号/问号分句后再拷贝到翻译app翻译,可有效解决这个问题.分句后别忘了先删除所有的句号和问号再拷贝回这里.可将txt格式的文档拖动到此."></textarea>
 	    <button id="startButton" onclick="startReading()">开始分句朗读</button>
 
         <div id="premade-articles">
@@ -219,8 +238,11 @@
             <button onclick="loadArticle(2)">Wild Things</button>
             <button onclick="loadArticle(3)">A Puma at Large</button>
         </div>
-		<textarea id="wordsLearned" placeholder="已掌握的单词表.若不留空,则点击开始后,会自动将不在这里的单词添加到生词列表.可将txt格式的单词表拖动到此."></textarea>
 
+        <div id="wordsArea" style="display: flex;">
+			<textarea id="wordsLearned" placeholder="熟词表.若不留空,则点击开始后,会自动将不在这里的单词添加到生词列表.可将txt格式的文档拖动到此."></textarea>
+			<textarea id="wordsCommon" placeholder="半熟词表.这里的单词会以蓝色高亮显示.可将txt格式的文档拖动到此."></textarea>
+		</div>
 
     	<div id="toast"></div>
 
@@ -244,6 +266,11 @@
     </div>
 
     <script>
+    	//熟词表
+    	let wordsLearnedArray = []
+		//半熟词表
+		let wordsCommonArray = []
+
 		function startReading() {
 		    const text = document.getElementById('inputArea').value.trim();
 		    const translationText = document.getElementById('translationInputArea').value.trim();
@@ -294,32 +321,42 @@
 		        sentenceList.appendChild(sentenceDiv);
 		    });
 
-			// 处理生单词
-			var wordsLearned = document.getElementById('wordsLearned').value;
-			var wordsLearnedArray = wordsLearned.match(/\b\w+\b/g);
+			// 处理熟词表
+			let wordsLearned = document.getElementById('wordsLearned').value;
+			wordsLearnedArray = wordsLearned.match(/\b\w+\b/g);
 			if (wordsLearnedArray) {
 			    wordsLearnedArray = wordsLearnedArray.map(function(word) {
-			    	//因为上面的正则已经处理了标点情况,所以这里只需要处理带撇号的单词
-        			return cleanText(word);
+	    			return cleanText(word);
 			    });
 			}
+
+			//处理半熟词及优先高亮
+			let wordsCommon = document.getElementById('wordsCommon').value;
+			wordsCommonArray = wordsCommon.match(/\b\w+\b/g);
+			if (wordsCommonArray) {
+			    wordsCommonArray = wordsCommonArray.map(function(word) {
+			    	cleanWord = cleanText(word)
+			    	setWordColor(cleanWord, "blue")
+	    			return cleanWord;
+			    });
+			}
+
+			// 添加生单词
 			if (wordsLearnedArray) {
 				const wordSpans = document.querySelectorAll('.word');
 			    wordSpans.forEach(wordSpan => {
-			    	// 先处理带撇号的单词,再处理句子尾部单词带标点的情况
 			    	const cleanTextContent = cleanText(wordSpan.textContent)
-
 			        if (wordsLearnedArray.includes(cleanTextContent)) {
 			        }else{
 			        	addWordToVocab(cleanTextContent, false)
 			        }
 			    });
 			}
-			
+
 		    document.getElementById('inputArea').style.display = 'none';
 		    document.getElementById('translationInputArea').style.display = 'none';
 		    document.getElementById('startButton').style.display = 'none';
-		    document.getElementById('wordsLearned').style.display = 'none';
+		    document.getElementById('wordsArea').style.display = 'none';
 		    document.getElementById('premade-articles').style.display = 'none';
 		    document.getElementById('readingSection').style.display = 'block';
 		}
@@ -342,7 +379,7 @@
    		    document.getElementById('translationInputArea').style.display = 'block';
 		    document.getElementById('startButton').style.display = 'block';
 		    document.getElementById('premade-articles').style.display = 'block';
-		    document.getElementById('wordsLearned').style.display = 'block';
+		    document.getElementById('wordsArea').style.display = 'flex';
 		    document.getElementById('readingSection').style.display = 'none';
 		    document.getElementById('sentenceList').innerHTML = '';
 		    document.getElementById('vocabList').innerHTML = '';
@@ -405,16 +442,30 @@
 		        wordDiv.onclick = () => deleteWordFromVocab(cleanWord);
 		        vocabList.appendChild(wordDiv);
 
-		        // 修改所有句子中包含该单词的单词的颜色
-			    const wordSpans = document.querySelectorAll('.word');
-			    wordSpans.forEach(wordSpan => {
-			    	const cleanTextContent = cleanText(wordSpan.textContent)
-
-			        if (cleanTextContent === cleanWord) {
-			            wordSpan.style.color = 'red'; // 修改颜色为红色（这里可以设置为你想要的颜色）
-			        }
-			    });
+		        setWordBgColor(cleanWord, 'LightPink')
 		    }
+		}
+
+		function setWordColor(word, color) {
+			const wordSpans = document.querySelectorAll('.word');
+		    wordSpans.forEach(wordSpan => {
+		    	const cleanWord = cleanText(word)
+		    	const cleanTextContent = cleanText(wordSpan.textContent)
+		        if (cleanTextContent === word) {
+		        	wordSpan.style.color = color;
+		        }
+		    });
+		}
+
+		function setWordBgColor(word, color) {
+			const wordSpans = document.querySelectorAll('.word');
+		    wordSpans.forEach(wordSpan => {
+		    	const cleanWord = cleanText(word)
+		    	const cleanTextContent = cleanText(wordSpan.textContent)
+		        if (cleanTextContent === word) {
+		        	wordSpan.style.backgroundColor = color;
+		        }
+		    });
 		}
 
         function deleteWordFromVocab(word) {
@@ -437,7 +488,7 @@
             wordSpans.forEach(wordSpan => {
             	const cleanTextContent = cleanText(wordSpan.textContent)
                 if (cleanTextContent === word) {
-                    wordSpan.style.color = ''; // 恢复默认颜色
+                	setWordBgColor(word, '')
                 }
             });
 
@@ -471,26 +522,37 @@
             errorArea.classList.remove("show");
         }
 
-        const textarea = document.getElementById('wordsLearned');
-		textarea.addEventListener('dragover', function(e) {
-		  e.preventDefault();
-		});
-		textarea.addEventListener('drop', function(e) {
-		  e.preventDefault();
-		  const file = e.dataTransfer.files[0];
+		function setupDragAndDrop(textarea) {
+		  textarea.addEventListener('dragover', function(e) {
+		    e.preventDefault();
+		  });
 		  
-		  if (file.type === 'text/plain') {
-		    const reader = new FileReader();
+		  textarea.addEventListener('drop', function(e) {
+		    e.preventDefault();
+		    const file = e.dataTransfer.files[0];
 		    
-		    reader.onload = function(e) {
-		      textarea.value = e.target.result;
-		    };
-		    
-		    reader.readAsText(file);
-		  } else {
-		    alert('请拖动一个txt文件到此处');
-		  }
-		});
+		    if (file.type === 'text/plain') {
+		      const reader = new FileReader();
+		      
+		      reader.onload = function(e) {
+		        textarea.value = e.target.result;
+		      };
+		      
+		      reader.readAsText(file);
+		    } else {
+		      alert('请拖动一个txt文件到此处');
+		    }
+		  });
+		}
+
+		const textarea1 = document.getElementById('wordsLearned');
+		setupDragAndDrop(textarea1);
+		const textarea2 = document.getElementById('wordsCommon');
+		setupDragAndDrop(textarea2);
+		const textarea3 = document.getElementById('inputArea');
+		setupDragAndDrop(textarea3);
+		const textarea4 = document.getElementById('translationInputArea');
+		setupDragAndDrop(textarea4);
 
         // 加载预制文章
         function loadArticle(articleNumber) {
