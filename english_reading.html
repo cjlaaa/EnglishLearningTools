@@ -40,7 +40,7 @@
 		    background-color: #007bff;
 		    color: #fff;
 		    border: none;
-		    padding: 8px 16px; /* 减小内边距 */
+		    padding: 6px 12px; /* 减小内边距 */
 		    border-radius: 4px;
 		    cursor: pointer;
 		    transition: background-color 0.3s;
@@ -307,8 +307,20 @@
 		        const playButton = document.createElement('button');
 		        playButton.textContent = '朗读';
 		        playButton.onclick = () => speakText(sentence);
-
 		        sentenceDiv.appendChild(playButton);
+
+		        const copyButton = document.createElement('button');
+				copyButton.textContent = '复制';
+				copyButton.onclick = () => {
+				    navigator.clipboard.writeText(sentence)
+				        .then(() => {
+				            showError('已复制', false);
+				        })
+				        .catch(err => {
+				            // showError('出现错误: ' + err, true);
+				        });
+				};
+				sentenceDiv.appendChild(copyButton);
 
 		        const words = sentence.split(/[\s\/-]+/);
 		        words.forEach(word => {
