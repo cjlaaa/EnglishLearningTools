@@ -354,17 +354,6 @@
 			    });
 			}
 
-			//处理半熟词及高亮
-			let wordsCommon = document.getElementById('wordsCommon').value;
-			wordsCommonArray = wordsCommon.match(/\b\w+\b/g);
-			if (wordsCommonArray) {
-			    wordsCommonArray = wordsCommonArray.map(function(word) {
-			    	cleanWord = cleanText(word)
-			    	setWordColor(cleanWord, "blue")
-	    			return cleanWord;
-			    });
-			}
-
 			//处理预置生词表及高亮
 			let wordsPreset = document.getElementById('wordsPreset').value;
 			wordsPresetArray = wordsPreset.match(/\b\w+\b/g);
@@ -379,6 +368,17 @@
 			        cleanWord = cleanText(word)
 			        setWordColor(cleanWord, "fuchsia")
 			        return cleanWord;
+			    });
+			}
+
+			//处理半熟词及高亮
+			let wordsCommon = document.getElementById('wordsCommon').value;
+			wordsCommonArray = wordsCommon.match(/\b\w+\b/g);
+			if (wordsCommonArray) {
+			    wordsCommonArray = wordsCommonArray.map(function(word) {
+			    	cleanWord = cleanText(word)
+			    	setWordColor(cleanWord, "blue")
+	    			return cleanWord;
 			    });
 			}
 
