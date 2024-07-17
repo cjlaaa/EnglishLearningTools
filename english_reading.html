@@ -361,7 +361,7 @@
 			    // 过滤掉已经在wordsLearned数组中的单词
 			    wordsPresetArray = wordsPresetArray.filter(function(word) {
 			    	cleanWord = cleanText(word)
-			        return !wordsLearned.includes(cleanWord)
+			        return !wordsLearnedArray.includes(cleanWord)
 			    });
 
 			    wordsPresetArray = wordsPresetArray.map(function(word) {
