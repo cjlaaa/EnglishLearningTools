@@ -33,6 +33,7 @@
                 border: 5px solid #00ff00; /* 设置边框为5像素宽的品红色实线 */
                 box-shadow: 0 0 20px rgba(0, 255, 0, 0.7); /* 设置阴影效果，红色阴影 */
                 padding: 10px; /* 增加内边距 */
+                max-width: 450px;
             }
             textarea {
                 width: 100%;
@@ -122,6 +123,22 @@
                 font-size: 12px;
                 color: #888;
             }
+
+            .input-effect {
+                animation: pulse 0.05s;
+            }
+
+            @keyframes pulse {
+                0% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.03);
+                }
+                100% {
+                    transform: scale(1);
+                }
+            }
         </style>
     </head>
     <body>
@@ -140,6 +157,7 @@
                 <button onclick="goBack()">返回</button>
                 <button onclick="playAudio()">播放单词</button>
                 <button onclick="toggleWordDisplay()">显示/隐藏单词</button>
+                <button onclick="toggleTranslationDisplay()">显示/隐藏翻译</button>
             </div>
             <div id="progress" class="area"></div>
             <input type="text" id="answerInput" placeholder="输入单词">
@@ -157,6 +175,7 @@
                 <div id="wrongWords" class="word-list"></div>
             </div>
             <button onclick="copyMistakes()">复制错误单词</button>
+            <button onclick="useMistakes()">使用错误单词重新开始</button>
         </div>
 
         <div id="toast"></div>
@@ -211,16 +230,8 @@
             function displayWord() {
                 document.getElementById("answerInput").value = "";
                 document.getElementById("answerInput").style.backgroundColor = "white";
-                document.getElementById("progress").innerText = `当前:${currentIndex}，剩余:${words.length - currentIndex}`;
-
-                const currentWordElement = document.getElementById("currentWord");
-                currentWordElement.innerText = words[currentIndex][0] + " - " + words[currentIndex][1];
-                if (isWordVisible) {
-                    currentWordElement.style.display = "block";
-                } else {
-                    currentWordElement.style.display = "none";
-                }
-
+                document.getElementById("progress").innerText = `当前:${currentIndex}, 剩余:${words.length - currentIndex}, 正确:${correctWords.length}, 错误:${wrongWords.length}`;
+                currentWordDisplay()
                 playAudio();
             }
 
@@ -230,9 +241,13 @@
                 }
             };
 
+            function cleanText(text) {
+                return text.replace(/['’].*/g, '').replace(/[^\w\s]/g, '').replace(/.*\d+.*/g, '').toLowerCase();
+            }
+
             document.getElementById("answerInput").oninput = function() {
-                let answer = document.getElementById("answerInput").value.trim().toLowerCase();
-                let correctWord = words[currentIndex][0].toLowerCase();
+                let answer = cleanText(document.getElementById("answerInput").value.trim().toLowerCase());
+                let correctWord = cleanText(words[currentIndex][0].toLowerCase());
 
                 let isCorrect = true;
                 for (let i = 0; i < answer.length; i++) {
@@ -246,6 +261,13 @@
                     document.getElementById("answerInput").style.border = "5px solid green"; // 边框颜色修改为绿色
                     document.getElementById("answerInput").style.color = "green"; // 颜色修改为绿色
                     document.getElementById("answerInput").style.boxShadow = "0 0 20px rgba(0, 255, 0, 0.7)"; // 颜色修改为绿色
+
+                    // 添加输入特效
+                    document.getElementById("answerInput").classList.add('input-effect');
+                    // 移除特效类以便下次输入时可以重新添加
+                    setTimeout(() => {
+                        document.getElementById("answerInput").classList.remove('input-effect');
+                    }, 55);
                 } else {
                     document.getElementById("answerInput").style.border = "5px solid red"; // 边框颜色修改为红色
                     document.getElementById("answerInput").style.color = "red"; // 颜色修改为红色
@@ -261,7 +283,10 @@
                     return
                 }
 
-                if (answer.toLowerCase() === words[currentIndex][0].toLowerCase()) {
+                answer = cleanText(answer.toLowerCase());
+                let correctWord = cleanText(words[currentIndex][0].toLowerCase());
+
+                if (answer === correctWord) {
                     correctWords.push(words[currentIndex]);
                 } else {
                     wrongWords.push(words[currentIndex]);
@@ -275,18 +300,35 @@
             }
 
             let isWordVisible = false;
+            let isTranslationVisible = true;
             function toggleWordDisplay() {
                 isWordVisible = !isWordVisible;
-                const wordElement = document.getElementById("currentWord");
-                if (isWordVisible) {
-                    wordElement.style.display = "block";
-                } else {
-                    wordElement.style.display = "none";
+                currentWordDisplay()
+                document.getElementById("answerInput").focus();
+            }
+            function toggleTranslationDisplay() {
+                isTranslationVisible = !isTranslationVisible;
+                currentWordDisplay()
+                document.getElementById("answerInput").focus();
+            }
+
+            function currentWordDisplay() {
+                const currentWordElement = document.getElementById("currentWord");
+                currentWordElement.style.display = "block";
+                if (isWordVisible && !isTranslationVisible) {
+                    currentWordElement.innerText = words[currentIndex][0];
+                } else if (!isWordVisible && isTranslationVisible) {
+                    currentWordElement.innerText = words[currentIndex][1];
+                } else if (isWordVisible && isTranslationVisible) {
+                    currentWordElement.innerText = words[currentIndex][0] + " - " + words[currentIndex][1];
+                } else if (!isWordVisible && !isTranslationVisible) {
+                    currentWordElement.style.display = "none";
                 }
             }
 
             function playAudio() {
                 speakText(words[currentIndex][0])
+                document.getElementById("answerInput").focus();
             }
 
             // 调用系统语音朗读文本内容的函数
@@ -356,6 +398,12 @@
                 let mistakes = wrongWords.map(word => `${word[0]}\t${word[1]}`).join('\n');
                 navigator.clipboard.writeText(mistakes);
                 showError("已复制错误单词列表！");
+            }
+
+            function useMistakes() {
+                let mistakes = wrongWords.map(word => `${word[0]}\t${word[1]}`).join('\n');
+                document.getElementById("wordList").value = mistakes;
+                goBack()
             }
 
             function showError(message, isError) {
