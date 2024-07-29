@@ -36,7 +36,7 @@
                 max-width: 450px;
             }
             input:focus {
-                border: 2px solid palegoldenrod; /* 修改边框颜色 */
+                border: 5px solid palegoldenrod; /* 修改边框颜色 */
                 outline: none; /* 去掉默认的轮廓 */
             }
             textarea {
@@ -197,6 +197,10 @@
 
             initializeSelect()
             function initializeGame() {
+                document.getElementById("answerInput").style.border = "5px solid palegoldenrod"; // 边框颜色修改为黄色
+                document.getElementById("answerInput").style.color = "green"; // 颜色修改为绿色
+                document.getElementById("answerInput").style.boxShadow = "0 0 20px palegoldenrod"; // 颜色修改为黄色
+
                 let wordList = document.getElementById("wordList").value.trim();
                 words = wordList.split('\n').map(item => item.split('\t'));
                 shuffle(words)
@@ -246,7 +250,7 @@
             };
 
             function cleanText(text) {
-                return text.replace(/['’].*/g, '').replace(/[^\w\s]/g, '').replace(/.*\d+.*/g, '').toLowerCase();
+                return text.replace(/['’].*/g, '').replace(/[^\w\s]/g, '').replace(/.*\d+.*/g, '').replace(/\s+/g, '').toLowerCase();
             }
 
             document.getElementById("answerInput").oninput = function() {
