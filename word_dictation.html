@@ -28,12 +28,16 @@
             }
             input {
                 font-size: 60px; /* 设置字体大小为48像素 */
-                background-color: #00ff00; /* 设置背景颜色为橙黄色 */
-                color: #00ff00; /* 设置文字颜色为红色 */
-                border: 5px solid #00ff00; /* 设置边框为5像素宽的品红色实线 */
-                box-shadow: 0 0 20px rgba(0, 255, 0, 0.7); /* 设置阴影效果，红色阴影 */
+                background-color: palegoldenrod; /* 设置背景颜色为橙黄色 */
+                color: green; /* 设置文字颜色为红色 */
+                border: 5px solid palegoldenrod; /* 设置边框为5像素宽的品红色实线 */
+                box-shadow: 0 0 20px palegoldenrod; /* 设置阴影效果，红色阴影 */
                 padding: 10px; /* 增加内边距 */
                 max-width: 450px;
+            }
+            input:focus {
+                border: 2px solid palegoldenrod; /* 修改边框颜色 */
+                outline: none; /* 去掉默认的轮廓 */
             }
             textarea {
                 width: 100%;
@@ -258,9 +262,9 @@
                 }
 
                 if (isCorrect) {
-                    document.getElementById("answerInput").style.border = "5px solid green"; // 边框颜色修改为绿色
+                    document.getElementById("answerInput").style.border = "5px solid palegoldenrod"; // 边框颜色修改为黄色
                     document.getElementById("answerInput").style.color = "green"; // 颜色修改为绿色
-                    document.getElementById("answerInput").style.boxShadow = "0 0 20px rgba(0, 255, 0, 0.7)"; // 颜色修改为绿色
+                    document.getElementById("answerInput").style.boxShadow = "0 0 20px palegoldenrod"; // 颜色修改为黄色
 
                     // 添加输入特效
                     document.getElementById("answerInput").classList.add('input-effect');
@@ -268,10 +272,15 @@
                     setTimeout(() => {
                         document.getElementById("answerInput").classList.remove('input-effect');
                     }, 55);
+
+                    if (answer.length === correctWord.length) {
+                        document.getElementById("answerInput").style.border = "5px solid lightgreen"; 
+                        document.getElementById("answerInput").style.boxShadow = "0 0 20px lightgreen"; 
+                    }
                 } else {
-                    document.getElementById("answerInput").style.border = "5px solid red"; // 边框颜色修改为红色
-                    document.getElementById("answerInput").style.color = "red"; // 颜色修改为红色
-                    document.getElementById("answerInput").style.boxShadow = "0 0 20px rgba(255, 0, 0, 0.7)"; // 颜色修改为红色
+                    document.getElementById("answerInput").style.border = "5px solid lightcoral"; 
+                    document.getElementById("answerInput").style.color = "red"; 
+                    document.getElementById("answerInput").style.boxShadow = "0 0 20px lightcoral"; 
                 }
             };
 
