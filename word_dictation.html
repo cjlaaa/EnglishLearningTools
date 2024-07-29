@@ -197,9 +197,7 @@
 
             initializeSelect()
             function initializeGame() {
-                document.getElementById("answerInput").style.border = "5px solid palegoldenrod"; // 边框颜色修改为黄色
-                document.getElementById("answerInput").style.color = "green"; // 颜色修改为绿色
-                document.getElementById("answerInput").style.boxShadow = "0 0 20px palegoldenrod"; // 颜色修改为黄色
+                setInputStyle(InputShowType.INIT)
 
                 let wordList = document.getElementById("wordList").value.trim();
                 words = wordList.split('\n').map(item => item.split('\t'));
@@ -236,6 +234,8 @@
             }
 
             function displayWord() {
+                setInputStyle(InputShowType.INIT)
+
                 document.getElementById("answerInput").value = "";
                 document.getElementById("answerInput").style.backgroundColor = "white";
                 document.getElementById("progress").innerText = `当前:${currentIndex}, 剩余:${words.length - currentIndex}, 正确:${correctWords.length}, 错误:${wrongWords.length}`;
@@ -266,9 +266,7 @@
                 }
 
                 if (isCorrect) {
-                    document.getElementById("answerInput").style.border = "5px solid palegoldenrod"; // 边框颜色修改为黄色
-                    document.getElementById("answerInput").style.color = "green"; // 颜色修改为绿色
-                    document.getElementById("answerInput").style.boxShadow = "0 0 20px palegoldenrod"; // 颜色修改为黄色
+                    setInputStyle(InputShowType.INIT)
 
                     // 添加输入特效
                     document.getElementById("answerInput").classList.add('input-effect');
@@ -278,15 +276,34 @@
                     }, 55);
 
                     if (answer.length === correctWord.length) {
-                        document.getElementById("answerInput").style.border = "5px solid lightgreen"; 
-                        document.getElementById("answerInput").style.boxShadow = "0 0 20px lightgreen"; 
+                        setInputStyle(InputShowType.RIGHT)
                     }
                 } else {
+                    setInputStyle(InputShowType.ERROR)
+                }
+            };
+
+            const InputShowType = {
+                INIT: 'init',
+                ERROR: 'error',
+                RIGHT: 'right'
+            };
+            function setInputStyle(type) {
+                // 初始状态/输入中且正确
+                if (type == InputShowType.INIT) {
+                    document.getElementById("answerInput").style.border = "5px solid palegoldenrod";
+                    document.getElementById("answerInput").style.color = "green";
+                    document.getElementById("answerInput").style.boxShadow = "0 0 20px palegoldenrod";
+                } else if (type == InputShowType.ERROR) { //字母输入错误
                     document.getElementById("answerInput").style.border = "5px solid lightcoral"; 
                     document.getElementById("answerInput").style.color = "red"; 
                     document.getElementById("answerInput").style.boxShadow = "0 0 20px lightcoral"; 
+                } else if (type == InputShowType.RIGHT) { //输入结束全部正确
+                    document.getElementById("answerInput").style.border = "5px solid lightgreen"; 
+                    document.getElementById("answerInput").style.color = "green";
+                    document.getElementById("answerInput").style.boxShadow = "0 0 20px lightgreen"; 
                 }
-            };
+            }
 
             function checkAnswer() {
                 let answer = document.getElementById("answerInput").value.trim();
