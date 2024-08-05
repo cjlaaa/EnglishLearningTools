@@ -162,6 +162,7 @@
                 <button onclick="playAudio()">播放单词</button>
                 <button onclick="toggleWordDisplay()">显示/隐藏单词</button>
                 <button onclick="toggleTranslationDisplay()">显示/隐藏翻译</button>
+                <button onclick="restart()">直接重开</button>
             </div>
             <div id="progress" class="area"></div>
             <input type="text" id="answerInput" placeholder="输入单词">
@@ -172,6 +173,7 @@
         <div class="container result" id="resultArea" style="display: none;">
             <div class="top-buttons">
                 <button onclick="goBack()">返回</button>
+                <button onclick="restart()">直接重开</button>
             </div>
             <div class="area">
                 <h2>听写结果</h2>
@@ -203,8 +205,17 @@
                 words = wordList.split('\n').map(item => item.split('\t'));
                 shuffle(words)
                 document.getElementById("inputArea").style.display = "none";
+                document.getElementById("resultArea").style.display = "none";
                 document.getElementById("quizArea").style.display = "block";
                 displayWord();
+            }
+
+            function restart(){
+                currentIndex = 0;
+                words = [];
+                correctWords = [];
+                wrongWords = [];
+                initializeGame()
             }
 
             function shuffle(array) {
