@@ -376,14 +376,24 @@
             function speakText(text) {
                 window.speechSynthesis.cancel();
                 var utterance = new SpeechSynthesisUtterance(text);
+                
+                //这里是为了适配safari不会调用onvoiceschanged
+                if (!selectedVoice){
+                    const voices = window.speechSynthesis.getVoices();
+                    selectedVoice = voices.find(voice => voice.name.includes('Samantha')) ||
+                        voices.find(voice => voice.name.includes('Mark'));
+                }
+
                 if (selectedVoice){
                     utterance.voice = selectedVoice;
                 }
+
                 if (selectedVoice.name.includes("Samantha")) {
                     utterance.rate = 0.3; // 设置朗读速度
                 }else if (selectedVoice.name.includes("Mark")){
                     utterance.rate = 0.7;
-                }                
+                }   
+
                 window.speechSynthesis.speak(utterance);
             }
 

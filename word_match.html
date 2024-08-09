@@ -300,6 +300,14 @@
         function speakText(text) {
             window.speechSynthesis.cancel();
             var utterance = new SpeechSynthesisUtterance(text);
+
+            //这里是为了适配safari不会调用onvoiceschanged
+            if (!selectedVoice){
+                const voices = window.speechSynthesis.getVoices();
+                selectedVoice = voices.find(voice => voice.name.includes('Samantha')) ||
+                    voices.find(voice => voice.name.includes('Mark'));
+            }
+
             if (selectedVoice){
                 utterance.voice = selectedVoice;
             }
