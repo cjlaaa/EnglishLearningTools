@@ -39,14 +39,7 @@
                 border: 5px solid palegoldenrod; /* 修改边框颜色 */
                 outline: none; /* 去掉默认的轮廓 */
             }
-            /* 媒体查询：针对手机屏幕 */
-            @media (max-width: 540px) {
-                input {
-                    font-size: 45px; /* 在手机上设置字体大小为30像素 */
-                    padding: 0px; /* 减少内边距 */
-                    max-width: 100%; /* 最大宽度为90% */
-                }
-            }
+            
             textarea {
                 width: 100%;
                 padding: 10px;
@@ -70,6 +63,7 @@
             button:hover {
                 background-color: #0056b3;
             }
+
             .result {
                 margin-top: 20px;
             }
@@ -88,6 +82,21 @@
                 font-size: 14px;
                 width: auto; /* 让按钮宽度根据文字内容自动调整 */
             }
+
+            /* 媒体查询：针对手机屏幕 */
+            @media (max-width: 540px) {
+                input {
+                    font-size: 45px; /* 在手机上设置字体大小为30像素 */
+                    padding: 0px; /* 减少内边距 */
+                    max-width: 100%; /* 最大宽度为90% */
+                }
+
+                .top-buttons button {
+                    padding: 3px 5px;
+                    font-size: 15px;
+                }
+            }
+
             .area {
                 margin-bottom: 10px;
                 margin-top: 10px;
@@ -167,9 +176,9 @@
         <div class="container" id="quizArea" style="display: none;">
             <div class="top-buttons">
                 <button onclick="goBack()">返回</button>
-                <button onclick="playAudio()">播放单词(Ctrl+S)</button>
-                <button onclick="toggleWordDisplay()">显示/隐藏单词(Ctrl+D)</button>
-                <button onclick="toggleTranslationDisplay()">显示/隐藏翻译(Ctrl+F)</button>
+                <button onclick="playAudio()">朗读(Ctrl+S)</button>
+                <button onclick="toggleWordDisplay()">显隐单词(Ctrl+D)</button>
+                <button onclick="toggleTranslationDisplay()">显隐翻译(Ctrl+F)</button>
                 <button onclick="restart()">直接重开</button>
             </div>
             <div id="progress" class="area"></div>
