@@ -33,11 +33,19 @@
                 border: 5px solid palegoldenrod; /* 设置边框为5像素宽的品红色实线 */
                 box-shadow: 0 0 20px palegoldenrod; /* 设置阴影效果，红色阴影 */
                 padding: 10px; /* 增加内边距 */
-                max-width: 450px;
+                max-width: 500px;
             }
             input:focus {
                 border: 5px solid palegoldenrod; /* 修改边框颜色 */
                 outline: none; /* 去掉默认的轮廓 */
+            }
+            /* 媒体查询：针对手机屏幕 */
+            @media (max-width: 540px) {
+                input {
+                    font-size: 45px; /* 在手机上设置字体大小为30像素 */
+                    padding: 0px; /* 减少内边距 */
+                    max-width: 100%; /* 最大宽度为90% */
+                }
             }
             textarea {
                 width: 100%;
@@ -159,9 +167,9 @@
         <div class="container" id="quizArea" style="display: none;">
             <div class="top-buttons">
                 <button onclick="goBack()">返回</button>
-                <button onclick="playAudio()">播放单词</button>
-                <button onclick="toggleWordDisplay()">显示/隐藏单词</button>
-                <button onclick="toggleTranslationDisplay()">显示/隐藏翻译</button>
+                <button onclick="playAudio()">播放单词(Ctrl+S)</button>
+                <button onclick="toggleWordDisplay()">显示/隐藏单词(Ctrl+D)</button>
+                <button onclick="toggleTranslationDisplay()">显示/隐藏翻译(Ctrl+F)</button>
                 <button onclick="restart()">直接重开</button>
             </div>
             <div id="progress" class="area"></div>
@@ -253,6 +261,24 @@
                 currentWordDisplay()
                 playAudio();
             }
+
+            document.addEventListener('keydown', function(event) {
+                // 检查是否按下了 Command (Meta) 或 Ctrl 或 Alt + S
+                if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 's') {
+                    event.preventDefault(); // 阻止默认的行为
+                    playAudio();
+                }
+
+                if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 'd') {
+                    event.preventDefault();
+                    toggleWordDisplay();
+                }
+
+                if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 'f') {
+                    event.preventDefault(); // 阻止默认的行为
+                    toggleTranslationDisplay();
+                }
+            });
 
             document.getElementById("answerInput").onkeypress = function(e) {
                 if (e.key === "Enter") {
@@ -368,7 +394,9 @@
             }
 
             function playAudio() {
-                speakText(words[currentIndex][0])
+                if (words[currentIndex][0] !== "") {
+                    speakText(words[currentIndex][0])
+                }
                 document.getElementById("answerInput").focus();
             }
 
