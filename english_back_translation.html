@@ -312,7 +312,8 @@
             if (!selectedVoice){
                 const voices = window.speechSynthesis.getVoices();
                 selectedVoice = voices.find(voice => voice.name.includes('Samantha')) ||
-                    voices.find(voice => voice.name.includes('Mark'));
+                    voices.find(voice => voice.name.includes('Mark')) ||
+                    voices.find(voice => voice.name.includes('美国'));
             }
 
             if (selectedVoice){
@@ -332,7 +333,8 @@
             // console.log('Available voices:', voices);
             // 查找名为 "Mark" 或 "Samantha" 的语音
             selectedVoice = voices.find(voice => voice.name.includes('Samantha')) ||
-                    voices.find(voice => voice.name.includes('Mark'));
+                    voices.find(voice => voice.name.includes('Mark')) ||
+                    voices.find(voice => voice.name.includes('美国'));
             if (selectedVoice) {
                 // console.log('Found voice:', selectedVoice);
                 // // 创建一个 SpeechSynthesisUtterance 实例
