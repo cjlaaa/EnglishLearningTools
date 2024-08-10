@@ -423,13 +423,13 @@
 
                 if (selectedVoice){
                     utterance.voice = selectedVoice;
-                }
 
-                if (selectedVoice.name.includes("Samantha")) {
-                    utterance.rate = 0.3; // 设置朗读速度
-                }else if (selectedVoice.name.includes("Mark")){
-                    utterance.rate = 0.7;
-                }   
+                    if (selectedVoice.name.includes("Samantha")) {
+                        utterance.rate = 0.3; // 设置朗读速度
+                    }else if (selectedVoice.name.includes("Mark")){
+                        utterance.rate = 0.7;
+                    }   
+                }
 
                 window.speechSynthesis.speak(utterance);
             }
