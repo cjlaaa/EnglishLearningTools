@@ -296,7 +296,7 @@
             };
 
             function cleanText(text) {
-                return text.replace(/['’].*/g, '').replace(/[^\w\s]/g, '').replace(/.*\d+.*/g, '').replace(/\s+/g, '').toLowerCase();
+                return text.replace(/['’].*/g, '').replace(/[^\w\s]/g, '').replace(/\s+/g, '').toLowerCase();
             }
 
             document.getElementById("answerInput").oninput = function() {
