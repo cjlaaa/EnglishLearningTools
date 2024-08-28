@@ -123,13 +123,6 @@
             display: block;
         }
 
-        .premade-words {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px; /* 设置横向和竖向的间距 */
-            margin-top: 10px; /* 设置上边距 */
-        }
-
         .discreet-text {
             margin-top: 20px;
             text-align: center;
@@ -149,6 +142,22 @@
             max-width: 430px;
             display: none; /* 默认隐藏 */
         }
+
+        select {
+            appearance: none; /* 去掉默认样式 */
+            -webkit-appearance: none; /* Safari */
+            -moz-appearance: none; /* Firefox */
+            background-color: #fff; /* 背景颜色 */
+            border: 1px solid #ccc; /* 边框 */
+            border-radius: 5px; /* 圆角 */
+            padding: 10px; /* 内边距 */
+            font-size: 16px; /* 字体大小 */
+            color: #333; /* 字体颜色 */
+            cursor: pointer; /* 鼠标指针 */
+            width: 300px; /* 宽度 */
+            position: relative; /* 为伪元素定位 */
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -159,11 +168,9 @@
                 <textarea id="wordTranslationList" rows="10" cols="30" placeholder="在此处输入英文单词与中文翻译,每行只能放一组英文单词与中文翻译,中间用tab符隔开(注意为了支持英文词组和中文翻译标点,这里的分隔符不支持空格或其他符号).建议使用excel两列分别输入英文单词和中文翻译并一一对应,然后框选后复制并粘贴到这里即可直接开始游戏."></textarea>
             </div>
             <button id="startGameButton">开始游戏</button>
-            <div class="premade-words">
-                <button id="presetWordsButton1">剑桥雅思核心词汇精讲精练</button>
-                <button id="presetWordsButton2">雅思阅读539考点词</button>
-                <button id="presetWordsButton3">新概念英语3-生词表</button>
-            </div>
+            <select id="mySelect" onchange="handleSelectChange()">
+                <option value="" selected>点击选择-剑桥雅思词汇精讲精练</option>
+            </select>
         </div>
         <div class="progress-area" id="progressArea"></div>
         <div class="game-area" id="gameArea"></div>
@@ -189,6 +196,7 @@
         // const colors = ["#a8d8e2", "#c5b8bf", "#e0c7e3", "#ebe4d0", "#f2c69c"];
         const colors = ["#FFD8B1", "#FFFACD", "#E0FFFF", "#C1E0FF", "#E1C1FF"];
         let currentColorIndex = 0;
+        initializeSelect();
 
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -447,13 +455,16 @@
             errorArea.classList.remove("show");
         }
 
-        const presetWordsButton1 = document.getElementById("presetWordsButton1");
-        const presetWordsButton2 = document.getElementById("presetWordsButton2");
-        const presetWordsButton3 = document.getElementById("presetWordsButton3");
+        function handleSelectChange() {
+            // 获取下拉菜单的值
+            var selectElement = document.getElementById("mySelect");
+            wordTranslationListInput.value = selectElement.value;
+        }
 
-        // 定义预置单词列表
-        const presetWordLists = [
-`adolescence\t(n.) 青春期,青少年
+        function initializeSelect(){
+            var selectElement = document.getElementById("mySelect");
+            var options = [`
+adolescence\t(n.) 青春期,青少年
 adulthood\t(n.) 成年
 bond\t(n.) 联系,纽带,契约
 brotherhood\t(n.) 兄弟情谊,兄弟关系
@@ -503,8 +514,9 @@ inherit\t(v.) 继承,遗传
 interact\t(v.) 互动,交流
 nurture\t(v.) 培育,养育
 play a role\t(v.) 扮演角色,起作用
-relate (to)\t(v.) 涉及,关联
-ability\t(n.) 能力,才能,技能
+relate (to)\t(v.) 涉及,关联`, 
+
+`ability\t(n.) 能力,才能,技能
 adolescent\t(n.) 青少年,青春期
 behaviour\t(n.) 行为,举止,表现
 childhood\t(n.) 童年,幼年时期
@@ -565,8 +577,9 @@ have something on your mind\t心里惦记着什么
 it slipped my mind\t我忘了,我记不起来了
 keep an open mind\t保持开放的心态,不偏不倚
 my mind went blank\t我脑子一片空白
-put your mind at ease\t使放心,安心些
-allergy\t(n.) 过敏,过敏性,过敏反应
+put your mind at ease\t使放心,安心些`, 
+
+`allergy\t(n.) 过敏,过敏性,过敏反应
 anxiety\t(n.) 焦虑,忧虑,担心
 appetite\t(n.) 食欲,胃口,欲望
 artery\t(n.) 动脉,干线
@@ -635,8 +648,9 @@ recover\t(v.) 恢复,康复,复原
 reduce\t(v.) 减少,缩小,降低
 skip\t(v.) 跳过,跳跃,不做
 stimulate\t(v.) 刺激,激发,促进
-trigger\t(v.) 触发,引发,引爆
-activity\t(n.) 活动,行动,活跃
+trigger\t(v.) 触发,引发,引爆`, 
+
+`activity\t(n.) 活动,行动,活跃
 aspect\t(n.) 方面,视角,方位
 attitude\t(n.) 态度,看法,姿态
 (achieve a) balance\t(n.) 平衡,平衡状态
@@ -706,8 +720,9 @@ lifelong ambition\t终身志向,终生抱负
 living expenses\t生活费用,生活开支
 once in a lifetime opportunity\t千载难逢的机会,一生一次的机会
 standard of living\t生活水平,生活标准
-way of life\t生活方式,生活方式
-assignment\t(n.) 作业,任务,分配
+way of life\t生活方式,生活方式`, 
+
+`assignment\t(n.) 作业,任务,分配
 college\t(n.) 大学,学院,学校
 controversy\t(n.) 争议,争论,纷争
 curriculum\t(n.) 课程,教学大纲,课程表
@@ -771,8 +786,9 @@ review\t(v.) 复习,审查,回顾
 revise\t(v.) 复习,修改,修订
 struggle\t(v.) 奋斗,斗争,挣扎
 take (a course)\t(v.) 上(课程),参加(课程),学习(课程)
-relatively\t(adv.) 相对地,比较地,相对而言
-accuracy\t(n.) 准确性,精确度,正确性
+relatively\t(adv.) 相对地,比较地,相对而言`, 
+
+`accuracy\t(n.) 准确性,精确度,正确性
 communication\t(n.) 沟通,交流,传达
 concept\t(n.) 概念,观念,思想
 conjecture\t(n.) 推测,猜测,猜想
@@ -826,8 +842,9 @@ when all is said and done\t说到底,毕竟
 having said that\t话虽如此,尽管如此
 to say the least\t至少可以说,至少可以说
 You can say that again!\t你说得没错！
-that is to say,也就是说\t也就是说的意思
-accommodation\t(n.) 住宿,住所,住宿设施
+that is to say,也就是说\t也就是说的意思`, 
+
+`accommodation\t(n.) 住宿,住所,住宿设施
 attraction\t(n.) 景点,吸引力,引力
 community\t(n.) 社区,社会,共同体
 countryside\t(n.) 乡村,农村,乡下
@@ -875,8 +892,9 @@ traditional\t(adj.) 传统的,传统性的,传统的
 unspoilt\t(adj.) 未受破坏的,未受损坏的,未受损害的
 urban\t(adj.) 城市的,都市的,市区的
 affect\t(v.) 影响,作用,涉及
-fluctuate\t(v.) 波动,起伏,涨落
-age\t(n.) 年龄,时代,时期
+fluctuate\t(v.) 波动,起伏,涨落`, 
+
+`age\t(n.) 年龄,时代,时期
 archaeologist\t(n.) 考古学家,考古学者,考古工作者
 century\t(n.) 世纪,百年,一百年
 decade\t(n.) 十年,十年期,十年间
@@ -915,8 +933,9 @@ the right time\t合适的时机,适当的时候
 chronologically\t(adv.) 按时间顺序,按年代顺序,按时间排序
 formerly\t(adv.) 以前,从前,以前地
 previously\t(adv.) 以前,事先,事前地
-subsequently\t(adv.) 随后,其后,之后
-agriculture\t(n.) 农业,农艺,农学
+subsequently\t(adv.) 随后,其后,之后`, 
+
+`agriculture\t(n.) 农业,农艺,农学
 animal kingdom\t(n.) 动物界,动物王国,动物区
 burrow\t(n.) 洞穴,地道,兽穴
 climate\t(n.) 气候,气象,气候条件
@@ -966,8 +985,9 @@ cultivate\t(v.) 耕作,种植,培养
 eradicate\t(v.) 根除,消灭,扑灭
 evolve\t(v.) 进化,发展,演变
 hibernate\t(v.) 进入冬眠,冬眠,蛰伏
-tolerate\t(v.) 容忍,忍受,忍耐
-asteroid\t(n.) 小行星,小行星,流星
+tolerate\t(v.) 容忍,忍受,忍耐`, 
+
+`asteroid\t(n.) 小行星,小行星,流星
 astronaut\t(n.) 宇航员,太空人,航天员
 atmosphere\t(n.) 大气层,气氛,大气
 cosmos\t(n.) 宇宙,空间,宇宙世界
@@ -1023,8 +1043,9 @@ propel\t(v.) 推进,推动,驱使
 rotate\t(v.) 旋转,转动,转变
 sustain\t(v.) 支撑,维持,持续
 simulate\t(v.) 模拟,仿真,模仿
-undergo\t(v.) 经历,遭受,忍受
-balcony\t(n.) 阳台,露台,楼台
+undergo\t(v.) 经历,遭受,忍受`, 
+
+`balcony\t(n.) 阳台,露台,楼台
 brick\t(n.) 砖,砖块,砖头
 building\t(n.) 建筑,建造物,大楼
 ceiling\t(n.) 天花板,顶板,上限
@@ -1097,8 +1118,9 @@ occupy\t(v.) 占据,居住,占领
 reconstruct\t(v.) 重建,重构,改建
 renovate\t(v.) 翻新,整修,修复
 support\t(v.) 支持,支撑,支援
-trigger\t(v.) 触发,引发,导致
-automatic pilot\t(n.) 自动驾驶,自动驾驶仪,自动驾驶模式
+trigger\t(v.) 触发,引发,导致`, 
+
+`automatic pilot\t(n.) 自动驾驶,自动驾驶仪,自动驾驶模式
 computerisation\t(n.) 计算机化,电脑化,自动化
 connection\t(n.) 连接,联系,关联
 data\t(n.) 数据,资料,数据信息
@@ -1145,8 +1167,9 @@ scroll\t(v.) 滚动,翻动,滚屏
 speculate\t(v.) 推测,猜测,思索
 store\t(v.) 存储,储存,贮存
 surpass\t(v.) 超过,超越,超出
-automatically\t(adv.) 自动地,自动化地,无需人工干预地
-attitude\t(n.) 态度,看法,意见
+automatically\t(adv.) 自动地,自动化地,无需人工干预地`, 
+
+`attitude\t(n.) 态度,看法,意见
 brand\t(n.) 品牌,牌子,商标
 culture\t(n.) 文化,文明,修养
 cycle\t(n.) 周期,循环,自行车
@@ -1202,8 +1225,9 @@ dwindle\t(v.) 减少,缩小,衰落
 factor\t(v.) 因素,要素,因素影响
 indicate\t(v.) 表明,指示,显示
 merge\t(v.) 合并,融合,结合
-migrate\t(v.) 迁徙,移居,迁移
-benefit\t(n.) 好处,利益,收益
+migrate\t(v.) 迁徙,移居,迁移`, 
+
+`benefit\t(n.) 好处,利益,收益
 challenge\t(n.) 挑战,艰巨任务,难题
 compromise\t(n.) 妥协,折中,和解
 difficulty\t(n.) 困难,难题,难度
@@ -1278,8 +1302,9 @@ find a solution\t找到解决方案
 overcome a difficulty\t克服困难
 reach/find a compromise\t达成妥协
 remedy a situation\t纠正情况
-resolve an issue\t解决问题
-acid rain\t(n.) 酸雨,酸性降雨,酸性雨水
+resolve an issue\t解决问题`, 
+
+`acid rain\t(n.) 酸雨,酸性降雨,酸性雨水
 biodiversity\t(n.) 生物多样性,生物多样化,生物的多样性
 climate change\t(n.) 气候变化,气候变迁,气候改变
 contamination\t(n.) 污染,污染物,污染程度
@@ -1348,8 +1373,9 @@ dispose of\t(v.) 处理,丢弃,处置
 dump\t(v.) 倾倒,丢弃,垃圾场
 threaten\t(v.) 威胁,恐吓,危及
 inexorably\t(adv.) 无情地,不可避免地,不可阻挡地
-inevitably\t(adv.) 不可避免地,必然地,照例地
-atmosphere\t(n.) 大气,气氛,空气层
+inevitably\t(adv.) 不可避免地,必然地,照例地`, 
+
+`atmosphere\t(n.) 大气,气氛,空气层
 balance\t(n.) 平衡,均衡,平稳
 biofuel\t(n.) 生物燃料,生物燃料源,生物质燃料
 carbon\t(n.) 碳,碳元素,炭
@@ -1398,8 +1424,9 @@ maintain\t(v.) 保持,维持,保养
 outweigh\t(v.) 超过,比...更重要,比...更有价值
 preserve\t(v.) 保护,保存,保持
 retain\t(v.) 保留,保持,保有
-waste\t(v.) 浪费,废弃,消耗
-advertisement\t(n.) 广告,廣告,廣告宣傳
+waste\t(v.) 浪费,废弃,消耗`, 
+
+`advertisement\t(n.) 广告,廣告,廣告宣傳
 advertising\t(n.) 广告业,廣告,廣告宣傳
 boss\t(n.) 老板,上司,领导
 campaign\t(n.) 活动,竞选,运动
@@ -1477,8 +1504,9 @@ invest (in)\t(v.) 投资,投入,投入(金钱等)
 persuade\t(v.) 说服,劝说,使相信
 to be promoted\t(phrase) 被提升,被晋升,被提升职位
 request\t(v.) 请求,要求,申请
-retire\t(v.) 退休,退役,离职
-actions\t(n.) 行动,动作,举动
+retire\t(v.) 退休,退役,离职`, 
+
+`actions\t(n.) 行动,动作,举动
 arson\t(n.) 纵火,纵火罪,纵火犯
 authority\t(n.) 权威,权力,当局
 burglary\t(n.) 入室盗窃,盗窃罪,盗窃行为
@@ -1558,8 +1586,9 @@ commit a crime\t(phrase) 犯罪,作案,犯法
 convict a criminal\t(phrase) 定罪犯罪嫌疑人,判定犯罪分子有罪,对罪犯定罪
 impose a fine\t(phrase) 处以罚款,开罚单,罚款
 pass a law\t(phrase) 通过法律,颁布法律,立法
-solve a crime\t(phrase) 解决犯罪案件,破案,查案
-access\t(n.) 接触,访问,进入
+solve a crime\t(phrase) 解决犯罪案件,破案,查案`, 
+
+`access\t(n.) 接触,访问,进入
 attitude\t(n.) 态度,看法,意见
 author\t(n.) 作者,著作人,创作者
 bias\t(n.) 偏见,偏向,偏爱
@@ -1631,8 +1660,9 @@ publicize\t(v.) 宣传,公开,发表
 publish\t(v.) 出版,发表,公布
 report\t(v.) 报告,汇报,报导
 review\t(v.) 审查,回顾,评论
-verify\t(v.) 核实,证实,验证
-actor\t(n.) 演员,表演者,演员
+verify\t(v.) 核实,证实,验证`, 
+
+`actor\t(n.) 演员,表演者,演员
 actress\t(n.) 女演员,女表演者,女演员
 aesthetics\t(n.) 美学,审美观,美感
 appreciation\t(n.) 欣赏,鉴赏,感激
@@ -1720,1618 +1750,19 @@ inspire\t(v.) 激发,鼓舞,启发
 participate\t(v.) 参与,参加,分享
 perform\t(v.) 表演,执行,履行
 provoke\t(v.) 激怒,挑起,挑衅
-transcend\t(v.) 超越,越过,超出`,
-`abandon\tn.放弃,抛弃,遗弃
-accelerate\tv.加速,加快,促进
-accumulate\tv.积累,累积,堆积
-acknowledge\tv.承认,确认,表达谢意
-adapt to\tv.适应,适合,调整
-addictive\tadj.上瘾的,使人沉溺的,成瘾性的
-adjust\tv.调整,调节,适应
-admit\tv.承认,接纳,允许进入
-adversity\tn.逆境,不幸,灾难
-aggression\tn.侵略,攻击性,敌对行为
-agreeable\tadj.令人愉快的,宜人的,符合的
-aid\tn.援助,帮助,资助
-allergic\tadj.过敏的,对...有过敏反应的,讨厌的
-allocate\tv.分配,分派,配置
-alter\tv.改变,修改,更改
-alternative\tn.选择,替代方案,二选一
-altitude\tn.海拔,高度,高处
-analyze\tv.分析,分解,解析
-ancient\tadj.古代的,古老的,古迹的
-and\tconj.和,与,而且
-application\tn.应用,申请,运用
-apply to\tv.适用于,申请,应用于
-appreciate\tv.欣赏,感激,重视
-approach\tv.接近,靠近,途径
-approve\tv.批准,赞成,通过
-array\tn.阵列,一系列,排列
-artificial\tadj.人造的,人工的,假的
-asses\tn.驴,骡,愚蠢的人
-assign\tv.分配,指派,委派
-association\tn.协会,联想,关联
-assumption\tn.假设,假定,推测
-assure\tv.保证,确信,使安心
-attempt\tn.尝试,企图,试图
-attitude\tn.态度,看法,姿势
-authority\tn.权威,当局,权力
-avoid\tv.避免,回避,躲开
-aware\tadj.意识到的,知道的,警觉的
-bacteria\tn.细菌,细菌群,细菌菌落
-barrier\tn.障碍,屏障,阻碍物
-based on\t基于,根据,依据
-be consistent with\t与...一致,符合,符合
-be liable to\t易于,有...倾向,有责任
-be subject to\t受制于,取决于,遭受
-bear\tv.忍受,负担,承受
-beneficial\tadj.有益的,有利的,有帮助的
-blight\tn.枯萎病,破坏,衰退
-boundary\tn.边界,界限,分界线
-budget\tn.预算,经费,开支
-bungle\tv.搞砸,笨手笨脚地做,弄糟
-burden\tn.负担,重担,负荷
-calamity\tn.灾难,灾祸,不幸事件
-calculate\tv.计算,估计,推测
-capacity\tn.容量,能力,才能
-catastrophic\tadj.灾难性的,毁灭性的,极糟糕的
-cater\tv.迎合,提供饮食,满足需要
-certify\tv.证明,认证,保证
-change\tv.改变,变化,更改
-characteristic\tn.特征,特点,特色
-chronic\tadj.慢性的,长期的,习惯性的
-civic\tadj.市民的,公民的,城市的
-clue\tn.线索,提示,暗示
-cognitive\tadj.认知的,认识的,感知的
-coin\tv.创造(新词),铸造(货币),杜撰
-collapse\tv.崩溃,倒塌,瓦解
-comment\tn.评论,意见,注释
-commitment\tn.承诺,责任,献身
-communal\tadj.公共的,社区的,共有的
-commute\tv.通勤,减刑,交换
-compare\tv.比较,对比,比喻
-compatible\tadj.兼容的,和谐的,一致的
-compensate\tv.补偿,赔偿,弥补
-complicate\tv.使复杂化,使混乱,使难懂
-comply with\t遵守,符合,依从
-component\tn.成分,组成部分,部件
-comprehend\tv.理解,领会,包含
-conceal\tv.隐藏,掩盖,隐瞒
-concentrate\tv.集中,专注,浓缩
-concur\tv.同意,一致,同时发生
-condemn\tv.谴责,判刑,宣告有罪
-confer\tv.授予,商议,讨论
-confidential\tadj.机密的,保密的,秘密的
-conflict\tn.冲突,争端,矛盾
-conform\tv.符合,遵守,一致
-confuse\tv.使混乱,使迷惑,混淆
-conscious\tadj.有意识的,意识到的,神志清醒的
-conservative\tadj.保守的,守旧的,谨慎的
-considerable\tadj.相当大的,可观的,重要的
-constrain\tv.限制,约束,强迫
-consult\tv.咨询,请教,商议
-contingent\tadj.依情况而定的,偶然的,有条件的
-contrast\tv.对比,对照,形成对比
-contribute\tv.贡献,捐赠,投稿
-controversial\tadj.有争议的,引起争论的,可疑的
-convention\tn.惯例,公约,大会
-conviction\tn.信念,定罪,确信
-co-operation\tn.合作,协作,配合
-co-ordinate\tv.协调,使一致,使配合
-correlation\tn.相关,关联,相互关系
-courtship\tn.求爱,追求,求婚
-crash\tv.碰撞,坠毁,崩溃
-credibility\tn.可信性,可靠性,信用
-criminal\tn.罪犯,犯罪者,刑事犯
-crisis\tn.危机,紧要关头,关键时刻
-criteria\tn.标准,条件,准则
-criticism\tn.批评,评论,指责
-cue\tn.暗示,提示,信号
-curb\tv.限制,控制,抑制
-curriculum\tn.课程,课程表,教学大纲
-damp\tadj.潮湿的,微湿的,沮丧的
-dazzle\tv.使目眩,使眼花,使倾倒
-deadline\tn.截止日期,最后期限,死线
-defeat\tv.击败,战胜,挫败
-defect\tn.缺陷,缺点,不足
-deficiency\tn.缺乏,不足,缺陷
-delay\tv.延迟,推迟,耽搁
-delicate\tadj.精致的,微妙的,脆弱的
-delivery\tn.递送,交付,分娩
-demanding\tadj.苛求的,要求高的,费力的
-democratic\tadj.民主的,民主主义的,民主政体的
-demographic\tadj.人口统计的,人口学的,人口结构的
-dental\tadj.牙科的,牙齿的,牙的
-depend on\t依靠,依赖,取决于
-depression\tn.抑郁,沮丧,萧条
-derive\tv.源于,来自,得自
-designate\tv.指定,指派,标明
-detailed\tadj.详细的,具体的,细节的
-detain\tv.扣留,拘留,耽搁
-detect\tv.发现,察觉,探测
-deter\tv.阻止,威慑,使不敢
-determine\tv.决定,确定,判决
-devastate\tv.毁灭,毁坏,使荒芜
-diagnose\tv.诊断,判断,分析
-differ\tv.不同,有区别,意见不同
-differentiate\tv.区分,区别,使不同
-diminish\tv.减少,减小,缩减
-disaster\tn.灾难,灾祸,不幸
-discharge\tv.释放,排放,履行
-disclose\tv.揭露,透露,公开
-disparate\tadj.不同的,异类的,完全不同的
-display\tv.展示,显示,陈列
-disrupt\tv.扰乱,打断,使分裂
-distinguish\tv.区分,辨别,使杰出
-distract\tv.分散,使分心,使混乱
-distribute\tv.分配,分发,分散
-diversity\tn.多样性,差异,多样化
-divert\tv.转移,使转向,使分心
-documentation\tn.文件,文献,证明文件
-domain\tn.领域,范围,域
-domestic\tadj.国内的,家庭的,驯养的
-dominant\tadj.占优势的,支配的,主要的
-donate\tv.捐赠,捐献,赠送
-dramatic\tadj.戏剧性的,引人注目的,戏剧的
-drought\tn.干旱,旱灾,长期缺乏
-durable\tadj.耐用的,持久的,耐久的
-dynamics\tn.动力学,动态,力学
-eco-friendly\tadj.环保的,对生态环境有利的,生态友好的
-elaborate\tadj.精细的,精心制作的,详细的
-elderly\tadj.上了年纪的,年长的,年老的
-eliminate\tv.消除,排除,淘汰
-elusive\tadj.难以捉摸的,难以找到的,难以理解的
-emphasize\tv.强调,着重,重视
-encyclopaedia\tn.百科全书,知识大全,大百科
-endanger\tv.危及,使遭受危险,使濒临灭绝
-engagement\tn.订婚,约会,参与
-enormous\tadj.巨大的,庞大的,极大的
-entertainment\tn.娱乐,款待,娱乐活动
-entrepreneur\tn.企业家,创业者,经营者
-environment\tn.环境,生态,周围
-equal\tadj.平等的,相等的,均等的
-equator\tn.赤道,赤道线,赤道地区
-erode\tv.侵蚀,腐蚀,削弱
-erratically\tadv.不规律地,不稳定地,无规律地
-escape\tv.逃脱,逃避,逃跑
-established\tadj.已建立的,确定的,已制定的
-estate\tn.房地产,财产,庄园
-ethical\tadj.伦理的,道德的,合乎伦理的
-evaluate\tv.评价,评估,估价
-even\tadj.平坦的,均匀的,平滑的
-eventually\tadv.最终,终于,最后
-evidence\tn.证据,证明,迹象
-evitable\tadj.可避免的,可防止的,可以避免的
-evolve\tv.进化,发展,演变
-exaggerate\tv.夸大,夸张,言过其实
-excel\tv.擅长,胜过,超过
-exceptional\tadj.异常的,杰出的,特别的
-exchange\tn.交换,交易,兑换
-exclude\tv.排除,排斥,不包括
-exclusive\tadj.独有的,独享的,排外的
-execute\tv.执行,实施,处死
-exhausted\tadj.精疲力尽的,耗尽的,筋疲力尽的
-expect\tv.期待,预期,料想
-experiment\tn.实验,试验,实践
-expertise\tn.专门知识,专业技能,专家意见
-explicit\tadj.明确的,清楚的,直率的
-exploit\tv.利用,开发,剥削
-expose\tv.暴露,揭露,使曝光
-extend\tv.延伸,扩展,延长
-extinct\tadj.灭绝的,绝种的,熄灭的
-extract\tv.提取,提炼,拔出
-extreme\tadj.极端的,极度的,尽头的
-exude\tv.流露,散发,渗出
-faculty\tn.才能,能力,系
-fair\tadj.公平的,公正的,相当的
-famine\tn.饥荒,饥馑,缺乏
-fatigue\tn.疲劳,劳累,疲乏
-feasible\tadj.可行的,行得通的,可实施的
-feature\tn.特征,特色,特点
-fertilizer\tn.肥料,化肥,受精剂
-financial\tadj.财政的,金融的,财务的
-finite\tadj.有限的,限定的,有穷的
-fit\tadj.适合的,健康的,合适的
-fitness\tn.健康,适合,适当
-focus on\t集中于,专注于,聚焦于
-foe\tn.敌人,仇敌,反对者
-format\tn.格式,形式,版式
-formation\tn.形成,构成,组织
-fragile\tadj.易碎的,脆弱的,虚弱的
-fragment\tn.碎片,片段,断片
-freeze\tv.冻结,结冰,使凝固
-frustration\tn.挫折,失望,受挫
-fulfill\tv.履行,实现,完成
-fund\tn.基金,资金,经费
-fundamental\tadj.基本的,基础的,根本的
-gene\tn.基因,遗传因子,基因型
-germ\tn.微生物,细菌,萌芽
-gifted\tadj.有天赋的,有才华的,天资高的
-grant\tv.授予,赞成,允许
-graphic\tadj.图表的,生动的,形象的
-guarantee\tv.保证,担保,保障
-habitat\tn.栖息地,生存环境,产地
-halt\tv.停止,终止,暂停
-harbour\tn.港口,避难所,心怀
-hardship\tn.困苦,艰难,困难
-harmonize\tv.协调,和谐,配合
-harsh\tadj.严厉的,苛刻的,刺耳的
-hazard\tn.危险,风险,危害
-hinder\tv.阻碍,妨碍,阻止
-hint\tn.暗示,提示,线索
-hostile\tadj.敌对的,敌方的,敌意的
-hypothesis\tn.假设,假说,假设论
-identify\tv.确定,确认,识别
-ignore\tv.忽视,不理睬,不顾
-illustrate\tv.说明,阐明,举例说明
-imitate\tv.模仿,仿效,效仿
-immediately\tadv.立即,马上,立刻
-immunity\tn.免疫,豁免权,免除
-impact\tn.影响,冲击,效果
-impair\tv.损害,削弱,损伤
-impede\tv.阻碍,妨碍,阻止
-imperative\tadj.必要的,急需的,迫切的
-impressive\tadj.令人印象深刻的,令人钦佩的,给人留下深刻印象的
-in accordance with\t根据,依照,按照
-inaccessible\tadj.无法接近的,达不到的,难以获得的
-inaccurate\tadj.不准确的,错误的,不精确的
-inactive\tadj.不活跃的,不活动的,不活泼的
-inappropriate\tadj.不适当的,不合适的,不恰当的
-incentive\tn.激励,动机,鼓励
-induce\tv.诱导,引起,导致
-indulge\tv.放纵,沉迷,纵容
-infest\tv.大批出没于,寄生,遍布
-influence\tn.影响,感化,势力
-inherit\tv.继承,遗传,得到
-initial\tadj.最初的,开始的,首字母的
-initiate\tv.开始,发起,创始
-innate\tadj.天生的,先天的,与生俱来的
-installment\tn.分期付款,分期交付,部分
-integrate\tv.整合,融合,结合
-intelligence\tn.智力,情报,情报机构
-intense\tadj.强烈的,紧张的,热烈的
-interaction\tn.互动,相互作用,交流
-interference\tn.干涉,干扰,干预
-interior\tn.内部,内地,内政
-interrupt\tv.中断,打断,干扰
-introverted\tadj.内向的,性格内向的,思想内敛的
-invent\tv.发明,创造,虚构
-involve\tv.涉及,包含,参与
-isolate\tv.隔离,孤立,使隔绝
-jeopardize\tv.危及,使受到危险,置...于危险中
-keen\tadj.敏锐的,热心的,渴望的
-label\tn.标签,标记,标号
-lack\tv.缺乏,缺少,欠缺
-landscape\tn.风景,景色,地形
-legal\tadj.法律的,合法的,法定的
-legitimate\tadj.合法的,正当的,合理的
-likelihood\tn.可能性,几率,机会
-limb\tn.肢,臂,腿
-limitation\tn.限制,局限,限度
-linguistic\tadj.语言的,语言学的,语言上的
-link\tn.链接,联系,纽带
-log\tn.日志,记录,原木
-look-in\tn.偶尔拜访,顺便看一看
-lopsided\tadj.倾斜的,不平衡的,不对称的
-loss\tn.损失,丧失,亏损
-magnetic\tadj.磁的,有磁性的,磁力的
-main\tadj.主要的,重要的,根本的
-mainly\tadv.主要地,大部分,大体上
-make up\tv.组成,构成,弥补
-malfunction\tn.故障,失灵,机能失常
-mammal\tn.哺乳动物,兽类,哺乳类
-manage to do\t设法做到,成功做
-manifest\tv.表明,证明,显示
-manufacture\tv.制造,生产,加工
-marine\tadj.海的,海洋的,船舶的
-massive\tadj.巨大的,庞大的,大规模的
-mate\tn.伙伴,配偶,同伴
-measure\tv.衡量,测量,措施
-mechanism\tn.机制,机械装置,方法
-mental\tadj.精神的,心理的,智力的
-mercury\tn.水银,汞,水银温度计
-meteorological\tadj.气象的,气象学的,气象条件的
-method\tn.方法,办法,方式
-microbe\tn.微生物,细菌,微生物体
-migrate\tv.迁徙,移居,迁移
-military\tadj.军事的,军队的,军人的
-mimic\tv.模仿,仿效,模拟
-minimize\tv.最小化,减小,使减到最低程度
-modify\tv.修改,更改,调整
-moisture\tn.湿气,水分,湿度
-monitor\tv.监控,监测,监听
-moral\tadj.道德的,道德上的,品德的
-mortality\tn.死亡率,死亡人数,必死性
-motif\tn.主题,主旨,动机
-motivate\tv.激励,鼓励,使有动机
-motive\tn.动机,目的,动力
-mould\tn.模子,霉菌,模型
-municipal\tadj.市政的,地方自治的,市的
-native\tadj.本土的,本地的,当地的
-necessary\tadj.必要的,必需的,不可缺少的
-neglect\tv.忽视,忽略,疏忽
-nocturnal\tadj.夜间的,夜行性的,夜活的
-norm\tn.规范,标准,规范值
-notoriety\tn.声名狼藉,臭名昭著,恶名
-obey\tv.服从,听从,顺从
-objective\tadj.客观的,客观存在的,目标的
-obligation\tn.义务,责任,法定义务
-obscure\tadj.模糊的,晦涩的,不明了的
-obstacle\tn.障碍,阻碍,困难
-obtain\tv.获得,得到,获取
-odd\tadj.奇数的,奇怪的,古怪的
-odour\tn.气味,臭气,气息
-offensive\tadj.进攻的,攻击性的,冒犯的
-official\tadj.官方的,正式的,公务的
-offset\tv.抵消,补偿,弥补
-only\tadj.唯一的,仅有的,独一无二的
-opportunity\tn.机会,机遇,良机
-optimum\tadj.最佳的,最适宜的,最适合的
-option\tn.选项,选择,选择权
-ordinary\tadj.普通的,平常的,平凡的
-organ\tn.器官,机构,风琴
-organize\tv.组织,安排,筹备
-original\tadj.原始的,原先的,创新的
-out of the question\t不可能的,不可能的
-overcome\tv.克服,战胜,胜过
-overlook\tv.忽视,俯视,眺望
-overtake\tv.超过,赶上,压倒
-paralyse\tv.使瘫痪,使麻痹,使失去活力
-paramount\tadj.至上的,最重要的,主要的
-participate\tv.参与,参加,分享
-particular\tadj.特别的,特殊的,详细的
-patient\tn.病人,承受者
-pattern\tn.模式,图案,样式
-peak\tn.顶峰,最高点,山峰
-perceive\tv.感知,感觉到,察觉
-peripheral\tadj.外围的,周边的,辅助性的
-permit\tv.允许,许可,容许
-persuade\tv.说服,劝说,使相信
-pessimistic\tadj.悲观的,悲观主义的,厌世的
-phase\tn.阶段,时期,相位
-physical\tadj.身体的,物理的,肉体的
-plagiarise\tv.抄袭,剽窃,抄写
-plague\tn.瘟疫,鼠疫,灾祸
-plenty of\t大量的,丰富的,充足的
-plot\tn.情节,阴谋,地块
-portable\tadj.便携式的,轻便的,手提式的
-pose\tv.造成,引起,提出
-postpone\tv.推迟,延期,延迟
-potential\tadj.潜在的,可能的,潜力的
-potential\tn.潜力,潜能,可能性
-poverty\tn.贫困,贫穷,贫乏
-practice\tn.实践,练习,实行
-praise\tv.称赞,赞扬,夸奖
-predict\tv.预测,预言,预告
-prefer to\t更喜欢,更愿意
-preference\tn.偏爱,优先选择,偏好
-preliminary\tadj.初步的,预备的,开端的
-pressing\tadj.紧迫的,迫切的,急迫的
-prevent\tv.阻止,预防,防止
-primary\tadj.主要的,初级的,首要的
-principal\tadj.主要的,首要的,主要的
-principle\tn.原则,原理,准则
-priority\tn.优先权,重点,优先考虑的事
-private\tadj.私人的,个人的,私有的
-prohibit\tv.禁止,阻止,不准
-prolong\tv.延长,拖延,拉长
-promote\tv.促进,推进,提升
-prompt\tv.促使,迅速的,敏捷的
-proof\tn.证据,证明,证实
-property\tn.财产,性质,特性
-proportion\tn.比例,部分,份额
-prosper\tv.繁荣,兴旺,成功
-provision\tn.供应,条款,规定
-purify\tv.净化,提纯,精炼
-puzzle\tn.谜,难题,迷惑
-qualify\tv.有资格,使具有资格,证明合格
-quantity\tn.数量,量,大量
-quotation\tn.引用,报价,报价单
-radical\tadj.激进的,根本的,彻底的
-range\tn.范围,射程,山脉
-rare\tadj.罕见的,稀有的,珍贵的
-rate\tn.比率,速度,费率
-rather\tadv.宁愿,相当,有点儿
-rather than\t而不是,与其
-react\tv.反应,回应,起反应
-realistic\tadj.现实的,现实主义的,实际的
-realize\tv.实现,意识到,认识到
-recognize\tv.认识,承认,辨认
-record\tn.记录,唱片,纪录
-recreation\tn.娱乐,消遣,休闲
-reduction\tn.减少,缩减,降低
-refer to\t参考,提及,涉及
-regulation\tn.规定,法规,管理
-rehearsal\tn.排练,彩排,演习
-reject\tv.拒绝,排斥,否决
-relative\tadj.相对的,相对的,有关的
-relevant\tadj.相关的,切题的,中肯的
-reliance\tn.依赖,信任,信赖
-religious\tadj.宗教的,虔诚的,信仰的
-reluctant\tadj.不情愿的,勉强的,厌恶的
-rely on\t依靠,依赖,依赖于
-replace\tv.取代,更换,替换
-reproduce\tv.繁殖,再生,复制
-resemble\tv.类似,像,相似
-resistance\tn.抵抗,阻力,反对
-respond\tv.回应,响应,应对
-responsible\tadj.负责任的,有责任的,负责的
-restriction\tn.限制,约束,限定
-retain\tv.保留,保持,记住
-revision\tn.修订,复习,校订
-revive\tv.复苏,恢复,苏醒
-risk\tn.风险,危险,冒险
-rudimentary\tadj.基本的,初步的,原始的
-ruin\tv.毁坏,破坏,毁灭
-scenic\tadj.风景优美的,景色宜人的,风景如画的
-scope\tn.范围,领域,机会
-secrete\tv.分泌,隐匿,隐藏
-seek\tv.寻找,追求,探索
-setting\tn.环境,背景,设置
-settle\tv.解决,安顿,定居
-shade\tn.阴影,遮阳,色调
-shelter\tn.庇护所,避难所,掩蔽
-shift\tv.转移,移动,转换
-signal\tn.信号,暗号,标志
-similar\tadj.相似的,类似的,相似的
-skepticism\tn.怀疑论,怀疑态度,怀疑
-soar\tv.猛增,翱翔,飞涨
-solely\tadv.仅仅,唯一地,单独地
-solicitor\tn.律师,法律顾问,事务律师
-sophisticate\tv.使复杂化,使精密化,使复杂
-specific\tadj.具体的,特定的,详细的
-spoil\tv.破坏,损坏,宠坏
-spouse\tn.配偶,夫妻,夫或妻
-stable\tadj.稳定的,稳固的,牢固的
-standard\tadj.标准的,规范的,普遍的
-steer\tv.驾驶,引导,指导
-stem from\t起源于,源于,来自
-stimulate\tv.刺激,激发,促进
-stimulus\tn.刺激,激励,促进因素
-stress\tn.压力,强调,重音
-stride\tv.大步行走,跨越,跨步
-subdivide\tv.细分,划分,细分
-substance\tn.物质,实质,内容
-substitute\tv.替代,代替,替换
-subtle\tadj.微妙的,细微的,精妙的
-succumb\tv.屈服,服从,死亡
-sufficiency\tn.充足,足够,满足
-suit\tv.适合,适应,合适
-superior\tadj.优秀的,上等的,高尚的
-supersede\tv.取代,替代,代替
-supplement\tv.补充,增补,增补剂
-suppress\tv.抑制,镇压,压制
-supremacy\tn.至高无上,霸权,最高权力
-surpass\tv.超过,胜过,优于
-surrounding\tadj.周围的,环绕的,附近的
-surveillance\tn.监视,监督,侦察
-survive\tv.幸存,生存,活下来
-suspicious\tadj.可疑的,猜疑的,怀疑的
-sustainable\tadj.可持续的,能维持的,耐用的
-swift\tadj.迅速的,敏捷的,快速的
-syllabus\tn.教学大纲,课程表,纲要
-symbol\tn.象征,符号,标志
-symptom\tn.症状,征兆,表现
-synthetic\tadj.合成的,人造的,综合的
-talented\tadj.有才能的,有天赋的,有才华的
-tension\tn.紧张,张力,拉力
-term\tn.术语,条件,期限
-thanks to\t由于,因为,多亏
-that\tadj.那,那个,那样
-theme\tn.主题,主旨,主题曲
-therapy\tn.治疗,疗法,理疗
-threaten\tv.威胁,恐吓,危及
-throughout\tadv.在所有地方,自始至终,遍及
-tolerate\tv.容忍,忍受,宽恕
-toll\tn.伤亡人数,通行费,钟声
-toxic\tadj.有毒的,中毒的,有害的
-trace\tv.追踪,描绘,跟踪
-track\tn.轨迹,足迹,径路
-trait\tn.特征,特点,品质
-transcend\tv.超越,超出,胜过
-transit\tn.过境,运输,运送
-transmit\tv.传输,传递,传播
-tremendous\tadj.巨大的,惊人的,极大的
-trigger\tv.触发,引发,引爆
-tropical\tadj.热带的,热带地区的,热带性的
-unbiased\tadj.公正的,无偏见的,公平的
-underestimate\tv.低估,看轻,小看
-underlie\tv.位于...之下,成为...的基础,构成...的基础
-unexpectedly\tadv.出乎意料地,意外地,突然地
-uniform\tadj.一致的,统一的,相同的
-utilization\tn.利用,应用,运用
-valuable\tadj.宝贵的,有价值的,贵重的
-vanish\tv.消失,消散,突然不见
-variety\tn.种类,品种,变化
-vary\tv.变化,改变,不同
-vast\tadj.广阔的,巨大的,浩瀚的
-versatile\tadj.多才多艺的,多功能的,多用途的
-viable\tadj.可行的,能活下去的,能生存的
-vicinity\tn.附近,邻近,接近
-view\tn.视野,观点,意见
-violent\tadj.暴力的,猛烈的,激烈的
-virus\tn.病毒,病原体,恶意软件
-visible\tadj.可见的,明显的,看得见的
-visual\tadj.视觉的,视力的,形象的
-volume\tn.体积,卷,量
-vulnerable\tadj.脆弱的,易受伤害的,易受攻击的
-well-being\tn.幸福,福祉,健康
-wholesome\tadj.有益身心健康的,健康的,有益的
-witness\tn.目击者,证人,见证人
-wreck\tv.毁坏,破坏,失事
-yield\tv.产生,出产,屈服`,
-            `puma\tn.美洲狮
-spot\tv.看出，发现
-evidence\tn.证据
-accumulate\tv.积累，积聚
-oblige\tv.使…感到必须
-hunt\tn.追猎；寻找；v.打猎
-blackberry\tn.黑莓
-human\t人类
-corner\tv.使走投无路，使陷入困境；n.角落
-trail\tn.一串，一系列
-print\tn.印痕
-cling\tv.粘
-convince\tv.使…信服
-somehow\tad.不知怎么搞的，不知什么原因
-disturb\tv.令人不安
-equal\tv.等于
-vicar\tn.牧师
-raise\tv.募集，筹(款)
-torchlight\tn.电筒光
-goddess\tn.女神
-archaeologist\tn.考古学家
-aegean\ta.爱琴海的
-explore\tv.考察，勘探
-promontory\tn.海角
-prosperous\ta.(经济上)繁荣的，昌盛的
-civilization\tn.文明
-storey\tn.楼层
-drainage\tn.排水
-worship\tn.祟拜
-sacred\ta.宗教的，神圣的
-fragment\tn.碎片
-remains\tn.遗物，遗迹，废墟
-classical\ta.(希腊和罗马)古文化的
-reconstruct\tv.修复
-rest\tv.倚放，放置
-hip\tn.屁股，臀部
-full-length\ta.(裙衣)拖地长的
-graceful\ta.优雅的
-identity\tn.身份
-manual\ta.体力的
-collar\tn.衣领
-sacrifice\tv.牺牲，献出
-privilege\tn.好处，特权
-dustman\tn.清洁工
-corporation\tn.公司
-overalls\tn.工作服
-shower\tn.淋浴
-secret\tn.秘密
-status\tn.地位
-editor\tn.编辑
-extreme\tn.极端
-statistics\tn.统计数字
-journalist\tn.新闻记者
-president\tn.总统
-palace\tn.王宫；宏伟的住宅
-publish\tv.出版
-fax\tn.传真
-impatient\ta.不耐烦的
-fire\tv.解雇
-originally\tad.起初，原先，从前
-smash-and-grab \tn.砸窗户抢劫
-arcade\tn.有拱廊的街道(两旁常设商店)
-Piccadilly\tn.皮卡迪利大街（伦敦市中心一条著名的街道）
-jewellery\tn.珠宝(总称)
-necklace\tn.项链
-ring\tn.戒指；环形物
-background\tn.背景
-velvet\tn.天鹅绒，丝绒
-headlight\tn.(汽车等)前灯
-blare\tv.发嘟嘟声，吼叫
-staff\tn.全体工作人员
-raid\tn.偷袭
-scramble\tv.爬行
-fantastic\ta.非常大的
-ashtray\tn.烟灰缸
-mutilate\tv.使残缺不全，毁坏
-chew\tv.咀嚼
-fiancé\tn.未婚夫
-microwave\tn.微波，微波炉
-oven\tn.炉灶
-safekeeping\tn.妥善保管
-Newcastle\tn.纽卡斯尔(英国港口城市)
-identify\tv.鉴定，识别
-spokeswoman\tn.女发言人
-monastery\tn.寺院，修道院
-St.Bernard\t圣伯纳德
-pass\tn.关隘
-watchdog\tn.看门狗
-rashly\ta.莽撞地，冒失地
-enclosure\tn.围场，圈地
-monk\tn.和尚，僧侣,修道士
-privacy\tn.清静，隐居
-skier\tn.滑雪者
-Easter\tn.复活节
-fascinate\tv.迷住，吸引住
-affectionate\ta.充满深情的，柔情的
-mysterious\ta.神秘的，难以理解的
-submissive\ta.服从的，顺从的
-feline\ta.猫的
-independence\tn.独立，独立性
-high-rise\ta.高层的
-windowsill\tn.窗槛，窗台
-paratrooper\tn.伞兵
-squirrel\tn.松鼠
-air-resistance\tn.空气阻力
-impact\tn.冲击力
-Southampton\tn.南安普敦(英国港口城市)
-colossal\ta.庞大的,巨大的
-watertight\ta.不漏水的
-compartment\tn.(轮船的)密封舱
-flood\tv.充满水
-float\tv.漂浮，飘浮
-tragic\ta.悲惨的
-liner\tn.班船, 大客轮；班机
-voyage\tn.航行
-iceberg\tn.冰山
-lookout\tn.瞭望员
-collision\tn.碰撞
-narrowly\tad.刚刚，勉强地
-miss\tv.避开
-slight\ta.轻微的
-tremble\tv.震颤
-faint\ta.微弱的
-horror\tn.恐惧
-abandon\tv.抛弃
-plunge\tv.投入，跳入；陷入
-lifeboat\tn.救生船
-guilty\ta.犯罪的，违法的
-tolerant\ta.宽容的
-declare\tv.申报
-hardened\ta.有经验的
-professional\ta.职业的，专业的
-smuggler\tn.走私者
-officious\ta.爱管闲事的
-confidently\tad.自信地
-dreadful\ta.可怕的，一团糟的
-pounce\tv.猛抓，扑住
-perfume\tn.香水
-sarcastically\tad.讽刺地
-exempt\ta.被免除的
-duty\tn.税
-gel\tn.凝胶，发胶
-mixture\tn.混合物
-unscrew\tv.拧开
-nostril\tn.鼻孔
-chalk\tn.粉笔
-baggage\tn.行李
-desert\tv.(军队中)开小差
-unrealistic\ta.不真实的
-paradise\tn.天堂，乐土
-wretched\ta.可怜的，艰苦的
-starve\tv.挨饿
-element\tn.成分
-opportunity\tn.机会
-coral\tn.珊瑚
-Virgin\t维尔京群岛
-Miami\tn.迈阿密(美国最南的城市)
-dinghy\tn.救生筏，小船
-Caribbean\tn.加勒比海
-spear\t捕鱼枪
-lobster\tn.龙虾
-tanker\tn.油轮
-genuinely\tad.由衷地
-Robinson Crusoe\t鲁滨孙·克鲁索(《鲁滨孙漂流记》主人公)
-costume\tn.化装服
-consist\tv.由…组成
-sheet\tn.被单
-effective\ta.有明显效果的，有作用的; 生效的
-comfortable\ta.舒适的
-storeroom\tn.储藏室
-electricity\tn.电
-ammeter\tn.电表
-pace\tn.一步
-flee\tv.逃走
-slam\tv.砰地关上
-gangster\tn.歹徒，强盗
-Chicago\tn.芝加哥(美国城市)
-protection\tn.保护
-promptly\tad.准时地；迅速的
-destroy\tv.毁掉；消灭
-remarkable\ta.不寻常的
-band\tn.帮，团伙
-Florence\tn.佛罗伦萨(意大利城市)
-city-state\tn.(古代)城邦
-hire\tv.租出，雇佣
-prince\tn.(小附属国的)君主，诸侯；王子
-Florentine\tn.佛罗伦萨人
-funeral\tn.葬礼
-dedicate\tv.奉献，题献给
-memory\tn.纪念
-valiant\ta.英勇的
-appreciate\tv.欣赏，感激
-pocket\t零用钱
-rattle\tv.格格作响
-thrifty\ta.节俭的
-nephew\tn.侄子，外甥
-bounce\tv.弹起，跳起
-pavement\tn.人行道
-stick\tv.卡住，夹住，不能再动
-brigade\tn.旅，(消防)队
-grease\tn.润滑油
-prize\ta.珍贵的，宝贵的
-tie\tv.拴，系
-theft\tn.偷盗行为，偷盗案
-accuse\tv.指控
-deny\tv.否认
-ashamed\ta.感到羞耻，惭愧
-apologize\tv.道歉
-dye\tv.染
-suspension\tn.悬，吊
-agreeable\ta.宜人的
-situation\tn.地点，地方
-locate\tv.位于
-immortal\ta.永生的，流芳百世的
-Brooklyn\tn.布鲁克林
-Staten\tn.斯塔顿(岛)
-span\tn.跨度
-cable\tn.缆索
-concrete\tn.混凝土
-suspend\tv.悬挂
-length\tn.根，段; 长度
-estimate\tv.估计
-capacity\tn.承受量，容量
-immensity\tn.巨大
-elegant\ta.优美别致的
-faintly\tad.微细地
-current\tn.电流,水流,气流
-sculpture\tn.雕塑
-mistaken\ta.错误的
-gallery\tn.美术馆
-exhibit\tn.展品，陈列品
-oddly\tad.古怪的
-attach\tv.连，系
-sphere\tn.球体
-magnetize\tv.使磁化
-repel\tv.排斥
-flicker\tv.闪烁
-emit\tv.放射
-flash\tv.闪光；闪过
-prehistoric\ta.史前的，老掉牙的
-electronic\ta.电子的
-peculiar\ta.奇异的
-shock\tv.令人震惊，刺激人
-emotionally\tad.感情上
-dear\ta.亲爱的；珍贵的；昂贵的
-kidnapper\tn.绑架者，拐骗者
-considerable\ta.相当大的
-wealthy\ta.富的，有钱的
-orderly\ta.有规律的
-disappearance\tn.失踪
-anonymous\ta.匿名的
-ransom\tn.赎金
-cardboard\tn.硬纸板
-withdraw\tv.(从银行)取钱
-punctually\tad.准时地
-astound\tv.使吃惊
-pioneer\tn.先驱
-lord\tn.对(英国)贵族的尊称；勋爵
-Calais\tn.加来(法国港口城市)
-overland\ta.陆上的
-boxing\tn.拳击
-boxer\tn.拳击手
-bare\ta.赤裸的；空荡的
-prizefighter\tn.职业拳击手(尤指古时赤手拳击手)
-crude\ta.粗野的
-marquis\tn.侯爵
-technically\tad.严格根据法律意义地
-science\tn.科学
-popularity\tn.名望
-adore\tv.崇拜，爱戴；非常喜欢
-alike\tad.一样地
-fame\tn.名声
-eminent\ta.著名的，杰出的
-bitterly\tad.厉害地
-bet\tv.打赌
-academy\tn.专业学校
-extravagant\ta.浪费的，奢侈的
-poverty\tn.贫困
-run\tv.(戏剧，电影等)连演，连映
-lines\tn.(剧本中的)台词
-part\tn.剧中的角色，台词
-falter\tv.支吾，结巴说
-cast\tv.选派……扮演角色
-role\tn.角色
-aristocrat\tn.贵族
-imprison\tv.关押
-Bastille\tn.巴士底狱
-gaoler\tn.监狱长，看守
-colleague\tn.同事
-curtain\tn.(舞台上的)幕布
-reveal\tv.使显露;泄漏
-cell\tn.单人监房，监号
-blank\ta.空白的
-squint\tv.眯着(眼)看，瞄
-dim\ta.昏暗的
-sire\tn.(古用法)陛下
-proceed\tv.继续进行
-poison\tn.毒药
-illogical\ta.不合逻辑的，无章法的
-octopus\tn.章鱼
-delicacy\tn.美味，佳肴
-repulsive\ta.令人反感的，令人生厌的
-stomach\tn.胃
-turn\tv.感到恶心，反胃
-fry\tv.油炸
-fat\tn.(动物、植物)油
-abuse\tn.辱骂，责骂
-snail\tn.蜗牛
-luxury\tn.奢侈品，珍品
-associate\tv.联想到
-despise\tv.鄙视
-appeal\tv.引起兴致
-shower\tn.淋浴
-stroll\tn.溜达，散步
-impulse\tn.冲动
-dozen\tn.12个，一打
-fancy\tv.喜爱，喜欢
-skeleton\tn.骷髅
-Seemingly\tad.表面上地
-Respectable\ta.体面的，雅观的
-conceal\tv.隐藏，隐瞒
-vivid\ta.生动的
-dramatic\ta.令人激动的，扣人心弦的
-ruin\tv.毁坏
-heroine\tn.女主人公
-fiction\tn.小说
-varying\ta.不同的
-medicine\tn.医学
-guestroom\tn.(家庭中的)客房
-unpack\tvt.(从箱中)取出
-stack\tv.(整齐地)堆放，排放；n.堆
-underclothes\tn.内衣
-drawer\tn.抽屉
-petrify\tv.使惊呆
-dangle\tv.悬挂
-sway\tv.摇摆
-unsympathetic\ta.不表同情的，无动于衷的
-medical\ta.医学的
-impressive\ta.给人深刻印象的
-steamship\tn.蒸汽轮船
-vessel\tn.轮船，大木船
-era\tn.时期，时代
-Java\tn.爪哇(印度尼西亚一岛)
-rudder\tn.舵
-roll\tv.颠簸，摇摆
-steer\tv.掌握方向
-temporary\ta.临时的
-plank\tn.大块木板
-fit\tv.安装
-Equator\tn.赤道
-delay\tv.n.耽误
-influence\tv.影响
-pride\tv.骄傲
-taste\tn.鉴赏力;品尝
-exert\tv.施加
-subtle\ta.微妙的，难以捉摸的
-advertiser\tn.做广告的人
-classify\tv.分类
-magic\ta.有奇妙作用的
-sample\tn.样品
-devise\tv.设计，想出
-capture\tv.吸引，赢得
-manufacturer\tn.生产厂家，制造商
-wheelbarrow\tn.独轮手推车
-boot\tn.(汽车尾部的)行李箱
-ingredient\tn.配料
-crane\tn.起重机
-anticipate\tv.预期，预料
-philosopher\tn.哲学家
-wisdom\tn.智慧
-priest\tn.牧师
-spiritual\ta.精神上的
-grudge\tv.不愿给，舍不得给
-surgeon\tn.外科大夫
-passer-by\tn.过路人(复数passers-by)
-dignity\tn.尊严
-deliberately\tad.故意地
-consequence\tn.后果，结果
-afflict\tv.使苦恼，折磨
-ease\tn.容易
-nature\tn.大自然
-contempt\tn.蔑视
-envious\ta.嫉妒的
-wares\tn.货物，商品
-anchor\tv.抛锚停泊, 使固定
-deck\tn.甲板
-silverware\tn.银器
-tempt\tv.吸引；引诱
-bargain\tv.讨价还价; n.便宜货
-disembark\tv.下船上岸
-assail\tv.纠缠
-marble\tn.小玻璃球
-inscribe\tv.刻写，雕
-favour\tn.好处，优惠
-gesticulate\tv.(讲话时)打手势
-outrageous\ta.出人预料的；令人不悦的
-thrust\tv.硬塞给；强行挤进
-largely\tad.在很大程度上
-comic\ta.喜剧的，可笑的
-universal\ta.普遍的
-comedian\tn.滑稽演员，喜剧演员
-distasteful\ta.讨厌的
-pester\tv.一再要求，纠缠
-dread\tv.惧怕
-recovery\tn.康复
-plaster\tn.熟石膏
-console\tv.安慰，慰问
-hobble\tv.瘸着腿走
-compensate\tv.补偿
-mumble\tv.喃喃而语
-labourer\tn.劳动者(也做laborer)
-overnight\tad.一夜期间
-hay\tn.干草
-corn\tn.谷物
-moonlight\tn.月光
-conscientious\ta.认真的
-suspect\tv.怀疑
-desert\tv.(军队中)开小差
-regiment\tn.(军队)团
-action\tn.战斗
-recluse\tn.隐士
-lovable\ta.可爱的
-eccentric\tn.(行为)古怪的人
-disregard\tv.不顾，无视
-convention\tn.习俗，风俗
-conscious\ta.感觉（意识）到的
-invariably\tad.总是，经常地
-routine\tn.常规；惯例; a.常规的
-shrewd\ta.精明的
-eccentricity\tn.怪癖
-legendary\ta.传奇般的
-snob\tn.势利小人，谄上欺下的人
-intensely\tad.强烈地
-bedraggled\ta.拖泥带水的；又脏又湿的
-dump\tv.把……砰的一声抛下
-apologetic\ta.道歉的
-reprimand\tv.训斥
-stage\tv.暗中策划
-elaborate\ta.精心构思的；精致的
-salvage\tv.n.救助，营救，打捞;
-Barents\tn.巴伦支(海)
-sunken\ta.沉没的
-cargo\tn.货物
-bullion\tn.金条；银条
-scour\tv.彻底搜索
-chest\tn.大箱子
-contents\tn.(复数)所装的东西
-belongings\tn.(复数)所有物
-item\tn.物件
-cruiser\tn.巡洋舰
-find\tn.找到的物品
-log book\t航海日志
-piece\tv.拼成整体
-convoy\tv.n.护航
-torpedo\tv.用鱼雷攻击
-submarine\tn.潜水艇
-naval\ta.海军的
-ministry\tn.(政府的)部
-prelude\tn.序幕，前奏
-unforeseen\ta.意料之外的
-series\tn.系列
-catastrophe\tn.大祸，灾难
-crockery\tn.陶器，瓦器
-suburb\tn.郊区
-collide\tv.猛撞
-learner\tn.初学者
-panic\tn.惊慌，恐慌
-windscreen\tn.(汽车的)挡风玻璃
-alongside\tprep.在……的旁边，与……并排
-slide\tv.滑；回避
-stray\ta.迷失的，离群的；v.迷路，偏离
-confusion\tn.混乱
-greedily\tad.贪婪地
-devour\tv.狼吞虎咽地吃
-antique\tn.古董，古玩
-fascination\tn.魅力，迷惑力
-forbidding\ta.望而生畏的，望而却步的
-muster\tv.鼓起
-pretentious\ta.自命不凡的，矫饰的
-labyrinth\tn.迷宫
-musty\ta.陈腐的，发霉的
-rarity\tn.稀世珍品
-assorted\ta.各式各样的
-junk\tn.破烂货，废品
-carve\tv.镌刻
-dagger\tn.短剑，匕首
-litter\tv.杂乱地布满；n.垃圾
-dedicated\ta.专心致志的；全身心投入的
-bargain hunter\tn.到处找便宜货买的人
-dealer\tv.商人
-cherish\tv.期望，渴望；珍爱
-amply\tad.足够地
-masterpiece\tn.杰作
-mere\ta.仅仅的
-prize\ta.珍贵的，宝贵的
-miniature\ta.小巧的，小型的
-composition\tn.构图
-justice\tn.正义，公正；司法
-court\tn.法院
-law\tn.法律
-innocence\tn.无辜
-undertake\tv.承担，着手做
-arduous\ta.艰苦的，艰难的
-abstract\ta.抽象的
-concept\tn.概念，观念
-mete\t给予，处置
-interference\tn.干涉
-accord\tv.n.一致
-premises\tn.房屋
-convert\tv.转变，改变
-disused\ta.不再用的，废弃的
-fireplace\tn.壁炉
-muffle\tv.捂住，压抑
-chip\tv.砍，削，凿；碎裂
-blacken\tv.使变黑
-emerge\tv.(从某处)出现
-credulous\ta.轻信的
-improbable\ta.不大可能的
-obscure\ta.不起眼的；v.遮掩，模糊
-maidservant\tn.女仆，女佣
-presume\tv.假定
-wickedly\tad.心眼坏地，居心叵测地
-plot\tv.密谋
-downfall\tn.倒台，垮台
-naïve\ta.天真的
-unacceptable\ta.不能接受的
-conspire\tv.(事件)巧合促成
-incredible\ta.难以置信的
-resemblance\tn.相似
-scorn\tn.嘲弄，挖苦
-acquaint\tv.使了解
-reunite\tv.使团聚
-assume\tv.假定，认为
-express\tn.快车 a.高速的
-punctual\ta.准时的
-condition\tv.使习惯于
-unshakable\ta.不可动摇的
-faith\tn.信任
-cancel\tv.取消
-exceptionally\tad.例外地
-dislocate\tv.打乱(计划等)
-blame\tv.责怪
-consult\tv.请教，查阅
-direct\tad.径直地
-odd\ta.奇怪的，异常的
-reflect\tv.细想
-advantage\tn.优势
-mighty\ta.强大的，有力的
-dawdle\tv.慢吞吞地动或做
-chug\tv.咔嚓咔嚓地响
-lodge\tv.提出；n.小屋，(旅游区的)小旅馆
-complaint\tn.抱怨
-triumph\tn.胜利; v.战胜
-asterisk\tn.星号
-conduct\tv.引向，引导
-calendar\tn.历法，日历
-historian\tn.历史学家
-unique\ta.无与伦比的；独特的
-steadily\tad.不断地
-solely\tad.唯一地
-video\tn.录像
-CD-ROM\tn.(只读)光盘驱动器
-bewilder\tv.令人眼花缭乱
-deduce\tv.推断，推理
-scanty\ta.不足的，贫乏的
-mammoth\tn.(古生物)长毛象
-tusk\tn.獠牙，长牙，象牙
-nomad\tn.游牧民
-correlate\tv.使相互联系
-clue\tn.线索
-insignificant\ta.不重要的
-shed\tv.使流出，泻
-advent\tn.出现，到来，来临
-agriculture\tn.农业
-assumption\tn.假定，设想
-dot\tn.小圆点
-symbol\tn.符号
-engrave\tv.雕刻
-ivory\tn.象牙制品
-phase\tn.月相，天相
-primitive\ta.原始的
-depict\tv.描画，描绘
-rough\ta.崎岖不平的
-boulder\tn.大石块
-pit\tv.使得坑坑洼洼
-perturb\tv.使不安
-underestimate\tv.低估
-swerve\tv.急转弯
-scoop\tv.挖出
-hammer\tv.(用锤)击打，锤打
-ominously\tad.有预兆的，不祥的
-rip\tv.划破，撕，扯
-zigzag\tn."之"字形
-shallow\ta.浅的
-grind\tv.磨擦，磨
-petrol\tn.汽油
-stretch\tn.一大片(平地或水)
-obstacle\tn.障碍
-clump\tn.丛，簇
-fissure\tn.(石，地的)深缝
-renew\tv.重复；更新
-pleading\tn.恳求
-gear\tn.(汽车)排档
-astride\tprep.骑，跨
-crack\tn.缝隙
-halt\tn.停
-dashboard\tn.(汽车上的)仪表盘
-hoax\tn.骗局，戏弄
-deception\tn.欺骗，骗局
-self-respecting\ta.自重的，自尊的
-indulge\tv.使沉迷；享受
-pneumatic\ta.气动的
-drill\tn.钻
-silly\ta.无意义的，无聊的
-advance\ta.预先的，事先获得的
-archway\tn.拱形门楼
-remonstrate\tv.规劝，告诫
-ironically\tad.讽刺地
-permission\tn.许可
-grant\tv.同意，准予
-illusion\tn.幻想，错觉
-pastoral\ta.田园的
-breed\tv.培育
-rapture\tn.欣喜
-extol\tv.赞美，颂扬
-superior\ta.优越的
-cockcrow\tn.鸡叫
-twitter\tv.(鸟)吱吱叫，嘁嘁喳喳叫
-glint\tv.闪烁
-pasture\tn.牧场
-idyllic\ta.田园诗的
-virtually\tad.几乎，差不多
-dubious\ta.可疑的，怀疑的
-privilege\tn.好处，特权
-misery\tn.苦难
-acquaintance\tn.熟人
-treat\tn.难得的乐事，享受
-dweller\tn.居住者
-stagger\tv.摇晃，蹒跚
-exotic\ta.异乎寻常的，外来的
-glow\tn.白炽光
-descend\tv.下落，降临
-tuck\tv.缩进，隐藏
-obstinately\tad.固执地，顽固地
-caveman\tn.(远古)洞穴人
-pot-holing\tn.洞穴探险，洞穴探险运动
-solitude\tn.孤独，寂寞
-lure\tv.引诱，诱惑
-pot-holer\tn.洞穴探险者
-rambler\tn.漫步者，散步者
-undertaking\tn.任务，工作
-foresight\tn.预见；深谋远虑
-foretell\tv.预言
-Grenoble\tn.格里诺布尔
-chasm\tn.断层，裂口，陷坑
-flaw\tn.小裂缝；缺点，瑕疵
-distinguished\ta.杰出的，著名的
-Everest\tn.珠穆朗玛峰
-wade\tv.涉水
-waterfall\tn.瀑布
-gear\tn.(汽车)排档
-inflatable\ta.可充气的
-rubble\tn.碎瓦，瓦块
-insistent\ta.连续的，不断的
-boom\tv.轰响
-waterspout\tn.强大的水柱
-cleft\tn.裂隙，开口
-cavern\tn.大洞穴
-stalagmite\tn.石笋
-stalactite\tn.钟乳石
-limestone\tn.石灰石
-glisten\tv.闪烁
-eerie\ta.引起恐惧的，可怕的
-dome\tn.穹窿，圆顶
-insure\tv.投保
-fete\tn.游园会
-admittedly\tad.公认的
-purchase\tv.买
-annual\ta.一年一度的
-teenager\tn.(13岁至19岁的)青少年
-capsize\tv.(船)翻
-shiver\tv.打颤，发抖
-dive\tv.(头向下)跳水
-haul\tv.拖曳
-hawser\tn.粗缆绳
-rim\tn.(圆形物品的)外沿，边
-winch\tn.绞车(带有绞盘的车)
-premium\tn.保险费
-recover\tv.使……得到补偿，弥补
-agonizing\ta.精神紧张的，提心吊胆的
-perch\tv.处于(高处)
-precariously\tad.危险地，不稳固地
-overbalance\tv.失去平衡
-clamp\tn.夹钳，夹板
-vertically\tad.垂直地
-torrent\tn.激流，洪流
-rebound\tv.弹回
-positively\tad.绝对地，完全地
-compartment\tn.(轮船的)密封舱
-cramped\ta.窄小的
-stuffy\ta.憋气的，闷气的
-monotonous\ta.枯燥的，乏味的，单调的
-rhythm\tn.有节奏的运动
-click\tv.发出咔哒声
-lull\tv.催人欲睡
-snatch\tn.短时，片段
-sleeper\tn.(火车等的)卧铺
-fumble\tv.乱摸，摸索
-inspection\tn.检查
-inevitably\tad.必然地，不可避免地
-destination\tn.目的地
-exhaust\tv.使精疲力尽
-motorway\tn.快车道
-ferry\tn.渡船
-cruise\tn.巡游船
-civilize\tv.使文明
-spacious\ta.宽敞的
-seasick\ta.晕船的
-intimidate\tv.恐吓，恫吓
-disadvantage\tn.短处，缺点
-exhilaration\ta.使人高兴的，令人兴奋的
-escapist\tn.逍遥者，逃避现实者
-sip\tv.呷，啜
-champagne\tn.香槟酒
-refinement\tn.精心的安排
-Breathtaking\ta.激动人心的；不寻常的
-soar\tv.高飞，翱翔
-effortlessly\tad.不费力地
-landscape\tn.景色
-fresh\ta.精神饱满的
-uncrumpled\ta.没有垮下来
-democratic\ta.民主的
-restrict\tv.限制
-abuse\tn.辱骂，责骂
-contention\tn.论点
-quintuplet\tn.五胞胎之一
-obscurity\tn.默默无闻
-radically\tad.彻底地，完全地
-exclusive\ta.独占的，独家的
-untold\ta.数不尽地，无限的
-South\t南达科他州(美国)
-perpetual\ta.永久的
-nursery\tn.育婴室，保育室
-commercialization\tn.商品化
-commodity\tn.商品
-plead\tv.找(借口)，辩解
-ignorance\tn.无知，不懂
-publication\tn.出版物，出版
-newlyweds\tn.新婚夫妇
-gaily\tad.愉快地，高兴地
-leisure\tn.空闲
-keen\ta.热心的，渴望的
-advisory\ta.咨询的
-novice\tn.新手
-consumer\tn.消费者，顾客
-assemble\tv.装配，组装
-outlet\tn.出路，出口
-creative\ta.创造性的
-handyman\tn.手巧的人，能工巧匠
-resourceful\ta.足智多谋的
-fuse\tv.由于烧断保险丝而短路
-rickety\ta.要散架的，晃动的
-clog\tv.堵塞
-delusion\tn.错觉
-lawn mower\t割草机
-adjustment\tn.调整
-screw\tn.螺丝钉
-dismantle\tv.拆卸
-chunk\tn.(厚)块
-snap\tv.绷断
-insurmountable\ta.不能克服的，难以对付的
-jigsaw\tn.线锯
-nag\tv.唠叨不休
-rust\tv.生锈
-pollution\tn.污染
-overpopulated\ta.人口多的
-over-industrialized\ta.过度工业化的
-sheer\ta.纯粹的，不掺杂的
-worldwide\tad.在全世界
-overwhelm\tv.制服，使不知所措
-pollute\tv.污染
-pesticide\tn.杀虫剂
-fertilizer\tn.肥料
-salmonella\tn.沙门氏菌
-listeria\tn.利斯特杆菌
-vegetarian\tn.吃素的人
-organically-grown\ta.有机培植的(不施化肥和其他化学药品培植)
-insidious\ta.暗中为害的
-urban\ta.城市的
-burglar\tn.窃贼
-burgle\tv.入室偷窃
-scream\tv.尖叫
-profound\ta.极度的
-irritation\tn.烦躁
-incessantly\tad.连续不断地
-whine\tv.发呜呜声
-helicopter\tn.直升飞机
-maximum\ta.最大的
-technology\tn.技术
-contribution\tn.贡献
-mobile\ta.可移动的
-snore\tv.打鼾
-offender\tn.冒犯者
-staggering\ta.令人惊愕的
-trumpet\tv.吹号
-partner\tn.伙伴
-inaccessible\ta.难接近的，达不到的
-hospitable\ta.好客的
-hostile\ta.不友好的，有敌意的
-vicinity\tn.周围,附近
-architectural\ta.建筑的
-fresco\tn.壁画
-abruptly\tad.突然地，意外地
-tramp\tv.徒步行进
-moor\tv.(用绳、链、锚)系(船)
-ferry\tn.渡船
-straggle\tv.蔓延，散乱分布
-dilapidated\ta.陈旧破烂的，倒塌的
-sardine\tn.沙丁鱼，沙丁鱼罐头
-rag\tn.破烂衣服
-motionless\ta.不动的
-procession\tn.行列，成队的人群
-shawl\tn.披巾，围巾
-peer\tv.凝视，盯着
-quicken\tv.加快
-rambling\ta.杂乱无章的
-sentimentally\tad.感情上，多情地
-lavishly\tad.慷慨地，大方地
-immaculate\ta.清洁的，无污点的
-parquet\tn.镶木地板
-gleam\tv.发亮，闪光
-preside\tv.指挥
-invisible\ta.看不见的，无形的
-scrub\tv.擦拭，刷洗
-enlightened\ta.开明的，教化的
-fickleness\tn.变化无常
-unrelenting\ta.不屈不挠的，不松懈的
-disillusion\tv.使幻想破灭
-industriousness\tn.勤奋
-qualification\tn.资格，能力
-mirth\tn.欢笑，高兴
-stack\tv.(整齐地)堆放，排放；n.堆
-cellar\tn.地窖
-resolution\tn.决心
-mentally\tad.内心里
-compile\tv.编辑，编制
-formidable\ta.令人畏惧的
-recur\tv.再发生，又出现
-regularity\tn.规律性
-accomplishment\tn.成就
-attainment\tn.达到；成就，造诣
-inveterate\ta.根深蒂固的
-self-improvement\tn.自我完善
-scheme\tn.简单的计划，方案
-ambitious\ta.雄心勃勃的
-pitfall\tn.意外的困难，易犯的错误
-modest\ta.要求不过分的,谦虚的
-assiduously\tad.刻苦地
-self-discipline\tn.自我约束
-frame\tn.躯体
-betray\tv.暴露，显露
-troop\tv.成群结队地走动
-unsettle\tv.使不安
-taunt\tn.v.嘲笑，奚落人的话
-jibe\tn.嘲弄，挖苦
-good-humouredly\tad.和气地，心情好地
-wane\tv.逐渐变小，变弱
-diminish\tv.减少，缩小
-hypnotize\tv.使欲睡，使朦胧
-undoing\tn.祸根，毁灭的原因
-screen\tn.电视机屏幕
-full-time\ta.专职的
-technician\tn.技师
-software\tn.软件
-IBM\t国际商用机器公司
-DOS\t磁盘操作系统(Disk Operating System)
-Microsoft\tn.(美国)微软公司
-user-friendly\ta.容易操作的，好用的
-multimedia\ta.多媒体的
-alternative\ta.选择的
-diagnose\tv.诊断
-relieve\tv.减轻
-accountant\tn.会计
-repetitive\ta.重复的
-clerical\ta.办公室工作的
-Internet\tn.国际交互网
-network\tn.网络
-permanent\ta.永久的
-tint\tv.给染色
-delicate\ta.淡色的
-shade\tn.色度
-observant\ta.观察力敏锐的
-grayish\ta.浅灰色的
-dispel\tv.驱散，消除
-outlandish\ta.稀奇古怪的
-acquisition\tn.获得
-cosmetic\tn.化妆品
-outrageous\ta.出人预料的；令人不悦的
-fanciful\ta.想象出来的
-insoluble\ta.不可溶解的
-prompt\tv.敦促，激励
-exclusive\ta.独占的，独家的
-syllable\tn.音节
-bewilderment\tn.迷惑，糊涂
-freckle\tn.雀斑
-evidently\tad.显然地，明显地
-weird\ta.奇异的，古怪的
-concoction\tn.调制品
-intoxicate\tv.陶醉，得意忘形
-blank\ta.空白的
-discreetly\tad.谨慎地
-clutch\tv.抓住
-adorn\tv.装饰，打扮
-evolve\tv.逐渐形成
-high-handed\ta.高压的，专横的
-incompetent\ta.不够格的，不称职的
-over-zealously\tad.过分热情地
-safeguard\tv.保护
-parliamentary\ta.国会的
-qualified\ta.合格的
-grievance\tn.不平，冤屈
-Justiteombudsman\tn.(瑞典的)司法特派员
-ombudsman\tn.(瑞典和英国的)司法特派员
-secretive\ta.保密的
-correspondence\tn.来往信件
-alter\tv.改变
-accusation\tn.谴责，指控
-ascertain\tv.查出，查明
-prejudiced\ta.有偏见的，不公平的
-prompt\tv.敦促，激励
-insect\tn.昆虫
-wage\tv.进行(斗争)
-contaminate\tv.弄脏
-provocation\tn.惹怒
-spider\tn.蜘蛛
-wasp\tn.黄蜂
-moth\tn.飞蛾
-ant\tn.蚂蚁
-revulsion\tn.厌恶
-horde\tn.群
-uncanny\ta.神秘的，不可思议的
-erase\tv.擦，抹去
-praying mantis\t螳螂
-entranced\ta.出神的
-beetle\tn.甲虫
-sheltered\ta.伤不着的，无危险的
-luscious\ta.甘美的
-cluster\tn.一簇，一群
-aphid\tn.蚜虫
-underside\tn.底面，下侧
-colony\tn.一群
-sticky\ta.粘的
-scurry\tv.小步跑
-swarm\tv.聚集
-ingenuity\tn.机灵
-astronomy\tn.天文学
-relative\ta.相对的
-infinitely\tad.无限地，无穷地
-solar\ta.太阳系的
-Venus\tn.金星
-Mars\tn.火星
-orbit\tn.运行轨道
-astronomical\ta.天文学的
-generate\tv.产生
-particle\tn.微粒，粒子
-Jupiter\tn.木星
-blot\tv.遮暗
-analyse\tv.分析
-bacteria\tn.细菌
-oxygen\tn.氧气
-realm\tn.领域
-endeavour\tn.努力
-boundary\tn.界线；边界
-pump\tv.用泵抽
-overtake\tv.(坏天气、麻烦等)突然降临
-backwater\tn.回水河汊
-predecessor\tn.前任
-meadow\tn.草地，草场
-crown\tv.给…戴花环
-holly\tn.一种冬青植物
-wreath\tn.花环
-occurrence\tn.偶发事件
-proportion\tn.部分
-site\tv.使位于
-spell\tv.招致，带来
-stall\tn.牲口棚
-attic\tn.顶楼
-sweeping\ta.范围广大的
-critical\ta.危急的
-juncture\tn.时刻，关头
-raft\tn.木筏
-unduly\tad.过度地
-foundations\tn.地基
-stoutly\tad.牢固地，粗壮的
-submerge\tv.浸没
-grapple\tv.抓住
-alien\ta.异国的，外国的
-emigrate\tv.移居(国外)
-absorb\tv.全神贯注于
-embedded\ta.扎牢的
-mortally\tad.致命地
-comprehensive\ta.广泛的；丰富的
-milestone\tn.里程碑
-territory\tn.领地；地区
-milometer\tn.计程表
-spire\tn.(教堂的)塔尖
-retrace\tv.返回，重走
-stumble\tv.趔趄地走
-horizon\tn.地平线
-reservoir\tn.水库
-lurk\tv.潜藏
-hinder\tv.妨碍
-fingerprint\tn.指纹
-chaos\tn.混乱，无秩序
-inconceivable\ta.不可思议的
-veritable\ta.真正的，地地道道的
-magpie\tn.喜欢收藏物品的人
-toss\tv.扔
-discard\tv.丢弃
-constable\tn.警察
-ransack\tv.洗劫
-balcony\tn.阳台
-fussy\ta.大惊小怪的，小题大做的
-amass\tv.积聚，收集
-indiscriminate\ta.不加选择的
-clutter\tn.v.一堆杂物;乱糟糟地堆满
-string\tn.细线, 细绳
-requisite\tn.必需品
-mania\tn.癖好,狂热
-sketch\tn.草图，图样
-remote\ta.(机会，可能性)极少的，小的
-strong-minded\ta.意志坚强的
-relaxation\tn.休息，娱乐
-verify\tv.查证，核实
-bearing\tn.关系，联系
-like-minded\ta.志趣相投的
-specimen\tn.标本
-constructively\tad.有益的，积极的
-contented\ta.心满意足的
-boredom\tn.烦恼，无聊
-punctuality\tn.准时
-rural\tad.农村的
-disregard\tv.不顾，无视
-intellectual\tn.知识分子
-abstruse\ta.深奥的
-coordinate\tv.协调
-reproach\tv.责备
-puncture\tv.刺破(轮胎)
-diversion\tn.改道，绕道
-trial\tn.讨厌的事、人
-fraction\tn.很小一点儿
-flourish\tn.挥舞(打手势)
-microscopic\ta.微小的
-adamant\ta.坚定的，不动摇的`
-        ];
+transcend\t(v.) 超越,越过,超出
+`]
 
-        presetWordsButton1.addEventListener("click", () => {
-            fillWordList(presetWordLists[0]);
-        });
-
-        presetWordsButton2.addEventListener("click", () => {
-            fillWordList(presetWordLists[1]);
-        });
-
-        presetWordsButton3.addEventListener("click", () => {
-            fillWordList(presetWordLists[2]);
-        });
-
-        function fillWordList(presetWords) {
-            wordTranslationListInput.value = presetWords;
-        }
-
+                // 动态添加选项
+                let currentValue = 1;
+                options.forEach(function(option) {
+                    var opt = document.createElement("option");
+                    opt.value = option;
+                    opt.textContent = "Unit " + currentValue;
+                    selectElement.appendChild(opt);
+                    currentValue++;
+                });
+            }
     </script>
 </body>
 </html>
