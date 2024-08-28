@@ -94,17 +94,25 @@
             color: #888;
         }
 
-        .premade-articles {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
         .hidden {
             display: none;
         }
 
+        select {
+            appearance: none; /* 去掉默认样式 */
+            -webkit-appearance: none; /* Safari */
+            -moz-appearance: none; /* Firefox */
+            background-color: #fff; /* 背景颜色 */
+            border: 1px solid #ccc; /* 边框 */
+            border-radius: 5px; /* 圆角 */
+            padding: 10px; /* 内边距 */
+            font-size: 16px; /* 字体大小 */
+            color: #333; /* 字体颜色 */
+            cursor: pointer; /* 鼠标指针 */
+            width: 300px; /* 宽度 */
+            position: relative; /* 为伪元素定位 */
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -117,11 +125,9 @@
             <textarea id="chineseTranslation" rows="4" placeholder="在这里输入中文翻译."></textarea>
             <button onclick="startExercise()">开始回译练习</button>
 
-            <!-- 预制文章按钮 -->
-            <div class="premade-articles">
-                <button onclick="loadArticle(1)">A Puma at Large</button>
-                <button onclick="loadArticle(2)">An unknown goddess</button>
-            </div>
+            <select id="articleSelect" style="display: block;" onchange="handleSelectChange(this)">
+                <option value="" selected>点击选择-预置文章</option>
+            </select>
         </div>
     </div>
 
@@ -165,6 +171,7 @@
         var originalEnglishSentences = []; // 原始英文句子数组
         var originalChineseTranslations = []; // 原始中文翻译数组
         var currentSentenceIndex = 0; // 当前句子索引
+        initializeSelect();
 
         // 朗读当前句子
         function speakCurrentSentence() {
@@ -408,32 +415,196 @@
             errorArea.style.color = "black"; // 添加绿色提示
         }
 
-        // 加载预制文章
-        function loadArticle(articleNumber) {
+        function handleSelectChange(selectElement) {
+            // 获取下拉菜单的值
+            var selectedOption = selectElement.options[selectElement.selectedIndex];
+            document.getElementById("englishArticle").value = selectedOption.getAttribute("data-english");
+            document.getElementById("chineseTranslation").value = selectedOption.getAttribute("data-translation");
+        }
+
+        // 动态初始化 select 选项
+        function initializeSelect() {
+            var titles = [
+`L1 A puma at large 逃遁的美洲狮`, 
+`L2 Thirteen equals one 十三等于一`, 
+`L3 An unknown goddess 无名女神`, 
+`L4 The double life of Alfred Bloggs 阿尔弗雷德•布洛格斯的双重生活`,
+`L5 The facts 确切数字`,
+`L6 Smash-and-grab 砸橱窗抢劫`,
+`L7 Mutilated ladies 残钞鉴别组`,
+`L8 A famous monastery 著名的修道院`,
+`L9 Flying cats 飞猫`,
+`L10 The loss Of the Tianic “泰坦尼克”号的沉没`,
+`L11 Not guilty 无罪`,
+`L12 Life on a desert island 荒岛生活`,
+`L13 'It's only me' “是我，别害怕”`,
+`L14 A noble gangster 贵族歹徒`,
+`L15 Fitty pence worth of trouble 五十便士的麻烦`,
+`L16 Mary had a little lamb 玛丽有一头小羔羊`,
+`L17 The longest suspension bridge in the world 世界上最长的吊桥`,
+`L18 Electric currents in moder art 现代艺术中的电流`,
+`L19 A very dear cat 一只贵重的宝贝猫`,
+`L20 Pioneer pilots 飞行员的先驱`
+            ];
             var englishArticles = [
-`Where must the puma have come from?
-Pumas are large, cat-like animals which are found in America. When reports came into London Zoo that a wild puma had been spotted forty-five miles south of London, they were not taken seriously. However, as the evidence began to accumulate, experts from the Zoo felt obliged to investigate, for the descriptions given by people who claimed to have seen the puma were extraordinarily similar.
-The hunt for the puma began in a small village where a woman picking blackberries saw 'a large cat' only five yards away from her. It immediately ran away when she saw it, and experts confirmed that a puma will not attack a human being unless it is cornered. The search proved difficult, for the puma was often observed at one place in the morning and at another place twenty miles away in the evening. Wherever it went, it left behind it a trail of dead deer and small animals like rabbits. Paw prints were seen in a number of places and puma fur was found clinging to bushes. Several people complained of "cat-like noises' at night and a businessman on a fishing trip saw the puma up a tree. The experts were now fully convinced that the animal was a puma, but where had it come from? As no pumas had been reported missing from any zoo in the country, this one must have been in the possession of a private collector and somehow managed to escape. The hunt went on for several weeks, but the puma was not caught. It is disturbing to think that a dangerous wild animal is still at large in the quiet countryside`,
+`Pumas are large, cat-like animals which are found in America. When reports came into London Zoo that a wild puma had been spotted forty-five miles south of London, they were not taken seriously. However, as the evidence began to accumulate, experts from the Zoo felt obliged to investigate, for the descriptions given by people who claimed to have seen the puma were extraordinarily similar.
+The hunt for the puma began in a small village where a woman picking blackberries saw 'a large cat' only five yards away from her. It immediately ran away when she saw it, and experts confirmed that a puma will not attack a human being unless it is cornered. The search proved difficult, for the puma was often observed at one place in the morning and at another place twenty miles away in the evening. Wherever it went, it left behind it a trail of dead deer and small animals like rabbits. Paw prints were seen in a number of places and puma fur was found clinging to bushes. Several people complained of 'cat-like noises' at night and a businessman on a fishing trip saw the puma up a tree. The experts were now fully convinced that the animal was a puma, but where had it come from? As no pumas had been reported missing from any zoo in the country, this one must have been in the possession of a private collector and somehow managed to escape. The hunt went on for several weeks, but the puma was not caught. It is disturbing to think that a dangerous wild animal is still at large in the quiet countryside.`,
 
-`How did the archaeologists know that the statue was a goddess? 
-Some time ago, an interesting discovery was made by archaeologists on the Aegean island of Kea. An American team explored a temple which stands in an ancient city on the promontory of Ayia Irini. The city at one time must have been prosperous, for it enjoyed a high level of civilization. Houses - often three storeys high — were built of stone. They had large rooms with beautifully decorated walls. The city was even equipped with a drainage system, for a great many clay pipes were found beneath the narrow streets. 
-The temple which the archaeologists explored was used as a place of worship from the fifteenth century BC until Roman times. In the most sacred room of the temple, clay fragments of fifteen statues were found. Each of these represented a goddess and had, at one time, been painted. The body of one statue was found among remains dating from the fifteenth century BC. Its missing head happened to be among remains of the fifth century BC. This head must have been found in Classical times and carefully preserved. It was very old and precious even then. When the archaeologists reconstructed the fragments, they were amazed to find that the goddess turned out to be a very modern-looking woman. She stood three feet high and her hands rested on her hips. She was wearing a full-length skirt which swept the ground. Despite her great age, she was very graceful indeed. But, so far, the archaeologists have been unable to discover her identity. `
+`Our vicar is always raising money for one cause or another, but he has never managed to get enough money to have the church clock repaired. The big clock which used to strike the hours day and night was damaged many years ago and has been silent ever since.
+One night, however, our vicar woke up with a start: the clock was striking the hours! Looking at his watch, he saw that it was one
+our vicar woke up with a start o'clock, but the bell struck thirteen times before it stopped. Armed with a torch, the vicar went up into the clock tower to see what was going on. In the torchlight, he caught sight of a figure whom he immediately recognized as Bill Wilkins, our local grocer.
+'Whatever are you doing up here Bill?' asked the vicar in surprise.
+'I'm trying to repair the bell,' answered Bill. 'I've been coming up here night after night for weeks now. You see, I was hoping to give you a surprise.'
+'You certainly did give me a surprise!' said the vicar. "You've probably woken up everyone in the village as well. Still, I'm glad the bell is working again.'
+'That's the trouble, vicar,' answered Bill. 'It's working all right, but I'm afraid that at one o'clock it will strike thirteen times and there's nothing I can do about it.'
+'We'll get used to that, Bill,' said the vicar. "Thirteen is not as good as one, but it's better than nothing. Now let's go downstairs and have a cup of tea.'`,
+
+`Some time ago, an interesting discovery was made by archaeologists on the Aegean island of Kea. An American team explored a temple which stands in an ancient city on the promontory of Ayia Irini. The city at one time must have been prosperous, for it enjoyed a high level of civilization. Houses — often three storeys high — a very modern-looking woman were built of stone. They had large rooms with beautifully decorated walls. The city was even equipped with a drainage system, for a great many clay pipes were found beneath the narrow streets.
+The temple which the archaeologists explored was used as a place of worship from the fifteenth century BC until Roman times. In the most sacred room of the temple, clay fragments of fifteen statues were found. Each of these represented a goddess and had, at one time, been painted. The body of one statue was found among remains dating from the fifteenth century BC. Its missing head happened to be among remains of the fifth century BC. This head must have been found in Classical times and carefully preserved. It was very old and precious even then. When the archaeologists reconstructed the fragments, they were amazed to find that the goddess turned out to be a very modern-looking woman. She stood three feet high and her hands rested on her hips. She was wearing a full-length skirt which swept the ground. Despite her great age, she was very graceful indeed, but, so far, the archaeologists have been unable to discover her identity.`,
+
+`These days, people who do manual work often receive far more money than people who work in offices. People who work in offices are frequently referred to as 'white-collar workers' for the simple reason that they usually wear a collar and tie to go to work. Such is human nature, that a great many people are often willing to sacrifice higher pay for the privilege of becoming white-collar workers. This can give rise to curious situations, as it did in the case of Alfred Bloggs who worked as a dustman for the Ellesmere Corporation.
+When he got married, Alf was too embarrassed to say anything to his wife about his job. He simply told her that he worked for the Corporation. Every morning, he left home dressed in a smart black suit. He then changed into overalls and spent the next eight hours as a dustman. Before returning home at night, he took a shower and changed back into his suit. Alf did this for over two years and his fellow dustmen kept his secret. Alf's wife has never discovered that she married a dustman and she never will, for Alf has just found another job. He will soon be working in an office. He will be earning only half as much as he used to, but he feels that his rise in status is well worth the loss of money. From now on, he will wear a suit all day and others will call him 'Mr Bloggs', not 'Alf".`,
+
+`Editors of newspapers and magazines often go to extremes to provide their readers with unimportant facts and statistics. Last year a journalist had been instructed by a well-known magazine to write an article on the president's palace in a new African republic. When the article arrived, the editor read the first sentence and then refused to publish it. The article began: 'Hundreds of steps lead to the high wall which surrounds the president's palace.' The editor at once sent the journalist a fax instructing him to find out the exact number of steps and the height of the wall.
+The journalist immediately set out to obtain these important facts, but he took a long time to send them. Meanwhile, the editor was getting impatient, for the magazine would soon go to press. He sent the journalist two more faxes, but received no reply. He sent yet another fax informing the journalist that if he did not reply soon he would be fired. When the journalist again failed to reply, the editor reluctantly published the article as it had originally been written. A week later, the editor at last received a fax from the journalist. Not only had the poor man been arrested, but he had been sent to prison as well. However, he had at last been allowed to send a fax in which he informed the editor that he had been arrested while counting the 1,084 steps leading to the fifteen-foot wall which surrounded the president's palace.`,
+
+`The expensive shops in a famous arcade near Piccadilly were just opening. At this time of the morning, the arcade was almost empty. Mr Taylor, the owner of a jewellery shop was admiring a new window display. Two of his assistants had been working busily since eight o'clock and had only just finished. Diamond necklaces and rings had been beautifully arranged on a background of black velvet. After gazing at the display for several minutes, Mr Taylor went back into his shop.
+The silence was suddenly broken when a large car, with its headlights on and its horn blaring, roared down the arcade. It came to a stop outside the jeweller's. One man stayed at the wheel while two others with black stockings over their faces jumped out and smashed the window of the shop with iron bars. While this was going on, Mr Taylor was upstairs. He and his staff began throwing furniture out of the window. Chairs and tables went flying into the arcade. One of the thieves was struck by a heavy statue, but he was too busy helping himself to diamonds to notice any pain. The raid was all over in three minutes, for the men scrambled back into the car and it moved off at a fantastic speed. Just as it was leaving, Mr Taylor rushed out and ran after it throwing ashtrays and vases, but it was impossible to stop the thieves. They had got away with thousands of pounds worth of diamonds.`,
+
+`Has it ever happened to you? Have you ever put your trousers in the washing machine and then remembered there was a large bank note in your back pocket? When you rescued your trousers, did you find the note was whiter than white? People who live in Britain needn't despair when they make mistakes like this (and a lot of people do)! Fortunately for them, the Bank of England has a team called Mutilated Ladies which deals with claims from people who fed their money to a machine or to their dog. Dogs, it seems, love to chew up money!
+A recent case concerns Jane Butlin whose fiancé, John, runs a successful furniture business. John had a very good day and put his wallet containing £ 3,000 into the microwave oven for safekeeping. Then he and Jane went horse-riding. When they got home, Jane cooked their dinner in the microwave oven and without realizing it, cooked her fiancé's wallet as well. Imagine their dismay when they found a beautifully-cooked wallet and notes turned to ash! John went to see his bank manager who sent the remains of wallet and the money to the special department of the Bank of England in Newcastle: the Mutilated Ladies! They examined the remains and John got all his money back. 'So long as there's something to identify, we will give people their money back,' said a spokeswoman for the Bank. 'Last year, we paid £1,5m on 21,000 claims.'`,
+
+`The Great St Bernard Pass connects Switzerland to Italy. At 2,473 metres, it is the highest mountain pass in Europe. The famous monastery of St Bernard, which was founded in the eleventh century, lies about a mile away. For hundreds of years, St Bernard dogs have saved the lives of travellers crossing the dangerous Pass. These friendly dogs, which were first brought from Asia, were used as watchdogs even in Roman times. Now that a tunnel has been built through the mountains, the Pass is less dangerous, but each year, the dogs are still sent out into the snow whenever a traveller is in difficulty. Despite the new tunnel, there are still a few people who rashly attempt to cross the Pass on foot.
+During the summer months, the monastery is very busy, for it is visited by thousands of people who cross the Pass in cars. As there are so many people about, the dogs have to be kept in a special enclosure. In winter, however, life at the monastery is quite different. The temperature drops to -30° and very few people attempt to cross the Pass. The monks prefer winter to summer for they have more privacy. The dogs have greater freedom, too, for they are allowed to wander outside their enclosure. The only regular visitors to the monastery in winter are parties of skiers who go there at Christmas and Easter. These young people, who love the peace of the mountains, always receive a warm welcome at St Bernard's monastery.`,
+
+`Cats never fail to fascinate human beings. They can be friendly and affectionate towards humans, but they lead mysterious lives of their own as well. They never become submissive like dogs and horses. As a result, humans have learned to respect feline independence. Most cats remain suspicious of humans all their lives. One of the things that fascinates us most about cats is the popular belief that they have nine lives. Apparently, there is a good deal of truth in this idea. A cat's ability to survive falls is based on fact.
+Recently the New York Animal Medical Centre made a study of 132 cats over a period of five months. All these cats had one experience in common: they had fallen off high buildings, yet only eight of them died from shock or injuries. Of course, New York is the ideal place for such an interesting study, because there is no shortage of tall buildings. There are plenty of high-rise windowsills to fall from! One cat, Sabrina, fell 32 storeys, yet only suffered from a broken tooth. 'Cats behave like well-trained paratroopers,' a doctor said. It seems that the further cats fall, the less they are likely to injure themselves. In a long drop, they reach speeds of 60 miles an hour and more. At high speeds, falling cats have time to relax. They stretch out their legs like flying squirrels. This increases their air-resistance and reduces the shock of impact when they hit the ground.`,
+
+`The great ship, Titanic, sailed for New York from Southampton on April 10th, 1912. She was carrying 1,316 passengers and a crew of 891. Even by modern standards, the 46,000 ton Titanic was a colossal ship. At that time, however, she was not only the largest ship that had ever been built, but was regarded as unsinkable, for she had sixteen watertight compartments. Even if two of these were flooded, she would still be able to float. The tragic sinking of this great liner will always be remembered, for she went down on her first voyage with heavy loss of life.
+Four days after setting out, while the Titanic was sailing across the icy waters of the North Atlantic, a huge iceberg was suddenly spotted by a lookout. After the alarm had been given, the great ship turned sharply to avoid a direct collision. The Titanic turned just in time, narrowly missing the immense wall of ice which rose over 100 feet out of the water beside her. Suddenly, there was a slight trembling sound from below, and the captain went down to see what had happened. The noise had been so faint that no one thought that the ship had been damaged. Below, the captain realized to his horror that the Titanic was sinking rapidly, for five of her sixteen watertight compartments had already been flooded! The order to abandon ship was given and hundreds of people plunged into the icy water. As there were not enough lifeboats for everybody, 1,500 lives were lost.`,
+
+`Customs Officers are quite tolerant these days, but they can still stop you when you are going through the Green Channel and have nothing to declare. Even really honest people are often made to feel guilty. The hardened professional smuggler, on the other hand, is never troubled by such feelings, even if he has five hundred gold watches hidden in his suitcase. When I returned from abroad recently, a particularly officious young Customs Officer clearly regarded me as a smuggler.
+'Have you anything to declare?' he asked, looking me in the eye.
+'No,' I answered confidently.
+'Would you mind unlocking this suitcase please?'
+'Not at all,' I answered.
+The Officer went through the case with great care. All the things I had packed so carefully were soon in a dreadful mess. I felt sure I would never be able to close the case again. Suddenly, I saw the Officer's face light up. He had spotted a tiny bottle at the bottom of my case and he pounced on it with delight.
+'Perfume, eh?' he asked sarcastically. "You should have declared that. Perfume is not exempt from import duty?'
+'But it isn't perfume,' I said. 'It's hair gel.' Then I added with a smile, 'It's a strange mixture I make myself.'
+As I expected, he did not believe me.
+'Try it!' I said encouragingly.
+The Officer unscrewed the cap and put the bottle to his nostrils. He was greeted by an unpleasant smell which convinced him that I was telling the truth. A few minutes later, I was able to hurry away with precious chalk marks on my baggage.`,
+
+`Most of us have formed an unrealistic picture of life on a desert island. We sometimes imagine a desert island to be a sort of paradise where the sun always shines. Life there is simple and good. Ripe fruit falls from the trees and you never have to work. The other side of the picture is quite the opposite. Life on a desert island is wretched. You either starve to death or live like Robinson Crusoe, waiting for a boat which never comes. Perhaps there is an element of truth in both these pictures, but few of us have had the opportunity to find out.
+Two men who recently spent five days on a coral island wished they had stayed there longer. They were taking a badly damaged boat from the Virgin Islands to Miami to have it repaired. During the journey, their boat began to sink. They quickly loaded a small rubber dinghy with food, matches, and cans of beer and rowed for a few miles across the Caribbean until they arrived at a tiny coral island. There were hardly any trees on the island and there was no water, but this did not prove to be a problem. The men collected rainwater in the rubber dinghy. As they had brought a spear gun with them, they had plenty to eat. They caught lobster and fish every day, and, as one of them put it 'ate like kings'. When a passing tanker rescued them five days later, both men were genuinely sorry that they had to leave.`,
+
+`After her husband had gone to work, Mrs Richards sent her children to school and went upstairs to her bedroom. She was too excited to do any housework that morning, for in the evening she would be going to a fancy-dress party with her husband. She intended to dress up as a ghost and as she had made her costume the night before, she was impatient to try it on. Though the costume consisted only of a sheet, it was very effective. After putting it on, Mrs Richards went downstairs. She wanted to find out whether it would be comfortable to wear.
+Just as Mrs Richards was entering the dining room, there was a knock on the front door. She knew that it must be the baker. She had told him to come straight in if ever she failed to open the door and to leave the bread on the kitchen table. Not wanting to frighten the poor man, Mrs Richards quickly hid in the small storeroom under the stairs. She heard the front door open and heavy footsteps in the hall. Suddenly the door of the storeroom was opened and a man entered. Mrs Richards realized that it must be the man from the Electricity Board who had come to read the metre. She tried to explain the situation, saying 'It's only me', but it was too late. The man let out a cry and jumped back several paces. When Mrs Richards walked towards him, he fled, slamming the door behind him.`,
+
+`There was a time when the owners of shops and businesses in Chicago had to pay large sums of money to gangsters in return for 'protection'. If the money was not paid promptly, the gangsters would quickly put a man out of business by destroying his shop. Obtaining 'protection money' is not a modern crime. As long ago as the fourteenth century, an Englishman, Sir John Hawkwood, made the remarkable discovery that people would rather pay large sums of money than have their life work destroyed by gangsters.
+Six hundred years ago, Sir John Hawkwood arrived in Italy with a band of soldiers and settled near Florence. He soon made a name for himself and came to be known to the Italians as Giovanni Acuto. Whenever the Italian city-states were at war with each other, Hawkwood used to hire his soldiers to princes who were willing to pay the high price he demanded. In times of peace, when business was bad, Hawkwood and his men would march into a city-state and, after burning down a few farms, would offer to go away if protection money was paid to them. Hawkwood made large sums of money in this way. In spite of this, the Italians regarded him as a sort of hero. When he died at the age of eighty, the Florentines gave him a state funeral and had a picture painted which was dedicated to the memory of 'the most valiant soldier and most notable leader, Signor Giovanni Haukodue'.`,
+
+`Children always appreciate small gifts of money. Mum or dad, of course, provide a regular supply of pocket money, but uncles and aunts are always a source of extra income. With some children, small sums go a long way. If fifty pence pieces are not exchanged for sweets, they rattle for months inside money boxes. Only very thrifty children manage to fill up a money box. For most of them, fifty pence is a small price to pay for a nice big bar of chocolate.
+My nephew, George, has a money box but it is always empty. Very few of the fifty pence pieces and pound coins I have given him have found their way there. I gave him fifty pence yesterday and advised him to save it. Instead he bought himself fifty pence worth of trouble. On his way to the sweet shop, he dropped his fifty pence and it bounced along the pavement and then disappeared down a drain. George took off his jacket, rolled up his sleeves and pushed his right arm through the drain cover. He could not find his fifty pence piece anywhere, and what is more, he could not get his arm out. A crowd of people gathered round him and a lady rubbed his arm with soap and butter, but George was firmly stuck. The fire brigade was called and two fire fighters freed George using a special type of grease. George was not too upset by his experience because the lady who owns the sweet shop heard about his troubles and rewarded him with a large box of chocolates.`,
+
+`Mary and her husband Dimitri lived in the tiny village of Perachora in southern Greece. One of Mary's prize possessions was a little white lamb which her husband had given her. She kept it tied to a tree in a field during the day and went to fetch it every evening. One evening, however, the lamb was missing. The rope had been cut, so it was obvious that the lamb had been stolen.
+When Dimitri came in from the fields, his wife told him what had happened. Dimitri at once set out to find the thief. He knew it would not prove difficult in such a small village. After telling several of his friends about the theft, Dimitri found out that his neighbour, Aleko, had suddenly acquired a new lamb. Dimitri immediately went to Aleko's house and angrily accused him of stealing the lamb. He told him he had better return it or he would call the police. Aleko denied taking it and led Dimitri into his backyard. It was true that he had just bought a lamb, he explained, but his lamb was black. Ashamed of having acted so rashly, Dimitri apologized to Aleko for having accused him. While they were talking it began to rain and Dimitri stayed in Aleko's house until the rain stopped. When he went outside half an hour later, he was astonished to find that the little black lamb was almost white. Its wool, which had been dyed black, had been washed clean by the rain!`,
+
+`Verrazano, an Italian about whom little is known, sailed into New York Harbour in 1524 and named it Angoulême. He described it as 'a very agreeable situation located within two small hills in the midst of which flowed a great river.' Though Verrazano is by no means considered to be a great explorer, his name will probably remain immortal, for on November 21st, 1964, the longest suspension bridge in the world was named after him.
+The Verrazano Bridge, which was designed by Othmar Ammann, joins Brooklyn to Staten Island. It has a span of 4,260 feet. The bridge is so long that the shape of the earth had to be taken into account by its designer. Two great towers support four huge cables. The towers are built on immense underwater platforms made of steel and concrete. The platforms extend to a depth of over 100 feet under the sea. These alone took sixteen months to build. Above the surface of the water, the towers rise to a height of nearly 700 feet. They support the cables from which the bridge has been suspended. Each of the four cables contains 26,108 lengths of wire. It has been estimated that if the bridge were packed with cars, it would still only be carrying a third of its total capacity. However, size and strength are not the only important things about this bridge. Despite its immensity, it is both simple and elegant, fulfilling its designer's dream to create "an enormous object drawn as faintly as possible'.`,
+
+`Modern sculpture rarely surprises us any more. The idea that modern art can only be seen in museums is mistaken. Even people who take no interest in art cannot have failed to notice examples of modern sculpture on display in public places. Strange forms stand in gardens, and outside buildings and shops. We have got quite used to them. Some so-called 'modern' pieces have been on display for nearly eighty years.
+In spite of this, some people — including myself — were surprised by a recent exhibition of modern sculp-ture. The first thing I saw when I entered the art gallery was a notice which said: 'Do not touch the exhibits. Some of them are dangerous!' The objects on display were pieces of moving sculpture. Oddly shaped forms that are suspended from the ceiling and move in response to a gust of wind are quite familiar to everybody. These objects, however, were different. Lined up against the wall, there were long thin wires attached to metal spheres. The spheres had been magnetized and attracted or repelled each other all the time. In the centre of the hall, there were a number of tall structures which contained coloured lights. These lights flickered continuously like traffic lights which have gone mad. Sparks were emitted from small black boxes and red lamps flashed on and off angrily. It was rather like an exhibition of prehistoric electronic equipment. These peculiar forms not only seemed designed to shock people emotionally, but to give them electric shocks as well!`,
+
+`Kidnappers are rarely interested in animals, but they recently took considerable interest in Mrs Eleanor Ramsay's cat. Mrs Eleanor Ramsay, a very wealthy old lady, has shared a flat with her cat, Rastus, for a great many years. Rastus leads an orderly life. He usually takes a short walk in the evenings and is always home by seven o'clock. One evening, however, he failed to arrive. Mrs Rastus was in safe hands Ramsay got very worried. She looked everywhere for him but could not find him.
+Three days after Rastus' disappearance, Mrs Ramsay received an anonymous letter. The writer stated that Rastus was in safe hands and would be returned immediately if Mrs Ramsay paid a ransom of £1,000. Mrs Ramsay was instructed to place the money in a cardboard box and to leave it outside her door. At first, she decided to go to the police, but fearing that she would never see Rastus again - the letter had made that quite clear - she changed her mind. She withdrew £1,000 from her bank and followed the kidnapper's in-structions. The next morning, the box had disappeared but Mrs Ramsay was sure that the kidnapper would keep his word. Sure enough, Rastus arrived punctually at seven o'clock that evening. He looked very well, though he was rather thirsty, for he drank half a bottle of milk. The police were astounded when Mrs Ramsay told them what she had done. She explained that Rastus was very dear to her. Considering the amount she paid, he was dear in more ways than one!`,
+
+`In 1908 Lord Northcliffe offered a prize of £1,000 to the first man who would fly across the English Channel. Over a year passed before the first attempt was made. On July 19th, 1909, in the early morning, Hubert Latham took off from the French coast in his plane the 'Antoinette IV'. He had travelled only seven miles across the Channel when his engine failed and he was forced to land on the sea. The 'Antoinette' floated on the water until Latham was picked up by a ship.
+Two days later, Louis Bleriot arrived near Calais with a plane called 'No, XI'. Bleriot had been making planes since 1905 and this was his latest model. A week before, he had completed a successful overland flight during which he covered twenty-six miles. Latham, however, did not give up easily. He, too, arrived near Calais on the same day with a new 'Antoinette'. It looked as if there would be an exciting race across the Channel. Both planes were going to take off on July 25th, but Latham failed to get up early enough. After making a short test flight at 4,15 am, Bleriot set off half an hour later. His great flight lasted thirty-seven minutes. When he landed near Dover, the first person to greet him was a local policeman. Latham made another attempt a week later and got within half a mile of Dover, but he was unlucky again. His engine failed and he landed on the sea for the second time.`
             ];
-
             var chineseTranslations = [
-`美洲狮是从哪里来的？
-美洲狮是一种体形似猫的大动物，产于美洲。当伦敦动物园接到报告说，在伦敦以南45英里处发现一只美洲狮时，这些报告并没有受到重视。可是，随着证据越来越多，动物园的专家们感到有必要进行一番调查，因为凡是声称见到过美洲狮的人们所描述的情况竟是出奇地相似。
-搜寻美洲狮的工作是从一座小村庄开始的，那里的一位妇女在采摘黑莓时看见“一只大猫”，离她仅5码远，她刚看见它，它就立刻逃走了。专家证实，美洲狮除非被逼得走投无路，是决不会伤人的。事实上搜寻工作很困难，因为常常是早晨在甲地发现那只美洲狮，晚上却在20英里外的乙地发现它的踪迹。无论它走到哪儿，一路上总会留下一串死鹿以及死兔子之类的小动物。在许多地方看见了爪印，灌木丛中也发现了粘在上面的美洲狮毛。有人抱怨说夜里听见了“像猫一样的叫声”;一位商人去钓鱼，看见那只美洲狮在树上。专家们如今已经完全肯定那只动物就是美洲狮，但它是从哪儿来的呢?由于全国动物园没有一家报告丢了美洲狮，因此那只美洲狮一定是某位私人收藏家豢养的，不知怎么设法逃出来了。搜寻工作进行了好几个星期，但始终未能逮住那只美洲狮。想到在宁静的乡村里有一头危险的野兽继续逍遥流窜，真令人担心。`,
-                
-`考古学家是如何知道雕像是女神的呢？
-不久之前，在爱琴海的基亚岛上，考古工作者有一项有趣的发现。一个美国考古队在阿伊亚•依里尼海角的一座古城里考察了一座庙宇。这座古城肯定一度很繁荣，因为它曾享有高度的文明。房子一般有3层楼高，用石块修建。里面房间很大，墙壁装饰华丽。城里甚至还敷设了排水系统，因为在狭窄的街道底下发现了许许多多陶土制作的排水管道。考古工作者考察的这座庙宇从公元前15世纪直至罗马时代一直是祭祀祈祷的场所。在庙中最神圣的一间殿堂里发现了15尊陶制雕像的碎片。每一尊雕像代表一位女神，而且一度上过色。其中有一尊雕像，她的躯体是在公元前15世纪的历史文物中发现的。而她那身首异处的脑袋却碰巧是在公元前5世纪的文物中找到的。她的脑袋一定是在古希腊罗马时代就为人所发现，并受到了精心的保护。即使在当时，它也属历史悠久的珍奇之物。考古工作者把这些碎片重新拼装起来后，惊奇地发现那位女神原来是一位相貌十分摩登的女郎。她身高3英尺，双手叉腰。身穿一条拖地长裙。尽管上了年纪，但体态确实优美。不过，考古工作者至今未能确定这位女神的身份。`
+`美洲狮是一种体形似猫的大动物，产于美洲。当伦敦动物园接到报告说，在伦敦以南43英里处发现一只美洲狮时，这些报告并没有受到重视。可是，随着证据越来越多，动物园的专家们感到有必要进行一番调查，因为凡是声称见到过美洲狮的人们所描述的情况竟是出奇地相似。
+搜寻美洲狮的工作是从一座小村庄开始的，那里的一位妇女在采摘黑莓时看见“一只大猫”，离她仪5码远。她刚看见它，它就立刻逃走了，专家证实，美洲狮除非被逼得走投无路，是决不会伤人的。事实上搜寻工作很困难，因为常常是早晨在甲地发现那只美洲狮，晚上却在 20 英里外的乙地发现它的踪迹。无论它走到哪儿，一路上总会留下一串死鹿以及死兔子之类的小动物。在许多地方看见了爪印，灌木丛中也发现了粘在上面的美洲狮毛。有人抱怨说夜里听见了“像猫一样的叫声”；一位商人去钓鱼，看见那只美洲狮在树上。专家们如今已经完全肯定那只动物就是美洲狮，但它是从哪儿来的呢？由于全国动物园没有一家报告丢了美洲狮，因此那只美洲狮一定是某位私入收藏寒象养的，不知怎么设法逃出来了。搜寻工作进行了好几个星期，但始终来能逮住那只美洲狮。想到在宁静的乡村里有一头危险的野兽继续逍遥流窜，真令人担心。`,
+
+`我们教区的牧师总是为各种各样的事筹集资金，但始终未能筹足资金把教堂的钟修好。教堂的钟很大，以前不分昼夜打点报时，但在很多年前遭到毁坏，从此便无声无息了。
+一天夜里，我们的牧师突然被惊醒了，大钟又在“打点”报时了！他一看表，才1点钟，可是那钟一连敲了13下才停。牧师拿着一支电筒走上钟楼想去看看究竞发生了什么事情。借着电筒光，他看见一个人，马上认出那是本地杂货店店主比尔•威尔金斯。
+“你究竟在这上面干什么，比尔？”牧师惊讶地问。
+“我想把这口钟修好，”比尔回答说。“好几个星期了，我天天夜里到钟楼上来。嗯，我是想让你大吃一惊。”“你确实使我大吃了一惊！”牧师说。“也许同时你把村里所有的人都吵醒了。不过，钟又能报时了，我还是很高兴的。”
+“问题就在这里，牧师，”比尔问答说。“不错，钟是能报时了，但是，恐怕每到1点钟，它总要敲13下，对此我已无能为力了。”
+“大家慢慢就习惯了，比尔，”牧师说。“13下是不如1下好，但总比1下也不敲强。来，咱们下楼去喝杯茶吧。”`,
+
+`不久之前，在爱琴海的基亚岛上，考古工作者有一项有趣的发现。一个美国考古队在阿伊亚•依里尼海角的一座古城里考察了一座庙宇。这座古城肯定一度很繁荣，因火它曾享有高度的文明。房子一般有3层楼高，用石块修建。里面房间很大，堵壁装饰华丽。城里甚至还敷设了排水系统，因为在狭窄的街道底下发现了许许多多陶土制作的排水管道。
+考古工作者考察的这座庙宇从公元前15世纪直至罗马时代一直是祭祀祈祷的场所。在庙中最神圣的一间殿堂里发现了15尊陶制雕像的碎片。每一尊雕像代表一位女神，而且一度上过色。其中有一尊雕像，她的躯体是在公元前15纪的历史文物中发现的。而她那身首异处的脑袋却碰巧是在公元前5世纪的文物中找到的。她的脑袋一定是在古希腊罗马时代就为人所发现，并受到了精心的保护。即使在当时，它也属历史悠久的珍奇之物。考古工作者把这些碎片重新拼装起来后，惊奇地发现那位女神原来是一位相貌十分摩登的女郎。她身高3英尺，双手又腰。身穿一条拖地长裙。尽管上了年纪，但体态确实优美，不过，考古工作者至今未能确定这位女神的身份。`,
+
+`如今，从事体力劳动的人的收入一般要比坐办公室的人高出许多。坐办公室的人之所以常常被称作“白领工人”，就是因为他们通常是穿着硬领白衬衫、系着领带去上班。许多人常常情愿放弃较高的薪水以換取做白领工人的殊荣，此乃人之常情。而这常常会引起种种奇怪的现象，在埃尔斯米尔公司当清洁工的艾尔弗苗德•布洛格斯就是一个例子。
+艾尔弗结婚时，感到非常难为情，而没有将自己的职业告诉妻子。他只说在埃尔斯米尔公司上班。每天早晨，他穿上一身漂亮的黑色西装离家上班。然后换上工作服，当8个小时清洁工。晚上回家前，他洗个淋浴，重新换上那身黑色西服。两年多以来，艾尔弗一直这样，他的同事也为他保守秘密。艾尔弗的妻子一直不知道她嫁给了一个清洁工，而且她水远也不会知道了，因为艾尔弗已找到新职。不久就要坐在办公室里工作了。他将来挣的钱只有他现在的一半，不过他觉得，地位升高了，损失点儿钱也值得。从此，艾尔弗可以一天到晚穿西服了，别人将称呼他为“布洛格斯先生”，而不再叫他“艾尔弗”了。`,
+
+`报刊杂志的编辑常常为了向读者提供成立一些无关紧要的事实和统计数字而走向极端。去年，一位记者受一家有名的杂志的委托写一篇关于非洲某个新成立共和国总统府的文章。稿子寄来后，编辑看了第一句话就拒绝予以发表。文章的开头是这样的：“几百级台阶通向环绕总统府的高墙。”编辑立即给那位记者发去传真，要求他核实一下台阶的确切数字和围墙的高度。
+记者立即出发去核实这些重要的事实，但过了好长时间不见他把数字寄来。在此期间，编辑等得不耐烦了，因为杂志马上要付印。他给记者先后发去两份传真，但对方毫无反应。于是他又发了一份传真，通知那位记者说，若再不迅速答复，将被解雇。但记者还是没有回复，编辑无奈，勉强按原样发稿了。一周之后，编辑终于接到了记者的传真。那个可怜的记者不仅被捕了，而且还被送进了监狱。不过，他终于获准发回了一份传真，在传真中他告诉编辑，就在他数通向15英尺高的总统府围墙的1,084级台阶时，被抓了起来。`,
+
+`皮卡迪利大街附近的一条著名拱廊街道上，几家高档商店刚刚开始营业。在早晨的这个时候，拱廊街上几乎空无一人。珠宝店主泰勒先生正在欣赏新布置的橱窗。他手下两名店员从早上8点就开始忙碌，这时刚刚布置完毕。钻石项链、戒指漂亮地陈列在黑色丝绒上面。泰勒先生站在橱窗外凝神欣赏了几分钟就回到了店里。
+宁静突然被打破，一辆大轿车亮着前灯，响着喇叭，呼啸着冲进了拱廊街。在珠宝店门口停了下来。一人留在驾驶座上，另外两个用黑色长筒丝袜蒙面的人跳下车来，他们用铁棒把商店橱窗玻璃砸碎。这一切发生时，泰勒先生正在楼上。他与店员动手向窗外投掷家具。椅子、桌子飞落到拱廊街上。一个窃贼被一尊很重的雕像击中，但由于他忙着抢钻石音饰，竟连疼痛都顾不上了。这场抢劫只持续了3分钟，因为窃贼争先恐后地爬上轿车，以惊人的速度开跑了。就在轿车离开的时候，泰勒先生从店里冲了出来，跟在车后追赶，一边还往车上扔烟灰缸、花瓶，但他已无法抓住那些窃贼了。他们已经带着价值数干镑的首饰逃之夭夭了。`,
+
+`这种事情在你身上出现过吗？你有没有把裤子塞进洗衣机，然后又想起在裤子的后兜有一张大面值的纸币？当你把裤子抢救出来时，你有没有发现那张纸币已经变得比白纸还白？当英国人犯这种错误时，他们不必感到绝望（而许多国家的人都有这种绝望的感觉）。对英国人来说，值得庆幸的是英国银行有一个残钞鉴别组，负责处理那些把钱塞进机器或塞给狗的人提出的索赔要求。看起来，狗很喜欢咀嚼钱币。
+最近的一个案例与简•巴特林有关，她的未婚夫约翰拥有一家生意兴隆的家具店。有一天约翰的生意很好，他把一只装有3,000 英镑的钱包放进微波炉内保存。然后，他和简一起去骑马。回家后，简用微波炉煮了晚饭，无意之中把她未婚夫的钱包也一起煮了。可以想像他们发现一只煮得很好看的钱包、钞票已化成灰时的沮丧心情。约翰去找银行经理，经理把约翰的钱包和纸币的残留物送到英国银行在纽卡斯尔的一个专门部门一残钞鉴别组。他们鉴定了这些残留物，约翰拿回了他损失的全部数额。“只要有东西可供识别，我们会把钱还给人家的，”银行的一位女发言人说。“去年，我们对21,000 起索赔要求支付了150万英镑。”`,
+
+`圣伯纳德大山口连接着瑞士与意大利。海拔2,473米，是欧洲最高的山口。11世纪建造的著名的圣伯纳德修道院位于离山口1英里远的地方。几百年来，圣伯纳德修道院驯养的狗拯救了许多翻越这道山口的旅游者的生命。这些最先从亚洲引进的狗，待人友好，早在罗马时代就给人当看门狗了。如今由于在山里开挖了隧道，翻越山口已不那么危险了，但每年还要派狗到雪地里去帮助那些遇到困难的旅游者。尽管修通了隧道，但仍有一些人想冒险徒步跨越圣伯纳德山口。
+夏天的几个月里，修道院十分忙碌，因为有成千上万的人驾车通过山口，顺道来修道院参观。由于来人太多，狗被关在专门的围栏里。然而到了冬天，修道院里的生活则是另一番景象。气温下降到零下30度，试图跨越山口的人蜜寥无几。修道士们喜欢冬天，而不太喜欢夏天，因为在冬天，他们可以更多地过上无人打扰的生活。狗也比较自由，被放出围栏，四处遛达。冬天常来修道院参观的只有一批批滑雪者，他们在圣诞节或复活节到那儿去。这些热爱高山清静环境的年轻人每年都受到圣伯纳德修道院的热烈欢迎。`,
+
+`猫总能引起人们的极大兴趣。它们可以对人友好，充满柔情，但是，它们又有自己神秘的生活方式。它们从不像狗和马一样变得那么顺从。结果是人们已经学会尊重猫的独立性。在它们的一生中，大多数猫都对人存有戒心。最使我们感兴趣的一件事情就是一种通俗的信念——猫有九条命。显然，这种说法里面包含着许多真实性。猫在跌落时能够大难不死是有事实作为依据的。
+最近，纽约动物医疗中心对132只猫进行了为期5个月的综合研究。所有这些猫都有一个共同的经历：它们都曾从高层建筑上摔下来过，但只有其中的8只猫死于震荡或跌伤。当然，纽约是进行这种有趣的试验的一个理想的地方，因为那里根本不乏高楼大厦。有的是高层的窗槛从上往下坠落。有一只叫萨伯瑞娜的猫从32层楼上掉下来，但只摔断了一颗牙。“猫就像训练有素的跳伞队员，”一位医生说。看起来，猫跌落的距离越长它们就越不会伤害自己。在一个长长的跌落过程中，它们可以达到每小时60英里甚至更快的速度。在高速下落中，猫有时间放松自己。它们伸展开四肢，就像飞行中的松鼠一样。这样就加大了空气阻力，并减小了它们着地时冲击力带来的震动。`,
+
+`巨轮“泰坦尼克”号1912年4月10日从南安普敦起锚驶向纽约。船上载有1,316名乘客与891名船员。即便用现代标准来衡量，46,000吨的“泰坦尼克”号也算得上一艘巨轮了。当时，这艘轮船不仅是造船史上建造的最大的一艘船，而且也被认为是不会沉没的，因为船由16个密封舱组成。即使有两个舱进水，仍可漂浮在水面上。然而，这艘巨轮首航就下沉，造成大批人员死亡，人们将永远记着这艘巨轮的沉没惨剧。
+“泰坦尼克”起航后的第4天，它正行驶在北大西洋冰冷的海面上，突然，瞭望员发现一座冰山。警报响过不久，巨轮急转弯，以避免与冰山正面相撞。“泰坦尼克”这个弯拐得及时，紧贴着高出海面100英尺的巨大的冰墙擦过去。突然，从船舱下部传来一声轻微的颤音，船长走下船舱去查看究竟。由于这个声音非常轻，没人会想到船身已遭损坏。在下面，船长惊恐地发现“泰坦尼克”号正在急速下沉，16个密封舱已有5个进水。于是，他发出了弃船的命令，几百人跳进了冰冷刺骨的海水里。由于没有足够的救生艇运载所有乘客，结果1,500人丧生。`,
+
+`现在的海关官员往往相当宽容，但是，当你通过绿色通道，没有任何东西需要申报时，他们仍可以拦住你。
+甚至是最诚实的人也常被弄得觉得有罪似的。而老练的职业走私犯即使在手提箱里藏着500只金表，却也处之泰然。最近一次，我出国归来，碰上一位特别好管闲事的年轻海关官员，他显然把我当成了走私犯。
+“您有什么需要申报的吗？”他直盯着我的眼睛问。
+“没有，”我自信地回答说。
+“请打开这只手提箱好吗？”“好的，”我回答说。
+那位官员十分仔细地把箱子检查了一遍。所有细心包装好的东西一会儿工夫就乱成了一团。我相信那箱子再也关不上了。突然，我看到官员脸上露出了得意的神色。他在我的箱底发现了一只小瓶，高兴地一把抓了起来。
+“香水，嗯？”他讥讽地说道。“你刚才应该申报。香水要上进口税的。”
+“不，这不是香水，”我说。“是发胶。”接着我脸带微笑补充说：“这是一种我自己配制的奇特的混合物。”果不出所料，他并不相信我。
+“你就闻一闻吧！”我催促说。
+海关官员拾开瓶盖，把瓶子放到鼻子底下。一股怪味袭来，使他相信了我说的是真话。几分钟后，我终于被放行，手提划着宝费的粉笔记号的行李，匆匆离去。`,
+
+`我们许多人对于荒岛生活有一种不切实际的想法。我们有时想像荒岛是阳光终日普照的天堂。在那里，生活简单又美好。成熟的水果从树上掉下来，人们根本无需劳动。另一种想法恰恰相反。认为荒岛生活很可怕。要么饿死，要么像鲁滨孙那样，天天盼船来，却总不见船影。也许，这两种想像都有可信之处，但很少有人能有机会去弄个究竟。
+最近有两个人在一座珊瑚岛上呆了5天，他们真希望在那儿再多呆一些日子。他们驾着一条严重损坏的小船从维尔京群岛去迈阿密修理。途中，船开始下沉。他们迅速把食物、火柴、罐装啤酒往一只救生筏上装，然后在加勒比海上划行了几英里，到了一座珊瑚岛上。岛上几乎没有一棵树，也没有淡水，但这不算什么问题。他们用橡皮艇蓄积雨水。由于他们随身带了一支捕鱼枪，因此，吃饭不愁。他们天天捕捉龙虾和鱼，正如其中一位所说，吃得“像国王一样好”。5天后，一条油轮从那儿路过，搭救了他们，这二位不得不离开那个荒品时，还真的感到遗憾呢！`,
+
+`理查兹夫人等丈夫上班走后，把孩子送去上学，然后来到楼上自己的卧室。那天上午，她兴奋得什么家务活都不想做，因为晚上她要同丈夫一起去参加一个化装舞会。她打算装扮成鬼的模样，头天晚上她已把化装服做好，这时她急于想试试。尽管化装服仅由一个被单制成，却十分逼真。理查茲夫人穿上化装服后下了楼。想看看穿起来是否舒服。
+理查兹夫人刚刚走进餐厅，前门就传来敲门声。她知道来人一定是面包师。她曾告诉过面包师，如果她不去开门，他可直接进门，把面包放在厨房的桌上。理查兹夫人不想吓唬这个可怜的人，便赶紧躲到了楼梯下的小储藏室里。她听见前门被打开，走廊里响起了重重的脚步声。突然贮藏室门开了，一个男人走了进来。理查兹夫人这才想到一定是供电局来人查电表了。她说了声“是我，别怕”然后想进行一番解释，但已来不及了。那人大叫了一声，惊退了几步。理查兹夫人朝他走去，只见他“砰”的一声关上门逃走了。`,
+
+`曾经有一个时期，芝加哥的店主和商行的老板们不得不拿出大笔的钱给歹徒以换取“保护”。如果交款不及时，歹徒们就会很快捣毁他的商店，让他破产。榨取“保护金”并不是一种现代的罪恶行径。早在14世纪，英国人约翰•霍克伍德就有过非凡的发现：人们情愿拿出大笔的钱，也不愿毕生的心血毁于歹徒之手。
+600 年前，约翰•霍克伍德爵士带着一队士兵来到意大利，在佛罗伦萨附近驻扎下来。很快就出了名，意大利人叫他乔凡尼•阿库托。每次意大利各城邦之间打仗，霍克伍德便把他的士兵雇佣给愿给他出高价的君主。和平时期，当生意萧条时，霍克伍德便带领士兵进入某个城邦，纵火烧毁一两个农场，然后提出，如向他们缴纳保护金，他们便主动撤离。霍克伍德用这种方法挣了大笔钱。尽管如此，意大利人还是把他视作某种英雄。他80岁那年死去时，佛罗伦萨人为他举行了国葬，并为他画像以纪念这位“骁勇无比的战士、杰出的领袖乔凡尼•阿库托先生”。`,
+
+`孩于们总是喜欢得到一些零花钱。爸爸妈妈当然经常会给孩子攀花钱，但是，叔舅婶姨也是孩子们额外收入的来源。对于有些孩子来说，少量的钱可以花很长一段时间。如果50便士不拿来换糖吃，则可以放在储蓄罐里叮当响上好几个月。但是能把储蓄罐装满的只有屈指可数的几个特别节俭的孩子。对大部分孩子来说，用50便士来买一大块好的巧克力，是算不了什么的。
+我的外甥乔治有一个储蓄罐，但总是空空的。我给了他不少50便士的硬币，但没有几个存到储蓄罐里。昨天，我给了他50便士让他存起来。他却拿这钱给自己买了50便士的麻烦。在他去糖果店的路上，50便士掉在地上，在人行道上跳了几下，掉进了阴沟里。乔治脱掉外套，卷起袖子，将右胳膊伸进了阴沟盖。但他摸了半天也没找到那50便士硬币，他的胳膊反倒退不出来了。这时在他周围围上了许多人，一位女士在乔治胳膊上抹了肥皂、黄油，但乔治的格膊仍然卡得紧紧的。有人打电话叫来消防队，两位消防队员使用了一种特的润滑剂才使乔治得以解脱。不过，此事并没使乔治过于伤心，因为糖果店老板娘听说了他遇到的麻烦后，赏给了他一大盒巧克力。`,
+
+`玛丽与丈夫迪米特里住在希腊南部一个叫波拉考拉的小村庄里。玛丽最珍贵的财产之一就是丈夫送给她的一只白色小羔羊。白天，玛丽把羔羊拴在地里的一棵树上，每天晚上把它牵回家。可是，一天晚上，那只小羔羊失踪了。绳子被人割断，很明显小羔羊是被人偷走了。
+迪米特里从地里回来，妻子把情况跟他一说。他马上出去找偷羔羊的人。他知道在这样一个小村庄里抓住小偷并不困难。把失窃的事告诉几个朋友后，迪米特里发现他的邻居阿列科家突然多了一只小羔羊。迪米特里立刻去了阿列科家，气呼呼地指责他偷了羔羊。告诉他最好把羊交还，否则就去叫警察。阿列科不承认，并把迪米特里领进院子。不错，他的确刚买了一只羔羊，阿列科解释说，但他的羔羊是黑色的。迪米特里为自己的鲁莽而感到不好意思，向阿列科道了歉，说是错怪了他。就在他俩说话的时候，天下起了雨，迪米特里便呆在阿列科家里避雨，一直等到雨停为止。半小时后，当他从屋里出来时，他惊奇地发现小黑羔羊全身几乎都变成了白色。原来羊毛上染的黑色被雨水冲掉了！`,
+
+`1524年，一位鲜为人知的意大利人维拉萨诺驾船驶进纽约港，并将该港命名为安古拉姆。他对该港作了这样的描述：“地理位置十分适宜，位于两座小山的中间，一条大河从中间流过”。虽然维拉萨诺绝对算不上一个伟大的探险家，但他的名字将流芳百世，因为1964年11月21日建成的一座世界上最长的吊桥是以他的名字命名的。
+维拉萨诺大桥由奥斯马•阿曼设计，连结着布鲁克林与斯塔顿岛。桥长4,260英尺。由于桥身太长，设计者不得不考虑了地表的形状。两座巨塔支撑着4根粗大的钢缆。塔身建在巨大的水下钢筋混凝土平台上。平台深入海底100英尺。仅这两座塔就花了16个月才建成。塔身高出水面将近700英尺。高塔支撑着钢缆，而钢缆又悬吊着大桥。4根钢缆中的每根由26，108股钢绳组成。据估计，若桥上摆满了汽车，也只不过是桥的总承载力的1/3。然而，这座桥的重要特点不仅是它的规模与强度。尽管此桥很大，但它的结构简单，造型优美，实现了设计者企图创造一个“尽量用细线条勾画出一个庞然大物”的梦想。`,
+
+`现代雕塑不再使我们感到惊讶了。那种认为现代艺术只能在博物馆里才能看到的观点是错误的。即使是对艺术不感兴趣的人也不会不注意到在公共场所展示的现代艺术品。公园里、大楼和商店外竖立着的奇形怪状的雕塑。对这些，我们已经司空见惯了。有些所谓的“现代”艺术品在那里已经陈列了近80年了。
+尽管如此，最近举办的一次现代雕塑展览还是使一些人（包括我在内）大吃了一惊。走进展厅首先看到的是一张告示，上面写着：“切勿触摸展品。某些展品有危险！”展品都是些活动的雕塑。人们所熟悉的是悬挂在天花板上、造型奇特、随风飘荡的雕塑品。这些展品都使人大开眼界。靠墙排列着许多细长的电线，而电线又连着金属球。金属球经过磁化，互相之间不停地相互吸引或相互排斥。展厅中央是装有彩色灯泡的许多高高的构件。灯泡一刻不停地闪烁着，就像失去了控制的红绿灯。小黑盒子里迸出火花，红色灯泡发怒似地忽明忽暗。这儿倒像是在展览古老的电子设备。好像设计这些奇形怪状的展品不仅是为了给人感情上的强烈刺激，而且还想给人以电击似的！`,
+
+`绑架者很少对动物感兴趣，最近，绑架者却盯上了埃莉诺•拉姆齐太太的猫。埃莉诺•拉姆齐太太是一个非常富有的老妇人，多年来，一直同她养的猫拉斯特斯一起住在一所公寓里。拉斯特斯生活很有规律。傍晚常常出去溜达一会儿，并且总是在7点钟以前回来。可是，有一天晚上，它出去后再也没回来。拉姆齐太太急坏了。四处寻找，但没找着。
+拉斯特斯失踪3天后，拉姆齐太太收到一封匿名信。写信人声称拉斯特斯安然无恙，只要拉姆齐太太愿意支付1,000英镑赎金，可以立即将猫送还。他让拉姆齐太太把钱放在一个纸盒里，然后将纸盒放在门口。一开始拉姆齐太太打算报告警察，但又害怕再也见不到拉斯特斯了——这点，信上说得十分明白——于是便改变了主意。她从银行取出1,000英镑，并照绑架者的要求做了。第二天早晨，放钱的盒子不见了，但拉姆齐太太确信绑架者是会履行诺言的。果然，当天晚上7点正，拉斯特斯准时回来了。它看上去一切正常，只是口渴得很，喝了半瓶牛奶。拉姆齐太太把她所做的事告诉了警察，警察听后大为吃惊。拉姆齐太太解释说她心疼她的猫拉斯特斯。想到她所花的那笔钱，她的心疼就具有双重意义了。`,
+
+`1908年，诺斯克利夫勋爵拿出1,000英镑，作为对第一个飞越英吉利海峡的人的奖励。然而一年多过去了才有人出来尝试。1909年7月19日凌晨，休伯特•莱瑟姆驾驶“安特瓦奈特4号”飞机从法国海岸起飞。但他只在海峡上空飞行了7英里，引擎就发生了故障，他只好降落在海面上。“安特瓦奈特”号飞机在海上漂浮，后来有船经过，莱瑟姆方才获救。
+两天之后，路易斯•布莱里奥驾驶一架名为“11号”的飞机来到加来附近。布菜里奥从1905年起便开始研制飞机，“11号”飞机是他制作的最新型号。一周以前，他曾成功地进行了一次26英里的陆上飞行。但是柴瑟姆不肯轻易罢休。同一天，他驾驶一架新的“安特瓦奈特”号飞机来到了加来附近。看来会有一场激烈的飞越英吉利海峡的竞争。两架飞机都打算在7月25日起飞，但莱瑟姆那天起床晚了。布莱里奥凌晨4点15分作了一次短距离试，半小时后便正式出发了。他这次伟大的飞行持续了37分钟。当他在多佛着陆后，第一个迎接他的是当地一名警察。莱瑟姆一周以后也作了一次尝试，飞到了离多佛不到半英里的地方，这次他又遭厄运。因引擎故障第二次降落在海面上。`
             ];
 
-            document.getElementById("englishArticle").value = englishArticles[articleNumber - 1];
-            document.getElementById("chineseTranslation").value = chineseTranslations[articleNumber - 1];
-
-            currentSentenceIndex = 0;
-            // startExercise();
+            var select = document.getElementById("articleSelect");
+            for (var i = 0; i < englishArticles.length; i++) {
+                var option = document.createElement("option");
+                option.value = i + 1; // 文章编号从 1 开始
+                option.textContent = titles[i];
+                option.setAttribute("data-english", englishArticles[i]); // 保存英文文章
+                option.setAttribute("data-translation", chineseTranslations[i]); // 保存中文翻译
+                select.appendChild(option);
+            }
         }
     </script>
 </body>
