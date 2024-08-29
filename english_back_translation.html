@@ -136,6 +136,7 @@
             <div>
                 <button onclick="returnToInitial()">&lt; 返回</button>
                 <button onclick="resetCurrentSentence()">重置当前句子</button> <!-- 新增按钮 -->
+                <button onclick="stopReading()">停止</button>
             </div>
         </div>
 
@@ -145,10 +146,10 @@
 
         <!-- 文章导航区域 -->
         <div class="area">
-            <button onclick="prevSentence()">&lt; 上一句</button>
-            <button onclick="speakCurrentSentence()">快速朗读</button>
-            <button onclick="speakCurrentSentenceSlow()">慢速朗读</button>
-            <button onclick="nextSentence()">下一句 &gt;</button>
+            <button onclick="prevSentence()">&lt;前一句(Ctrl+A)</button>
+            <button onclick="speakCurrentSentence()">快速朗读(Ctrl+S)</button>
+            <button onclick="speakCurrentSentenceSlow()">慢速朗读(Ctrl+D)</button>
+            <button onclick="nextSentence()">&gt;后一句(Ctrl+F)</button>
         </div>
         
         <!-- 中文翻译区域 -->
@@ -278,6 +279,7 @@
 
         // 上一句
         function prevSentence() {
+            stopReading();
             if (currentSentenceIndex > 0) {
                 currentSentenceIndex--;
                 startExercise();
@@ -288,6 +290,7 @@
 
         // 下一句
         function nextSentence() {
+            stopReading();
             if (currentSentenceIndex < originalEnglishSentences.length - 1) {
                 currentSentenceIndex++;
                 startExercise();
@@ -309,6 +312,10 @@
             translationArea.innerHTML += '<div class="card" onclick="removeFromTranslation(this)">' + word + '</div>';
 
             checkSentence(); // 检查句子是否正确
+        }
+
+        function stopReading() {
+            window.speechSynthesis.cancel();
         }
 
         function speakText(text, speed = 1.0) {
@@ -414,6 +421,29 @@
             errorArea.innerText = "很好,目前词序没有问题!"; // 清空错误提示
             errorArea.style.color = "black"; // 添加绿色提示
         }
+
+        document.addEventListener('keydown', function(event) {
+            // 检查是否按下了 Command (Meta) 或 Ctrl 或 Alt + S
+            if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 's') {
+                event.preventDefault(); // 阻止默认的行为
+                speakCurrentSentence();
+            }
+
+            if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 'd') {
+                event.preventDefault();
+                speakCurrentSentenceSlow();
+            }
+
+            if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 'a') {
+                event.preventDefault();
+                prevSentence();
+            }
+
+            if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 'f') {
+                event.preventDefault();
+                nextSentence();
+            }
+        });
 
         function handleSelectChange(selectElement) {
             // 获取下拉菜单的值
