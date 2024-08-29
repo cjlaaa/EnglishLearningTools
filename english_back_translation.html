@@ -13,24 +13,25 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: left;
             background-color: #f0f0f0;
-            padding: 20px;
+            margin: 0;
+            padding: 0;
         }
-
         .container {
             max-width: 800px;
-            margin: 0 auto;
+            margin: 50px auto;
+            padding: 20px;
             background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .area {
-            margin-bottom: 20px;
-            padding: 15px;
+            margin-bottom: 10px;
+            margin-top: 10px;
+            padding: 5px;
             border: 1px solid #ddd;
             border-radius: 8px;
         }
@@ -41,21 +42,23 @@
 
         textarea {
             width: 100%;
-            min-height: 50px;
             padding: 10px;
             border: 1px solid #ccc;
-            border-radius: 4px;
-            resize: vertical;
+            border-radius: 5px;
+            resize: vertical; /* 允许垂直拉伸 */
+            box-sizing: border-box; /* 修复输入框显示 */
+            margin: 0; /* 居中显示 */
         }
 
         button {
-            padding: 10px 20px;
             background-color: #007bff;
             color: #fff;
             border: none;
+            padding: 6px 12px; /* 减小内边距 */
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s;
+            margin-top: 5px;
         }
 
         button:hover {
