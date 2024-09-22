@@ -166,6 +166,7 @@
         <div class="container" id="inputArea">
             <textarea id="wordList" rows="10" placeholder="在此处输入英文单词与中文翻译,每行只能放一组英文单词与中文翻译,中间用tab符隔开(注意为了支持英文词组和中文翻译标点,这里的分隔符不支持空格或其他符号).建议使用excel两列分别输入英文单词和中文翻译并一一对应,然后框选后复制并粘贴到这里即可直接开始游戏."></textarea>
             <button onclick="startQuiz()">开始听写</button>
+            <button id="autoPlayBtn1" onclick="toggleAutoPlay()">自动朗读已开启</button>
             <div>
                 <select id="mySelect" onchange="handleSelectChange()">
                     <option value="" selected>点击选择-剑桥雅思词汇精讲精练</option>
@@ -179,6 +180,7 @@
                 <button onclick="playAudio()">朗读(Ctrl+S)</button>
                 <button onclick="toggleWordDisplay()">显隐单词(Ctrl+D)</button>
                 <button onclick="toggleTranslationDisplay()">显隐翻译(Ctrl+F)</button>
+                <button id="autoPlayBtn2" onclick="toggleAutoPlay()">自动朗读已开启</button>
                 <button onclick="restart()">直接重开</button>
             </div>
             <div id="progress" class="area"></div>
@@ -268,7 +270,9 @@
                 document.getElementById("answerInput").style.backgroundColor = "white";
                 document.getElementById("progress").innerText = `当前:${currentIndex}, 剩余:${words.length - currentIndex}, 正确:${correctWords.length}, 错误:${wrongWords.length}`;
                 currentWordDisplay()
-                playAudio();
+                if (isAutoPlay){
+                    playAudio();
+                }
             }
 
             document.addEventListener('keydown', function(event) {
@@ -377,6 +381,7 @@
 
             let isWordVisible = false;
             let isTranslationVisible = true;
+            let isAutoPlay = true;
             function toggleWordDisplay() {
                 isWordVisible = !isWordVisible;
                 currentWordDisplay()
@@ -386,6 +391,21 @@
                 isTranslationVisible = !isTranslationVisible;
                 currentWordDisplay()
                 document.getElementById("answerInput").focus();
+            }
+            function toggleAutoPlay() {
+                isAutoPlay = !isAutoPlay;
+                document.getElementById("answerInput").focus();
+
+                var varAutoPlayBtn1 = document.getElementById("autoPlayBtn1");
+                var varAutoPlayBtn2 = document.getElementById("autoPlayBtn2");
+                if (isAutoPlay) {
+                    varAutoPlayBtn1.textContent = "自动朗读已开启";
+                    varAutoPlayBtn2.textContent = "自动朗读已开启";
+                } else {
+                    varAutoPlayBtn1.textContent = "自动朗读已关闭";
+                    varAutoPlayBtn2.textContent = "自动朗读已关闭";
+                }
+                
             }
 
             function currentWordDisplay() {
