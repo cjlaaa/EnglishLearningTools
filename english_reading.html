@@ -238,7 +238,7 @@
 	    <textarea id="translationInputArea" placeholder="在此输入中文翻译(可选),在使用翻译软件翻译大段英文时可能会有中文句子和英文句子无法一一对应的情况,建议使用文本编辑器用句号/问号分句后再拷贝到翻译中进行翻译,可有效解决这个问题.可将txt格式的文档拖动到此."></textarea>
 		<div style="display: flex; gap: 10px; margin-top: 10px;">
 			<button id="startButton" onclick="startReading()">开始分句朗读</button>
-			<button id="translateButton" onclick="translateText()">本地Ollama自动英译中</button>
+			<button id="translateButton" onclick="translateText()">翻译句子(Ollama)</button>
 		</div>
 
         <select id="articleSelect" onchange="handleSelectChange(this)" style="display: block;">
@@ -281,26 +281,38 @@
 		let wordsPresetArray = []
 
 		async function translateText() {
-			const text = document.getElementById('inputArea').value.trim();
+			let text = document.getElementById('inputArea').value.trim();
 			const translationText = document.getElementById('translationInputArea').value.trim();
 			if (text === '') {
 		        showError("请输入英文文章", true);
 		        return;
 		    }
-			document.getElementById("translationInputArea").value = "翻译中..."
+			text = processString(text);
+			document.getElementById("translationInputArea").value = "翻译中(加载模型)"
 
 			const sentences = text.split(/(?<=[.!?。？！])/);
 			const translatedSentences = [];
 
 			let count = 0;
 			for (const sentence of sentences) {
-                if (sentence.trim()) { // 确保句子不为空
+                if (sentence.trim() && /[a-zA-Z]/.test(sentence)) { // 确保句子不为空
                     let translated = await translateSentence(sentence.trim());
 					if (translated.startsWith('翻译失败')) {
 						// 如果翻译失败，停止后续翻译
 						document.getElementById("translationInputArea").value = translated; // 显示错误信息
 						return;
 					}
+
+					//将除了最后一个标点符号以外的所有句号叹号问号替换为逗号,以便于分句
+					translated = translated.replace(/([.!?。？！])(?!.*[.!?。？！])|([.!?。？！])/g, (match, p1, p2, offset, string) => {
+						// 如果是最后一个标点符号，保留它
+						if (p1) {
+							return p1; // 返回最后的句号、叹号或问号
+						}
+						// 否则替换为逗号
+						return ',';
+					});
+
                     translatedSentences.push(translated);
 					count ++;
 
@@ -314,35 +326,55 @@
 
 		async function translateSentence(sentence){
 			// 拼接字符串
-            const prefix = "翻译成中文,不要解释,只要结果: ";
+            const prefix = "翻译成中文,不要任何解释,只要结果: ";
             const combinedText = prefix + sentence; // 在输入文本前面添加前缀
 
             try {
                 const response = await fetch('http://localhost:11434/api/generate', {
                     method: 'POST',
+                    // mode: 'no-cors',
                     headers: {
                         'Content-Type': 'application/json',
                         // 'Authorization': 'Bearer YOUR_API_KEY' // 替换为您的API密钥
                     },
-                    body: JSON.stringify({ prompt: combinedText, model: "qwen2.5:3b",stream: false })
+                    body: JSON.stringify({ prompt: combinedText, model: "qwen2.5:3b", stream: false })
                 });
 
                 if (!response.ok) {
-                    throw new Error('翻译失败: 网络响应不是OK');
+                    throw new Error('网络响应不是OK');
                 }
 
                 const data = await response.json();
                 // console.log(data); // 打印整个响应数据以调试
                 return data.response;
             } catch (error) {
-                return  '翻译失败: ' + error.message + ' (请启动本地ollama服务并下载qwen2.5:3b模型后重试)';
+                return  '翻译失败: ' + error.message + '\n(请启动本地ollama服务并下载qwen2.5:3b模型后重试)\n(需要添加环境变量"OLLAMA_ORIGINS=*"以允许ollama跨域访问)';
             }
+		}
+
+		//处理标点符号,以便于分句
+		function processString(input) {
+			// 定义一个包含常见缩写的数组
+			const abbreviations = ['Mr.', 'Mrs.', 'Ms.', 'Dr.', 'Prof.', 'p.m.', 'a.m.', 'i.e.', 'e.g.', 'B.C.', 'A.D.', 'etc.', 'vs.', 'No.', 'Inc.', 'Ltd.', 'Co.', 'St.', 'Ave.', 'Drs.', 'M.D.', 'Ph.D.', 'R.S.V.P.', 'P.S.', 'P.P.S.', 'Q.E.D.', 'S.O.S.', 'T.B.D.', 'T.B.A.', 'U.S.', 'U.K.', 'E.U.', 'N.B.'];
+			// 创建一个正则表达式，用于匹配缩写
+			// 将缩写数组中的每个缩写用 '|' 连接，并转义句点
+			const regex = new RegExp(`(${abbreviations.join('|').replace(/\./g, '\\.')})`, 'g');
+			// 使用正则表达式替换输入字符串中的缩写
+    		// 将匹配到的缩写中的句点替换为空字符串
+			let result = input.replace(regex, (match) => match.replace(/\./g, ''));
+			// 将 "..." 替换为 "."
+			result = result.replace(/\.\.\./g, '.');
+
+			return result;
 		}
 
 		initializeSelect()
 		function startReading() {
-		    const text = document.getElementById('inputArea').value.trim();
-		    const translationText = document.getElementById('translationInputArea').value.trim();
+		    let text = document.getElementById('inputArea').value.trim();
+		    let translationText = document.getElementById('translationInputArea').value.trim();
+
+		    text = processString(text);
+		    translationText = processString(translationText);
 
 		    if (text === '') {
 		        showError("请输入英文文章", true);
