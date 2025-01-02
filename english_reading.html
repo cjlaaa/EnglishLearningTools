@@ -369,6 +369,8 @@
 			let result = input.replace(regex, (match) => match.replace(/\./g, ''));
 			// 将 "..." 替换为 "."
 			result = result.replace(/\.\.\./g, '.');
+			// 替换字符串中的小数点为逗号
+			result = result.replace(/(\d+)\.(\d+)/g, '$1,$2');
 
 			return result;
 		}
