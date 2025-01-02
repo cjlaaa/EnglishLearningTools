@@ -313,6 +313,11 @@
 						return ',';
 					});
 
+					// 检查最后一个字符是否为标点符号，如果不是，则添加中文句号
+					if (!/[.!?。？！]$/.test(translated)) {
+						translated += '。'; // 添加中文句号
+					}
+
                     translatedSentences.push(translated);
 					count ++;
 
