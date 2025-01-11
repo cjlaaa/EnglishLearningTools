@@ -220,8 +220,6 @@
             function initializeGame() {
                 setInputStyle(InputShowType.INIT)
 
-                let wordList = document.getElementById("wordList").value.trim();
-                words = wordList.split('\n').map(item => item.split('\t'));
                 shuffle(words)
                 document.getElementById("inputArea").style.display = "none";
                 document.getElementById("resultArea").style.display = "none";
@@ -231,7 +229,6 @@
 
             function restart(){
                 currentIndex = 0;
-                words = [];
                 correctWords = [];
                 wrongWords = [];
                 initializeGame()
@@ -305,7 +302,7 @@
 
             document.getElementById("answerInput").oninput = function() {
                 let answer = cleanText(document.getElementById("answerInput").value.trim().toLowerCase());
-                let correctWord = cleanText(words[currentIndex][0].toLowerCase());
+                let correctWord = cleanText(words[currentIndex].english.toLowerCase());
 
                 let isCorrect = true;
                 for (let i = 0; i < answer.length; i++) {
@@ -364,7 +361,7 @@
                 }
 
                 answer = cleanText(answer.toLowerCase());
-                let correctWord = cleanText(words[currentIndex][0].toLowerCase());
+                let correctWord = cleanText(words[currentIndex].english.toLowerCase());
 
                 if (answer === correctWord) {
                     correctWords.push(words[currentIndex]);
@@ -412,19 +409,19 @@
                 const currentWordElement = document.getElementById("currentWord");
                 currentWordElement.style.display = "block";
                 if (isWordVisible && !isTranslationVisible) {
-                    currentWordElement.innerText = words[currentIndex][0];
+                    currentWordElement.innerText = words[currentIndex].english;
                 } else if (!isWordVisible && isTranslationVisible) {
-                    currentWordElement.innerText = words[currentIndex][1];
+                    currentWordElement.innerText = words[currentIndex].chinese;
                 } else if (isWordVisible && isTranslationVisible) {
-                    currentWordElement.innerText = words[currentIndex][0] + " - " + words[currentIndex][1];
+                    currentWordElement.innerText = words[currentIndex].english + " - " + words[currentIndex].chinese;
                 } else if (!isWordVisible && !isTranslationVisible) {
                     currentWordElement.style.display = "none";
                 }
             }
 
             function playAudio() {
-                if (words[currentIndex][0] !== "") {
-                    speakText(words[currentIndex][0])
+                if (words[currentIndex].english !== "") {
+                    speakText(words[currentIndex].english)
                 }
                 document.getElementById("answerInput").focus();
             }
@@ -498,24 +495,24 @@
                 let correctWordsDiv = document.getElementById("correctWords");
                 correctWordsDiv.innerHTML = "<h3>正确单词</h3>";
                 correctWords.forEach(word => {
-                    correctWordsDiv.innerHTML += `${word[0]} - ${word[1]}<br>`;
+                    correctWordsDiv.innerHTML += `${word.english} - ${word.chinese}<br>`;
                 });
 
                 let wrongWordsDiv = document.getElementById("wrongWords");
                 wrongWordsDiv.innerHTML = "<h3>错误单词</h3>";
                 wrongWords.forEach(word => {
-                    wrongWordsDiv.innerHTML += `${word[0]} - ${word[1]}<br>`;
+                    wrongWordsDiv.innerHTML += `${word.english} - ${word.chinese}<br>`;
                 });
             }
 
             function copyMistakes() {
-                let mistakes = wrongWords.map(word => `${word[0]}\t${word[1]}`).join('\n');
+                let mistakes = wrongWords.map(word => `${word.english}\t${word.chinese}`).join('\n');
                 navigator.clipboard.writeText(mistakes);
                 showError("已复制错误单词列表！");
             }
 
             function useMistakes() {
-                let mistakes = wrongWords.map(word => `${word[0]}\t${word[1]}`).join('\n');
+                let mistakes = wrongWords.map(word => `${word.english}\t${word.chinese}`).join('\n');
                 document.getElementById("wordList").value = mistakes;
                 goBack()
             }
