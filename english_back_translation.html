@@ -125,8 +125,10 @@
             <label for="englishArticle">英文文章:</label><br>
             <textarea id="englishArticle" rows="4" placeholder="在这里输入英文文章.请注意,中英文文章中的每个句子都应按相应的顺序用句号或感叹号或问号分隔,否则可能会出现不匹配的问题."></textarea>
             <label for="chineseTranslation">中文翻译:</label><br>
-            <textarea id="chineseTranslation" rows="4" placeholder="在这里输入中文翻译."></textarea>
+            <textarea id="chineseTranslation" rows="4" placeholder="在这里输入中文翻译.(请启动本地ollama服务并下载qwen2.5:3b模型后重试,需要添加环境变量OLLAMA_ORIGINS=*以允许ollama跨域访问)"></textarea>
             <button onclick="startExercise()">开始回译练习</button>
+            <button id="translateButton" onclick="translateText()">翻译句子(Ollama)</button>
+
 
             <select id="articleSelect" style="display: block;" onchange="handleSelectChange(this)">
                 <option value="" selected>点击选择-新概念英语3</option>
@@ -149,9 +151,9 @@
 
         <!-- 文章导航区域 -->
         <div class="area">
-            <button onclick="prevSentence()">&lt;前一句(Ctrl+A)</button>
+            <button onclick="prevSentence()">&lt;前一句(Ctrl+D)</button>
             <button onclick="speakCurrentSentence()">快速朗读(Ctrl+S)</button>
-            <button onclick="speakCurrentSentenceSlow()">慢速朗读(Ctrl+D)</button>
+            <button onclick="speakCurrentSentenceSlow()">慢速朗读(Ctrl+G)</button>
             <button onclick="nextSentence()">&gt;后一句(Ctrl+F)</button>
         </div>
         
@@ -177,15 +179,110 @@
         var currentSentenceIndex = 0; // 当前句子索引
         initializeSelect();
 
+        async function translateText() {
+			let text = document.getElementById('englishArticle').value.trim();
+			// const translationText = document.getElementById('translationInputArea').value.trim();
+			if (text === '') {
+		        // showError("请输入英文文章", true);
+		        return;
+		    }
+			text = processString(text);
+			document.getElementById("chineseTranslation").value = "翻译中(加载模型)"
+
+			const sentences = text.split(/(?<=[.!?。？！])/);
+			const translatedSentences = [];
+
+			let count = 0;
+			for (const sentence of sentences) {
+                if (sentence.trim() && /[a-zA-Z]/.test(sentence)) { // 确保句子不为空
+                    let translated = await translateSentence(sentence.trim());
+					if (translated.startsWith('翻译失败')) {
+						// 如果翻译失败，停止后续翻译
+						document.getElementById("chineseTranslation").value = translated; // 显示错误信息
+						return;
+					}
+
+					//将除了最后一个标点符号以外的所有句号叹号问号替换为逗号,以便于分句
+					translated = translated.replace(/([.!?。？！])(?!.*[.!?。？！])|([.!?。？！])/g, (match, p1, p2, offset, string) => {
+						// 如果是最后一个标点符号，保留它
+						if (p1) {
+							return p1; // 返回最后的句号、叹号或问号
+						}
+						// 否则替换为逗号
+						return ',';
+					});
+
+					// 检查最后一个字符是否为标点符号，如果不是，则添加中文句号
+					if (!/[.!?。？！]$/.test(translated)) {
+						translated += '。'; // 添加中文句号
+					}
+
+                    translatedSentences.push(translated);
+					count ++;
+
+					// 更新翻译区域的内容，显示当前翻译进度
+            		document.getElementById("chineseTranslation").value = `翻译中(${count}/${sentences.length})`;
+                }
+            }
+
+			document.getElementById("chineseTranslation").value = translatedSentences.join(' ');
+		}
+
+		async function translateSentence(sentence){
+			// 拼接字符串
+            const prefix = "翻译成中文,不要任何解释,只要结果: ";
+            const combinedText = prefix + sentence; // 在输入文本前面添加前缀
+
+            try {
+                const response = await fetch('http://localhost:11434/api/generate', {
+                    method: 'POST',
+                    // mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // 'Authorization': 'Bearer YOUR_API_KEY' // 替换为您的API密钥
+                    },
+                    body: JSON.stringify({ prompt: combinedText, model: "qwen2.5:3b", stream: false })
+                });
+
+                if (!response.ok) {
+                    throw new Error('网络响应不是OK');
+                }
+
+                const data = await response.json();
+                // console.log(data); // 打印整个响应数据以调试
+                return data.response;
+            } catch (error) {
+                return  '翻译失败: ' + error.message + '\n(请启动本地ollama服务并下载qwen2.5:3b模型后重试)\n(需要添加环境变量"OLLAMA_ORIGINS=*"以允许ollama跨域访问)';
+            }
+		}
+
+        //处理标点符号,以便于分句
+		function processString(input) {
+			// 定义一个包含常见缩写的数组
+			const abbreviations = ['Mr.', 'Mrs.', 'Ms.', 'Dr.', 'Prof.', 'p.m.', 'a.m.', 'i.e.', 'e.g.', 'B.C.', 'A.D.', 'etc.', 'vs.', 'No.', 'Inc.', 'Ltd.', 'Co.', 'St.', 'Ave.', 'Drs.', 'M.D.', 'Ph.D.', 'R.S.V.P.', 'P.S.', 'P.P.S.', 'Q.E.D.', 'S.O.S.', 'T.B.D.', 'T.B.A.', 'U.S.', 'U.K.', 'E.U.', 'N.B.'];
+			// 创建一个正则表达式，用于匹配缩写
+			// 将缩写数组中的每个缩写用 '|' 连接，并转义句点
+			const regex = new RegExp(`(${abbreviations.join('|').replace(/\./g, '\\.')})`, 'g');
+			// 使用正则表达式替换输入字符串中的缩写
+    		// 将匹配到的缩写中的句点替换为空字符串
+			let result = input.replace(regex, (match) => match.replace(/\./g, ''));
+			// 将 "..." 替换为 "."
+			result = result.replace(/\.\.\./g, '.');
+			// 替换字符串中的小数点为逗号
+			result = result.replace(/(\d+)\.(\d+)/g, '$1,$2');
+
+			return result;
+		}
+
         // 朗读当前句子
         function speakCurrentSentence() {
             var englishSentence = originalEnglishSentences[currentSentenceIndex].trim();
-            speakText(englishSentence, 1.2);
+            speakText(englishSentence, 1.5);
         }
 
         function speakCurrentSentenceSlow() {
             var englishSentence = originalEnglishSentences[currentSentenceIndex].trim();
-            speakText(englishSentence, 0.7);
+            speakText(englishSentence, 0.5);
         }
 
         // 重置当前句子状态
@@ -226,6 +323,8 @@
             if (englishArticle === '' || chineseTranslation === '') {
                 return;
             }
+
+            englishArticle = processString(englishArticle);
 
             // 将文章拆分成句子，并保存到数组中
             originalEnglishSentences = englishArticle.split(/[.!?。？！]\s*/).filter(sentence => sentence.trim() !== ""); // 假设句子以句号分隔
@@ -329,7 +428,7 @@
             if (!selectedVoice){
                 const voices = window.speechSynthesis.getVoices();
                 selectedVoice = voices.find(voice => voice.name.includes('Samantha')) ||
-                    voices.find(voice => voice.name.includes('Susan')) ||
+                    voices.find(voice => voice.name.includes('Mark')) ||
                     voices.find(voice => voice.name.includes('美国'));
             }
 
@@ -350,7 +449,7 @@
             // console.log('Available voices:', voices);
             // 查找名为 "Mark" 或 "Samantha" 的语音
             selectedVoice = voices.find(voice => voice.name.includes('Samantha')) ||
-                    voices.find(voice => voice.name.includes('Susan')) ||
+                    voices.find(voice => voice.name.includes('Mark')) ||
                     voices.find(voice => voice.name.includes('美国'));
             if (selectedVoice) {
                 // console.log('Found voice:', selectedVoice);
@@ -432,12 +531,12 @@
                 speakCurrentSentence();
             }
 
-            if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 'd') {
+            if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 'g') {
                 event.preventDefault();
                 speakCurrentSentenceSlow();
             }
 
-            if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 'a') {
+            if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 'd') {
                 event.preventDefault();
                 prevSentence();
             }
@@ -458,9 +557,9 @@
         // 动态初始化 select 选项
         function initializeSelect() {
             var titles = [
-`L1 A puma at large 逃遁的美洲狮`, 
-`L2 Thirteen equals one 十三等于一`, 
-`L3 An unknown goddess 无名女神`, 
+`L1 A puma at large 逃遁的美洲狮`,
+`L2 Thirteen equals one 十三等于一`,
+`L3 An unknown goddess 无名女神`,
 `L4 The double life of Alfred Bloggs 阿尔弗雷德•布洛格斯的双重生活`,
 `L5 The facts 确切数字`,
 `L6 Smash-and-grab 砸橱窗抢劫`,

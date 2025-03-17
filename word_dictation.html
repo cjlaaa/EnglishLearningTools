@@ -435,7 +435,7 @@
                 if (!selectedVoice){
                     const voices = window.speechSynthesis.getVoices();
                     selectedVoice = voices.find(voice => voice.name.includes('Samantha')) ||
-                        voices.find(voice => voice.name.includes('Susan'));
+                        voices.find(voice => voice.name.includes('Mark'));
                         voices.find(voice => voice.name.includes('美国'));
                 }
 
@@ -444,7 +444,7 @@
 
                     if (selectedVoice.name.includes("Samantha")) {
                         utterance.rate = 0.3; // 设置朗读速度
-                    }else if (selectedVoice.name.includes("Susan")){
+                    }else if (selectedVoice.name.includes("Mark")){
                         utterance.rate = 0.7;
                     }   
                 }
@@ -462,7 +462,7 @@
                 // console.log('Available voices:', voices);
                 // 查找名为 "Mark" 或 "Samantha" 的语音
                 selectedVoice = voices.find(voice => voice.name.includes('Samantha')) ||
-                        voices.find(voice => voice.name.includes('Susan')) ||
+                        voices.find(voice => voice.name.includes('Mark')) ||
                         voices.find(voice => voice.name.includes('美国'));
                 if (selectedVoice) {
                     // console.log('Found voice:', selectedVoice);
