@@ -312,7 +312,8 @@
 						// 否则替换为逗号
 						return ',';
 					});
-
+					//删除换行符
+					translated = translated.replace(/[\r\n]+$/, '');
 					// 检查最后一个字符是否为标点符号，如果不是，则添加中文句号
 					if (!/[.!?。？！]$/.test(translated)) {
 						translated += '。'; // 添加中文句号
@@ -322,7 +323,7 @@
 					count ++;
 
 					// 更新翻译区域的内容，显示当前翻译进度
-            		document.getElementById("translationInputArea").value = `翻译中(${count}/${sentences.length})`;
+            		document.getElementById("translationInputArea").value = `翻译中(${count}/${sentences.length})\n${translatedSentences.join(' ')}`;
                 }
             }
 
@@ -342,7 +343,7 @@
                         'Content-Type': 'application/json',
                         // 'Authorization': 'Bearer YOUR_API_KEY' // 替换为您的API密钥
                     },
-                    body: JSON.stringify({ prompt: combinedText, model: "qwen2.5:3b", stream: false })
+                    body: JSON.stringify({ prompt: combinedText, model: "gemma3:4b", stream: false })
                 });
 
                 if (!response.ok) {
@@ -353,7 +354,7 @@
                 // console.log(data); // 打印整个响应数据以调试
                 return data.response;
             } catch (error) {
-                return  '翻译失败: ' + error.message + '\n(请启动本地ollama服务并下载qwen2.5:3b模型后重试)\n(需要添加环境变量"OLLAMA_ORIGINS=*"以允许ollama跨域访问)';
+                return  '翻译失败: ' + error.message + '\n(请启动本地ollama服务并下载gemma3:4b模型后重试)\n(需要添加环境变量"OLLAMA_ORIGINS=*"以允许ollama跨域访问)';
             }
 		}
 

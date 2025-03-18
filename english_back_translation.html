@@ -125,7 +125,7 @@
             <label for="englishArticle">英文文章:</label><br>
             <textarea id="englishArticle" rows="4" placeholder="在这里输入英文文章.请注意,中英文文章中的每个句子都应按相应的顺序用句号或感叹号或问号分隔,否则可能会出现不匹配的问题."></textarea>
             <label for="chineseTranslation">中文翻译:</label><br>
-            <textarea id="chineseTranslation" rows="4" placeholder="在这里输入中文翻译.(请启动本地ollama服务并下载qwen2.5:3b模型后重试,需要添加环境变量OLLAMA_ORIGINS=*以允许ollama跨域访问)"></textarea>
+            <textarea id="chineseTranslation" rows="4" placeholder="在这里输入中文翻译.(请启动本地ollama服务并下载gemma3:4b模型后重试,需要添加环境变量OLLAMA_ORIGINS=*以允许ollama跨域访问)"></textarea>
             <button onclick="startExercise()">开始回译练习</button>
             <button id="translateButton" onclick="translateText()">翻译句子(Ollama)</button>
 
@@ -211,7 +211,8 @@
 						// 否则替换为逗号
 						return ',';
 					});
-
+                    //删除换行符
+					translated = translated.replace(/[\r\n]+$/, '');
 					// 检查最后一个字符是否为标点符号，如果不是，则添加中文句号
 					if (!/[.!?。？！]$/.test(translated)) {
 						translated += '。'; // 添加中文句号
@@ -221,7 +222,7 @@
 					count ++;
 
 					// 更新翻译区域的内容，显示当前翻译进度
-            		document.getElementById("chineseTranslation").value = `翻译中(${count}/${sentences.length})`;
+            		document.getElementById("chineseTranslation").value = `翻译中(${count}/${sentences.length})\n${translatedSentences.join(' ')}`;
                 }
             }
 
@@ -241,7 +242,7 @@
                         'Content-Type': 'application/json',
                         // 'Authorization': 'Bearer YOUR_API_KEY' // 替换为您的API密钥
                     },
-                    body: JSON.stringify({ prompt: combinedText, model: "qwen2.5:3b", stream: false })
+                    body: JSON.stringify({ prompt: combinedText, model: "gemma3:4b", stream: false })
                 });
 
                 if (!response.ok) {
@@ -252,7 +253,7 @@
                 // console.log(data); // 打印整个响应数据以调试
                 return data.response;
             } catch (error) {
-                return  '翻译失败: ' + error.message + '\n(请启动本地ollama服务并下载qwen2.5:3b模型后重试)\n(需要添加环境变量"OLLAMA_ORIGINS=*"以允许ollama跨域访问)';
+                return  '翻译失败: ' + error.message + '\n(请启动本地ollama服务并下载gemma3:4b模型后重试)\n(需要添加环境变量"OLLAMA_ORIGINS=*"以允许ollama跨域访问)';
             }
 		}
 
