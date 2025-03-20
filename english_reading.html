@@ -269,7 +269,7 @@
 			<div>
 				<button id="copyAllWordsButton" onclick="copyAllWords()">复制所有生词</button>
 				<select id="voiceSelect" onchange="onVoiceSelectChange(this)">
-					<option selected value="">点击选择朗读者</option>
+					<option selected value=""></option>
 				</select>
 			</div>
 
@@ -598,7 +598,7 @@
 					voiceSelect.appendChild(option);
 				}
 
-				if (voice.name.includes('Mark') || voice.name.includes('Samantha') || voice.name.includes('美国')) {
+				if ((voice.name.includes('Mark') || voice.name.includes('Samantha') || voice.name.includes('美国')) && voiceSelect.value) {
                     voiceSelect.value = voice.name; // 设置默认选择
                 }
             });
