@@ -551,33 +551,19 @@
         function speakText(text) {
             window.speechSynthesis.cancel();
 			const utterance = new SpeechSynthesisUtterance(text);
-
-			//这里是为了适配safari不会调用onvoiceschanged
-            if (!g_selectedVoice){
-                const voices = window.speechSynthesis.getVoices();
-                g_selectedVoice = voices.find(voice => voice.name.includes('Samantha')) ||
-                    voices.find(voice => voice.name.includes('Mark')) ||
-                    voices.find(voice => voice.name.includes('美国'));
-            }
-
-            if (g_selectedVoice){
-                utterance.voice = g_selectedVoice;
+			const voices = window.speechSynthesis.getVoices();
+			selectedVoice = voices.find(voice => voice.name.includes(selectedVoiceName));
+            if (selectedVoice){
+                utterance.voice = selectedVoice;
             }
             utterance.rate = speakSpeed; // 设置朗读速度
             window.speechSynthesis.speak(utterance);
         }
 
 		// 定义一个变量来保存选择的语音
-        let g_selectedVoice;
+        let selectedVoiceName = "";
 		function onVoiceSelectChange(selectElement) {
-			const selectedVoiceName = selectElement.value;
-			if (selectedVoiceName) {
-				const voices = window.speechSynthesis.getVoices();
-				const selectedVoice = voices.find(voice => voice.name === selectedVoiceName);
-				if (selectedVoice) {
-					g_selectedVoice = selectedVoice; // 设置选中的语音
-				}
-			}
+			selectedVoiceName = selectElement.value;
 		}
 
         // 监听 voiceschanged 事件
@@ -598,9 +584,15 @@
 					voiceSelect.appendChild(option);
 				}
 
-				if ((voice.name.includes('Mark') || voice.name.includes('Samantha') || voice.name.includes('美国')) && voiceSelect.value) {
-                    voiceSelect.value = voice.name; // 设置默认选择
-					g_selectedVoice = voices.find(voice => voice.name === voiceSelect.value);
+				// 如果选择过朗读者,多次调用onvoiceschanged不改变已选择朗读者
+				if (selectedVoiceName) {
+					voiceSelect.value = selectedVoiceName;
+				}
+
+				// 第一次调用,设置默认朗读者
+				if (!selectedVoiceName && (voice.name.includes('Mark') || voice.name.includes('Samantha') || voice.name.includes('美国'))) {
+					voiceSelect.value = voice.name;
+					selectedVoiceName = voice.name;
                 }
             });
         }
