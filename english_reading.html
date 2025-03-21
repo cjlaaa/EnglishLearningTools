@@ -588,9 +588,7 @@
 
 		// 获取所有可用的语音
 		const voiceSelect = document.getElementById('voiceSelect');
-		let isVoiceListPopulated = false; // 防止onvoiceschanged反复加载,否则会导致默认值有问题
 		function populateVoiceList(voices) {
-			if (isVoiceListPopulated) return; // 如果已经加载过，直接返回
 			voiceSelect.innerHTML = '';
             voices.forEach((voice) => {
 				if (voice.lang.startsWith('en')) {
@@ -602,10 +600,10 @@
 
 				if ((voice.name.includes('Mark') || voice.name.includes('Samantha') || voice.name.includes('美国')) && voiceSelect.value) {
                     voiceSelect.value = voice.name; // 设置默认选择
+					g_selectedVoice = voices.find(voice => voice.name === voiceSelect.value);
                 }
             });
-			isVoiceListPopulated = true; // 设置标志为已加载
-        };
+        }
         // 手动触发一次以确保语音列表加载
         window.speechSynthesis.getVoices();
 
