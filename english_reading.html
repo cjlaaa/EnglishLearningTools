@@ -257,8 +257,7 @@
 	        <div id="buttonContainer" style="display: flex; gap: 10px;">
 			    <button id="returnButton" onclick="returnToInitialState()">返回</button>
 			    <button id="playAllButton" onclick="playAllSentences()">全部朗读</button>
-				<button onclick="pauseReading()">暂停</button>
-                <button onclick="resumeReading()">继续</button>
+				<button onclick="pauseAndResumeReading()">暂停/继续</button>
 			    <button id="stopButton" onclick="stopReading()">停止</button>
 				<div style="border: 1px solid #ccc;padding: 7px;border-radius: 5px;">
 					<label for="speakSpeedSlider">朗读速度</label>
@@ -529,23 +528,33 @@
 		}
 
 		function playAllSentences() {
-		    speakText(document.getElementById('inputArea').value)
+		    speakText(document.getElementById('inputArea').value);
 		}
 
 		function stopReading() {
 		    window.speechSynthesis.cancel(); // 停止朗读
+			playStatus = 0;
 		}
 
-        function pauseReading() {
-            window.speechSynthesis.pause();
-        }
+		//google的在线语音无法通过接口读取播放状态,只能自己用变量控制
+		let playStatus = 0; //0未播放 1播放中 2暂停
+        function pauseAndResumeReading() {
+			if (playStatus === 0) {
+				return;
+			}
 
-        function resumeReading() {
-            window.speechSynthesis.resume();
-        }
+			if (playStatus === 1) {
+				window.speechSynthesis.pause();
+				playStatus = 2;
+			}else if(playStatus === 2){
+				window.speechSynthesis.resume();
+				playStatus = 1;
+			}
+		}
 
 		function returnToInitialState() {
 			window.speechSynthesis.cancel();
+			playStatus = 0;
 		    document.getElementById('inputArea').style.display = 'block';
    		    document.getElementById('translationInputArea').style.display = 'block';
 		    document.getElementById('startButton').style.display = 'block';
@@ -568,6 +577,10 @@
             }
             utterance.rate = speakSpeed; // 设置朗读速度
             window.speechSynthesis.speak(utterance);
+			utterance.onend = function(event) {
+				playStatus = 0;
+			};
+			playStatus = 1;
         }
 
 		// 定义一个变量来保存选择的语音
@@ -610,9 +623,9 @@
         window.speechSynthesis.getVoices();
 
 		function addWordToVocab(word, isSpeakText = true) {
-        	if (window.speechSynthesis.speaking) {
-			} else if (isSpeakText) {
-			    speakText(word);
+			if (playStatus===0){
+				speakText(word);
+				playStatus = 0;
 			}
 
 		    // 使用正则表达式删除单词中的标点
@@ -665,9 +678,9 @@
 		        }
 		    });
 
-		    if (window.speechSynthesis.speaking) {
-			} else {
-			    speakText(word);
+			if (playStatus===0){
+				speakText(word);
+				playStatus = 0;
 			}
 
 			// 恢复句子中的单词颜色
