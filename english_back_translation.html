@@ -58,7 +58,7 @@
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s;
-            margin-top: 5px;
+            /*margin-top: 5px;*/
         }
 
         button:hover {
@@ -114,7 +114,7 @@
             cursor: pointer; /* 鼠标指针 */
             width: 300px; /* 宽度 */
             position: relative; /* 为伪元素定位 */
-            margin-top: 10px;
+            /*margin-top: 10px;*/
         }
     </style>
 </head>
@@ -126,9 +126,10 @@
             <textarea id="englishArticle" rows="4" placeholder="在这里输入英文文章.请注意,中英文文章中的每个句子都应按相应的顺序用句号或感叹号或问号分隔,否则可能会出现不匹配的问题."></textarea>
             <label for="chineseTranslation">中文翻译:</label><br>
             <textarea id="chineseTranslation" rows="4" placeholder="在这里输入中文翻译.(请启动本地ollama服务并下载gemma3:4b模型后重试,需要添加环境变量OLLAMA_ORIGINS=*以允许ollama跨域访问)"></textarea>
-            <button onclick="startExercise()">开始回译练习</button>
-            <button id="translateButton" onclick="translateText()">翻译句子(Ollama)</button>
-
+            <div style="margin-bottom: 10px;margin-top: 5px;">
+                <button onclick="startExercise()">开始回译练习</button>
+                <button id="translateButton" onclick="translateText()">翻译句子(Ollama)</button>
+            </div>
 
             <select id="articleSelect" style="display: block;" onchange="handleSelectChange(this)">
                 <option value="" selected>点击选择-新概念英语3</option>
@@ -143,20 +144,30 @@
                 <button onclick="resetCurrentSentence()">重置当前句子</button> <!-- 新增按钮 -->
                 <button onclick="stopReading()">停止</button>
             </div>
+
+
         </div>
 
         <div>
-            <div class="area" id="sentenceIndexArea"></div>
+            <select id="voiceSelect" onchange="onVoiceSelectChange(this)">
+                <option selected value=""></option>
+            </select>
         </div>
 
         <!-- 文章导航区域 -->
         <div class="area">
             <button onclick="prevSentence()">&lt;前一句(Ctrl+D)</button>
-            <button onclick="speakCurrentSentence()">快速朗读(Ctrl+S)</button>
-            <button onclick="speakCurrentSentenceSlow()">慢速朗读(Ctrl+G)</button>
+            <button onclick="speakCurrentSentence()">朗读(Ctrl+S)</button>
             <button onclick="nextSentence()">&gt;后一句(Ctrl+F)</button>
         </div>
-        
+
+        <div class="area">
+            <label for="speakSpeedSlider">朗读速度</label>
+            <input type="range" id="speakSpeedSlider" min="0" max="2" value="0" step="0.1">
+            <span id="speakSpeedSliderValue"></span>
+        </div>
+
+        <div class="area" id="sentenceIndexArea"></div>
         <!-- 中文翻译区域 -->
         <div class="area" id="chineseTranslationArea"></div>
         <!-- 翻译区域 -->
@@ -178,6 +189,17 @@
         var originalChineseTranslations = []; // 原始中文翻译数组
         var currentSentenceIndex = 0; // 当前句子索引
         initializeSelect();
+
+        //朗读速度
+		let speakSpeed = 1;
+		const speakSpeedSlider = document.getElementById("speakSpeedSlider");
+        const speakSpeedSliderValue = document.getElementById("speakSpeedSliderValue");
+		speakSpeedSlider.value = speakSpeed;
+		speakSpeedSliderValue.textContent = speakSpeed;
+        speakSpeedSlider.addEventListener('input', function() {
+            speakSpeedSliderValue.textContent = this.value;
+			speakSpeed = this.value;
+        });
 
         async function translateText() {
 			let text = document.getElementById('englishArticle').value.trim();
@@ -278,12 +300,7 @@
         // 朗读当前句子
         function speakCurrentSentence() {
             var englishSentence = originalEnglishSentences[currentSentenceIndex].trim();
-            speakText(englishSentence, 1.5);
-        }
-
-        function speakCurrentSentenceSlow() {
-            var englishSentence = originalEnglishSentences[currentSentenceIndex].trim();
-            speakText(englishSentence, 0.5);
+            speakText(englishSentence);
         }
 
         // 重置当前句子状态
@@ -421,49 +438,55 @@
             window.speechSynthesis.cancel();
         }
 
-        function speakText(text, speed = 1.0) {
+        // 调用系统语音朗读文本内容的函数
+        function speakText(text) {
             window.speechSynthesis.cancel();
-            var utterance = new SpeechSynthesisUtterance(text);
-
-            //这里是为了适配safari不会调用onvoiceschanged
-            if (!selectedVoice){
-                const voices = window.speechSynthesis.getVoices();
-                selectedVoice = voices.find(voice => voice.name.includes('Samantha')) ||
-                    voices.find(voice => voice.name.includes('Mark')) ||
-                    voices.find(voice => voice.name.includes('美国'));
-            }
-
+			const utterance = new SpeechSynthesisUtterance(text);
+			const voices = window.speechSynthesis.getVoices();
+			selectedVoice = voices.find(voice => voice.name.includes(selectedVoiceName));
             if (selectedVoice){
                 utterance.voice = selectedVoice;
             }
-            utterance.rate = speed; // 设置朗读速度
+            utterance.rate = speakSpeed; // 设置朗读速度
             window.speechSynthesis.speak(utterance);
         }
 
-        // 定义一个变量来保存找到的语音
-        let selectedVoice;
+        // 定义一个变量来保存选择的语音
+        let selectedVoiceName = "";
+		function onVoiceSelectChange(selectElement) {
+			selectedVoiceName = selectElement.value;
+		}
+
         // 监听 voiceschanged 事件
         window.speechSynthesis.onvoiceschanged = function() {
-            // 获取所有可用的语音
             const voices = window.speechSynthesis.getVoices();
-            // 打印所有可用语音的详细信息
-            // console.log('Available voices:', voices);
-            // 查找名为 "Mark" 或 "Samantha" 的语音
-            selectedVoice = voices.find(voice => voice.name.includes('Samantha')) ||
-                    voices.find(voice => voice.name.includes('Mark')) ||
-                    voices.find(voice => voice.name.includes('美国'));
-            if (selectedVoice) {
-                // console.log('Found voice:', selectedVoice);
-                // // 创建一个 SpeechSynthesisUtterance 实例
-                // const utterance = new SpeechSynthesisUtterance('Hello, this is Mark or Samantha.');
-                // // 设置为找到的语音
-                // utterance.voice = selectedVoice;
-                // // 使用当前设置的语音进行合成
-                // window.speechSynthesis.speak(utterance);
-            } else {
-                // console.error('Voice not found: Mark or Samantha.');
-            }
-        };
+			populateVoiceList(voices);
+		}
+
+		// 获取所有可用的语音
+		const voiceSelect = document.getElementById('voiceSelect');
+		function populateVoiceList(voices) {
+			voiceSelect.innerHTML = '';
+            voices.forEach((voice) => {
+				if (voice.lang.startsWith('en')) {
+					const option = document.createElement('option');
+					option.value = voice.name;
+					option.textContent = `${voice.name} (${voice.lang})`;
+					voiceSelect.appendChild(option);
+				}
+
+				// 如果选择过朗读者,多次调用onvoiceschanged不改变已选择朗读者
+				if (selectedVoiceName) {
+					voiceSelect.value = selectedVoiceName;
+				}
+
+				// 第一次调用,设置默认朗读者
+				if (!selectedVoiceName && (voice.name.includes('Mark') || voice.name.includes('Samantha') || voice.name.includes('美国'))) {
+					voiceSelect.value = voice.name;
+					selectedVoiceName = voice.name;
+                }
+            });
+        }
         // 手动触发一次以确保语音列表加载
         window.speechSynthesis.getVoices();
 
