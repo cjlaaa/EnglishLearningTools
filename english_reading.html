@@ -257,6 +257,8 @@
 	        <div id="buttonContainer" style="display: flex; gap: 10px;">
 			    <button id="returnButton" onclick="returnToInitialState()">返回</button>
 			    <button id="playAllButton" onclick="playAllSentences()">全部朗读</button>
+				<button onclick="pauseReading()">暂停</button>
+                <button onclick="resumeReading()">继续</button>
 			    <button id="stopButton" onclick="stopReading()">停止</button>
 				<div style="border: 1px solid #ccc;padding: 7px;border-radius: 5px;">
 					<label for="speakSpeedSlider">朗读速度</label>
@@ -533,6 +535,14 @@
 		function stopReading() {
 		    window.speechSynthesis.cancel(); // 停止朗读
 		}
+
+        function pauseReading() {
+            window.speechSynthesis.pause();
+        }
+
+        function resumeReading() {
+            window.speechSynthesis.resume();
+        }
 
 		function returnToInitialState() {
 			window.speechSynthesis.cancel();
