@@ -352,8 +352,8 @@
 
 		async function translateSentence(sentence){
 			// 拼接字符串
-            const prefix = "翻译成中文,不要任何解释,只要结果: ";
-            const combinedText = prefix + sentence; // 在输入文本前面添加前缀
+            const prefix = "翻译成中文,不要任何解释,只要结果: \"";
+            const combinedText = prefix + sentence + "\""; // 在输入文本前面添加前缀
 
             try {
                 const response = await fetch('http://localhost:11434/api/generate', {
