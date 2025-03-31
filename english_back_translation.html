@@ -36,10 +36,6 @@
             border-radius: 8px;
         }
 
-        .area label {
-            font-weight: bold;
-        }
-
         textarea {
             width: 100%;
             padding: 10px;
@@ -116,6 +112,22 @@
             position: relative; /* 为伪元素定位 */
             /*margin-top: 10px;*/
         }
+
+        .input-effect {
+            animation: pulse 0.05s;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.03);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
     </style>
 </head>
 <body>
@@ -142,10 +154,9 @@
             <div>
                 <button onclick="returnToInitial()">&lt; 返回</button>
                 <button onclick="resetCurrentSentence()">重置当前句子</button> <!-- 新增按钮 -->
+                <button id="showAnswerInput" onclick="showAnswerInput()">显示听写框</button>
                 <button onclick="stopReading()">停止</button>
             </div>
-
-
         </div>
 
         <div>
@@ -170,13 +181,15 @@
         <div class="area" id="sentenceIndexArea"></div>
         <!-- 中文翻译区域 -->
         <div class="area" id="chineseTranslationArea"></div>
-        <!-- 翻译区域 -->
+        <!-- 输入句子区域 -->
+        <textarea class="area" id="answerInput" rows="3" style="width: 100%; font-family: 'Microsoft YaHei', 微软雅黑, Arial, sans-serif; font-size: 30px; font-weight: bold; outline: none; display: none;" autocomplete="off" placeholder="你可以直接在这里听写"></textarea>
+        <!-- 组句区域 -->
         <div class="area" id="translationArea"></div>
         <!-- 单词区域 -->
         <div class="area" id="wordArea"></div>
         <!-- 错误提示区域 -->
         <div class="area error" id="errorArea"></div>
-    </div>
+     </div>
 
     <div class="discreet-text">
         <p>&copy; 2024 机智的常总 (<a href="https://github.com/cjlaaa/EnglishLearningTools">GitHub</a> | <a href="index.html">返回主页</a>)</p>
@@ -189,6 +202,90 @@
         var originalChineseTranslations = []; // 原始中文翻译数组
         var currentSentenceIndex = 0; // 当前句子索引
         initializeSelect();
+
+        function showAnswerInput(){
+            const button = document.getElementById("showAnswerInput")
+            const input = document.getElementById("answerInput")
+
+            if (input.style.display === 'none') {
+                input.style.display = 'block';
+                button.textContent = '隐藏输入框';
+                document.getElementById("answerInput").focus();
+            } else {
+                input.style.display = 'none';
+                button.textContent = '显示输入框';
+            }
+        }
+
+        function cleanText(text) {
+            return text.replace(/['’].*/g, '').replace(/[^\w\s]/g, '').replace(/\s+/g, '').toLowerCase();
+        }
+
+        const InputShowType = {
+            INIT: 'init',
+            ERROR: 'error',
+            RIGHT: 'right'
+        };
+        function setInputStyle(type) {
+            // 初始状态/输入中且正确
+            if (type === InputShowType.INIT) {
+                document.getElementById("answerInput").style.border = "5px solid palegoldenrod";
+                document.getElementById("answerInput").style.color = "green";
+                document.getElementById("answerInput").style.boxShadow = "0 0 20px palegoldenrod";
+            } else if (type === InputShowType.ERROR) { //字母输入错误
+                document.getElementById("answerInput").style.border = "5px solid lightcoral";
+                document.getElementById("answerInput").style.color = "red";
+                document.getElementById("answerInput").style.boxShadow = "0 0 20px lightcoral";
+            } else if (type === InputShowType.RIGHT) { //输入结束全部正确
+                document.getElementById("answerInput").style.border = "5px solid lightgreen";
+                document.getElementById("answerInput").style.color = "green";
+                document.getElementById("answerInput").style.boxShadow = "0 0 20px lightgreen";
+            }
+        }
+
+        function sentenceCorrectCheck() {
+            let answer = cleanText(document.getElementById("answerInput").value.trim().toLowerCase());
+            let correctSentence = cleanText(originalEnglishSentences[currentSentenceIndex].trim().toLowerCase());
+
+            let isCorrect = true;
+            for (let i = 0; i < answer.length; i++) {
+                if (answer[i] !== correctSentence[i]) {
+                    isCorrect = false;
+                    break;
+                }
+            }
+
+            return isCorrect;
+        }
+
+        function sentenceLengthsEqualCheck() {
+            let answer = cleanText(document.getElementById("answerInput").value.trim().toLowerCase());
+            let correctSentence = cleanText(originalEnglishSentences[currentSentenceIndex].trim().toLowerCase());
+
+             return answer.length === correctSentence.length;
+        }
+
+        document.getElementById("answerInput").oninput = function() {
+            let isSpellingCorrect = sentenceCorrectCheck();
+            let areLengthsEqual = sentenceLengthsEqualCheck();
+
+            if (isSpellingCorrect) {
+                setInputStyle(InputShowType.INIT)
+
+                // 添加输入特效
+                document.getElementById("answerInput").classList.add('input-effect');
+                // 移除特效类以便下次输入时可以重新添加
+                setTimeout(() => {
+                    document.getElementById("answerInput").classList.remove('input-effect');
+                }, 55);
+
+                if (areLengthsEqual) {
+                    setInputStyle(InputShowType.RIGHT)
+                }
+            } else {
+                setInputStyle(InputShowType.ERROR)
+            }
+        };
 
         //朗读速度
 		let speakSpeed = 1;
@@ -337,6 +434,8 @@
             var chineseTranslation = document.getElementById("chineseTranslation").value.trim(); // 获取输入的中文翻译
             var wordArea = document.getElementById("wordArea");
             var translationArea = document.getElementById("translationArea");
+            setInputStyle(InputShowType.INIT);
+            document.getElementById("answerInput").value = "";
 
             if (englishArticle === '' || chineseTranslation === '') {
                 return;
@@ -385,6 +484,8 @@
         function updateSentenceIndexDisplay() {
             var sentenceIndexArea = document.getElementById("sentenceIndexArea");
             sentenceIndexArea.innerText = `当前句子：${currentSentenceIndex + 1} / ${originalEnglishSentences.length}`;
+            setInputStyle(InputShowType.INIT);
+            document.getElementById("answerInput").value = "";
         }
 
         // 返回到初始状态
@@ -555,10 +656,10 @@
                 speakCurrentSentence();
             }
 
-            if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 'g') {
-                event.preventDefault();
-                speakCurrentSentenceSlow();
-            }
+            // if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 'g') {
+            //     event.preventDefault();
+            //     speakCurrentSentenceSlow();
+            // }
 
             if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 'd') {
                 event.preventDefault();
@@ -566,6 +667,11 @@
             }
 
             if ((event.metaKey || event.ctrlKey || event.altKey) && event.key === 'f') {
+                event.preventDefault();
+                nextSentence();
+            }
+
+            if (event.key === 'Enter' && sentenceCorrectCheck() && sentenceLengthsEqualCheck()) {
                 event.preventDefault();
                 nextSentence();
             }

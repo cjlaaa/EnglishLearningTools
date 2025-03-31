@@ -337,15 +337,15 @@
             };
             function setInputStyle(type) {
                 // 初始状态/输入中且正确
-                if (type == InputShowType.INIT) {
+                if (type === InputShowType.INIT) {
                     document.getElementById("answerInput").style.border = "5px solid palegoldenrod";
                     document.getElementById("answerInput").style.color = "green";
                     document.getElementById("answerInput").style.boxShadow = "0 0 20px palegoldenrod";
-                } else if (type == InputShowType.ERROR) { //字母输入错误
+                } else if (type === InputShowType.ERROR) { //字母输入错误
                     document.getElementById("answerInput").style.border = "5px solid lightcoral"; 
                     document.getElementById("answerInput").style.color = "red"; 
                     document.getElementById("answerInput").style.boxShadow = "0 0 20px lightcoral"; 
-                } else if (type == InputShowType.RIGHT) { //输入结束全部正确
+                } else if (type === InputShowType.RIGHT) { //输入结束全部正确
                     document.getElementById("answerInput").style.border = "5px solid lightgreen"; 
                     document.getElementById("answerInput").style.color = "green";
                     document.getElementById("answerInput").style.boxShadow = "0 0 20px lightgreen"; 
