@@ -559,14 +559,14 @@
 		}
 
         // 监听 voiceschanged 事件
-        window.speechSynthesis.onvoiceschanged = function() {
-            const voices = window.speechSynthesis.getVoices();
-			populateVoiceList(voices);
-		}
+        window.speechSynthesis.onvoiceschanged = initVoiceList;
 
-		// 获取所有可用的语音
-		const voiceSelect = document.getElementById('voiceSelect');
-		function populateVoiceList(voices) {
+        // 获取所有可用的语音
+        initVoiceList();
+        function initVoiceList() {
+            const voices = window.speechSynthesis.getVoices();
+            const voiceSelect = document.getElementById('voiceSelect');
+
 			voiceSelect.innerHTML = '';
             voices.forEach((voice) => {
 				if (voice.lang.startsWith('en')) {
